@@ -1,7 +1,7 @@
 Things to check out...
 
 For search:
-fuse.js - fuzzy search
+fuseinfoBox.js - fuzzy search
     http://fusejs.io/
 
 For layout:

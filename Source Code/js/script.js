@@ -8,5 +8,8 @@ let horizontalBars = new horizontalBars();
 
 let impactTrace = new impactTrace();
 
-let infoBox = new infoBox();
+let journalInfoBox = new journalInfoBox();
 
+// load all data
+
+// create first network, maybe first in alphabet? That with largest impact factor?
