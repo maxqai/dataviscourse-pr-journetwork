@@ -1,0 +1,11 @@
+Things to check out...
+
+For search:
+fuse.js - fuzzy search
+    http://fusejs.io/
+
+For layout:
+bootstrap
+    https://getbootstrap.com/
+css grid
+    https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Grid_Layout
