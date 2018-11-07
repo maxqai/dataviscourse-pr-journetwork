@@ -1,6 +1,6 @@
 // class implementing the yearSlider
 // adapted from votePercentageChart.js
-class yearSlider {
+class YearSlider {
 
     constructor(){
         //initialize svg elements, svg sizing

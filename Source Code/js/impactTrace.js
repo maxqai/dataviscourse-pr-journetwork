@@ -1,6 +1,6 @@
 // class implementing the impactTrace
 // adapted from votePercentageChart.js
-class impactTrace {
+class ImpactTrace {
 
     constructor(){
         //initialize svg elements, svg sizing

@@ -1,14 +1,14 @@
 // initiate necessary objects
 
-let forceDirectedNetwork = new forceDirectedNetwork();
+let forceDirectedNetwork = new ForceDirectedNetwork();
 
-let yearSlider = new yearSlider();
+let yearSlider = new YearSlider();
 
-let horizontalBars = new horizontalBars();
+let horizontalBars = new HorizontalBars();
 
-let impactTrace = new impactTrace();
+let impactTrace = new ImpactTrace();
 
-let journalInfoBox = new journalInfoBox();
+let journalInfoBox = new JournalInfoBox();
 
 // load all data
 // const fs = require('fs');

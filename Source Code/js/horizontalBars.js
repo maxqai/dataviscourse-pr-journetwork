@@ -1,6 +1,6 @@
 // class implementing the horizontalBars
 // adapted from votePercentageChart.js
-class horizontalBars {
+class HorizontalBars {
 
     constructor(){
         //initialize svg elements, svg sizing

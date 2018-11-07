@@ -1,6 +1,6 @@
 // class implementing the journalInfoBox
 // adapted from votePercentageChart.js
-class journalInfoBox {
+class JournalInfoBox {
 
     constructor(){
         //initialize svg elements, svg sizing

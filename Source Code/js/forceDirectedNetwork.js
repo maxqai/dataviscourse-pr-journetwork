@@ -1,6 +1,6 @@
 // class implementing the forceDirectedNetwork
 // adapted from votePercentageChart.js
-class forceDirectedNetwork {
+class ForceDirectedNetwork {
 
     constructor(){
         //initialize svg elements, svg sizing
