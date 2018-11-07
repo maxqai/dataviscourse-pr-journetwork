@@ -15,17 +15,17 @@ class JournalInfoBox {
         //add the svg to the div
         this.svg = divInfoBox.append("svg")
             .attr("width", this.svgWidth)
-            .attr("height", this.svgHeight);
+            .attr("height", 30);//TODO: fix this to not be hardcoded
 
 
 
 		//for reference: https://github.com/Caged/d3-tip
 		//Use this tool tip element to handle any hover over the chart
-		this.tip = d3.tip().attr('class', 'd3-tip')
-			.direction('s')
-			.offset(function() {
-				return [0,0];
-			});
+		// this.tip = d3.tip().attr('class', 'd3-tip')
+		// 	.direction('s')
+		// 	.offset(function() {
+		// 		return [0,0];
+		// 	});
     };
 
 
