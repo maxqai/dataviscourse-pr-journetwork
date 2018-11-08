@@ -8,5 +8,5 @@ print(allCSVs)
 journalCitedList = []
 for i in range(len(allCSVs)):
     if allCSVs[i].find('JournalCitedTab'):
-        # journalCitedList.push(allCSVs[i])
+        journalCitedList.push(allCSVs[i])
 

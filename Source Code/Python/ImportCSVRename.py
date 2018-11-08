@@ -4,7 +4,7 @@ from os.path import isfile, join
 import re
 
 
-path = 'data_presort'
+path = 'Source Code/data_presort'
 
 
 csvs = []
