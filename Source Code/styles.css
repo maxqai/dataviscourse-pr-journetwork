@@ -1,0 +1,39 @@
+/*.fullView{*/
+    /*display: inline-block;*/
+    /*width: 100%;*/
+/*}*/
+
+/*.sub_content {*/
+    /*display: inline-block;*/
+    /*width: 40%;*/
+    /*position: relative;*/
+    /*padding-right: 2%*/
+/*}*/
+
+/*.sideBar {*/
+    /*display: inline-block;*/
+    /*width: 15%;*/
+    /*float:right;*/
+/*}*/
+
+/*.tile_view{*/
+    /*display: inline-block;*/
+    /*width: 80%;*/
+    /*position: relative;*/
+/*}*/
+
+.fullView{
+    display: inline-block;
+    width: 100%;
+}
+
+.largeView{
+    display: inline-block;
+    width: 70%;
+}
+
+.sidebar{
+    display: inline-block;
+    width: 70%;
+    position: relative;
+}

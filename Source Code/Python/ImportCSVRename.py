@@ -4,7 +4,7 @@ from os.path import isfile, join
 import re
 
 
-path = 'C:/Users/bphil/Downloads'
+path = 'data_presort'
 
 
 csvs = []
