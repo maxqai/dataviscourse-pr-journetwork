@@ -39,27 +39,28 @@ for f in l:
         if f == 'JournalProfileGrid.csv':
             JName = f
             csv1 = csv.reader(open(path + '/' + f, 'r'))
-            for id, row in enumerate(csv1):
+            for id, row1 in enumerate(csv1):
                 if id > 0:
-                    Grid.append(row)
+                    Grid.append(row1)
         elif f == 'JournalCitingTab.csv':
             JName = f
-            csv1 = csv.reader(open(path + '/' + f, 'r'))
-            for id, row in enumerate(csv1):
-                if id > 0 and id < 104:
-                    Cite.append(row)
+            csv2 = csv.reader(open(path + '/' + f, 'r'))
+            for id, row2 in enumerate(csv2):
+                if id > 0 and id < 102:
+                    Cite.append(row2)
         elif f == 'JournalCitedTab.csv':
             JName = f
-            csv1 = csv.reader(open(path + '/' + f, 'r'))
-            for id, row in enumerate(csv1):
-                if id > 0 and id < 104:
-                    Cited.append(row)
+            csv3 = csv.reader(open(path + '/' + f, 'r'))
+            for id, row3 in enumerate(csv3):
+                if id > 0 and id < 102:
+                    Cited.append(row3)
 
 for i in range(0,len(Grid)):
     if i > 0:
         Grid[i].append(des_word)
     else:
         Grid[i].append("Journal")
+
 for i in range(0, len(Cite)):
     if i > 0:
         Cite[i].append(des_word)
@@ -73,14 +74,22 @@ for i in range(0, len(Cited)):
         Cited[i].append("Journal")
 
 Grid = Grid[:-2]
-print(Grid)
-print(Cite)
+#
+# print(Grid)
+# print(Cite)
 print(Cited)
 
 for i in range(0, len(NewFileNames)):
     csvfile = open(NewFileNames[i], 'w', newline='')
     csvwriter = csv.writer(csvfile)
-    for ii in range(0,len(Grid)):
-        csvwriter.writerow(Grid[ii])
+    if i == 0:
+        for ii in range(0, len(Cited)):
+            csvwriter.writerow(Cited[ii])
+    elif i == 1:
+        for ii in range(0, len(Cite)):
+            csvwriter.writerow(Cite[ii])
+    else:
+        for ii in range(0, len(Grid)):
+            csvwriter.writerow(Grid[ii])
     csvfile.close()
 
