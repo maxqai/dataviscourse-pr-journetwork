@@ -1,6 +1,14 @@
+# Goal: Automatic CSV reorganizer
+# Steps:
+# Make Working Directory Dataviscourse-pr-journetwork
+# Have downloaded data inside the folder: dataviscourse-pr-journetwork/Source Code/data_presort
+# Right-Click and Run File
+# Author Brian Philip
+# Year   Fall 2018
+# Org.   UU
+
 import csv
 from os import listdir, remove
-
 
 path = 'Source Code/data_presort'
 path2 = 'Source Code/data'
@@ -92,4 +100,3 @@ for i in range(0, len(NewFileNames)):
         for ii in range(0, len(Grid)):
             csvwriter.writerow(Grid[ii])
     csvfile.close()
-
