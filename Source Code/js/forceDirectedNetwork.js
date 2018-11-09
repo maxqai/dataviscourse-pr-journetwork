@@ -30,7 +30,7 @@ class ForceDirectedNetwork {
         //add the svg to the div
         this.svg = divForceDirectedNetwork.append("svg")
             .attr("width", this.svgWidth)
-            .attr("height", 30); //TODO: fix this to not be hardcoded
+            .attr("height", 800); //TODO: fix this to not be hardcoded
 
 
 
@@ -75,9 +75,36 @@ class ForceDirectedNetwork {
         // console.log('citingTab', this.citingTab);
         // console.log('Year', this.year);
 
+
+        //
+        let journalsNetworkInfo = this.citingTab.map( (d, i) => {
+            if(i>1){
+                return {
+                    journalName: d['Cited Journal'],
+                    impactFactor: d['Impact Factor']
+                }
+            }
+        });
+        journalsNetworkInfo = journalsNetworkInfo.slice(2);
+        // add info for current journal
+        let currentJournal = this.profileGrid.filter( obj => {
+            return obj.Year === String(this.year);
+        });
+        currentJournal = currentJournal[0];
+        currentJournal = {
+            journalName: 'NATURE',
+            impactFactor: currentJournal['Journal Impact Factor']
+        };
+        // bring current journal to front: TODO: deal with case of journal self-cites
+        journalsNetworkInfo.unshift(currentJournal);
+        console.log('currJournal', currentJournal);
+        console.log('journalNetworkInfo', journalsNetworkInfo);
+
 	    // make scale for circle sizes (have to sqrt for area)
+        let domainMax = d3.max(journalsNetworkInfo.map(d => d.impactFactor));
+        let domainMin = d3.min(journalsNetworkInfo.map(d => d.impactFactor));
         let impactFactorScale = d3.scaleLinear()
-            .domain([0,1])
+            .domain([domainMin,domainMax])
             .range([0,1])
 
 
