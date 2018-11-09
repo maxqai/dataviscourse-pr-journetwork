@@ -1,8 +1,5 @@
 import csv
-from os import listdir
-from os.path import isfile, join
-import re
-import json
+from os import listdir, remove
 
 
 path = 'Source Code/data_presort'
@@ -12,6 +9,7 @@ path2 = 'Source Code/data'
 # Finds the Names of the Files and Renames them Appropriately
 csvs = []
 l = listdir(path)
+names = ['JournalProfileGrid.csv', 'JournalCitingTab.csv', 'JournalCitedTab.csv']
 for f in l:
     if f.find('.csv') != -1:
         if f == 'JournalProfileGrid.csv':
@@ -28,7 +26,9 @@ for f in l:
 
 NewFileNames = []
 [NewFileNames.append(path2 + '/' + des_word + f) for f in csvs]
-print(NewFileNames)
+OldFileNames = []
+[OldFileNames.append(path + '/' + f) for f in names]
+print(OldFileNames)
 
 # Store CSV as Python Object
 Grid = []
@@ -69,8 +69,10 @@ print(Cite)
 print(Cited)
 
 for i in range(0, len(NewFileNames)):
-    csvfile = open(NewFileNames[i], 'w')
+    csvfile = open(NewFileNames[i], 'w', newline='')
     csvwriter = csv.writer(csvfile)
     for ii in range(0,len(Grid)):
         csvwriter.writerow(Grid[ii])
     csvfile.close()
+#    remove(OldFileNames[i])
+
