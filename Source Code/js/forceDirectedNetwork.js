@@ -103,9 +103,16 @@ class ForceDirectedNetwork {
 	    // make scale for circle sizes (have to sqrt for area)
         let domainMax = d3.max(journalsNetworkInfo.map(d => d.impactFactor));
         let domainMin = d3.min(journalsNetworkInfo.map(d => d.impactFactor));
+        let rangeMax = 50;
         let impactFactorScale = d3.scaleLinear()
             .domain([domainMin,domainMax])
-            .range([0,1])
+            .range([0,rangeMax]) //TODO: correction for area
+
+
+
+
+        this.impactTrace.update(this.profileGrid, this.citedTab, this.citingTab);
+
 
 
 			// this.tip.html((d)=> {
