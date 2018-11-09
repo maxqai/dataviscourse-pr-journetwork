@@ -28,22 +28,49 @@ for f in l:
 
 NewFileNames = []
 [NewFileNames.append(path2 + '/' + des_word + f) for f in csvs]
-# print(NewFileNames)
+print(NewFileNames)
 
-
-# Finds the csv file and turn to json file
-l = listdir(path)
+# Store CSV as Python Object
+Grid = []
+Cite = []
+Cited = []
 for f in l:
-    if f.find('.csv') != -1:
-        print(f)
+    if f.find(".csv") != -1:
         if f == 'JournalProfileGrid.csv':
             JName = f
-            csvfile = open(path + '/' + f,'r')
-            jsonfile = open(NewFileNames[2],'w')
-            print(jsonfile)
-            fieldnames = ('Year','Total Cites', 'Journal Impact Factor', 'Impact Factor without Journal Self Cites', '5-Year Impact Factor'	'Immediacy Index',	'Citable Items', 'Cited Half-Life',	'Citing Half-life',	'Eigenfactor Score', 'Article Influence Score',	'% Articles in Citable Items', 'Normalized Eigenfactor', 'avgJifPercentile')
-            reader = csv.DictReader(csvfile, fieldnames)
-            for row in reader:
-                json.dump(row, jsonfile)
-                jsonfile.write('\n')
+            csv1 = csv.reader(open(path + '/' + f, 'r'))
+            for id, row in enumerate(csv1):
+                if id > 0:
+                    Grid.append(row)
+        elif f == 'JournalCitingTab.csv':
+            JName = f
+            csv1 = csv.reader(open(path + '/' + f, 'r'))
+            for id, row in enumerate(csv1):
+                if id > 0 and id < 104:
+                    Cite.append(row)
+        elif f == 'JournalCitedTab.csv':
+            JName = f
+            csv1 = csv.reader(open(path + '/' + f, 'r'))
+            for id, row in enumerate(csv1):
+                if id > 0 and id < 104:
+                    Cited.append(row)
 
+for i in range(0,len(Grid)):
+    Grid[i].append(des_word)
+for i in range(0, len(Cite)):
+    Cite[i].append(des_word)
+
+for i in range(0, len(Cited)):
+    Cited[i].append(des_word)
+
+Grid = Grid[:-2]
+print(Grid)
+print(Cite)
+print(Cited)
+
+for i in range(0, len(NewFileNames)):
+    csvfile = open(NewFileNames[i], 'w')
+    csvwriter = csv.writer(csvfile)
+    for ii in range(0,len(Grid)):
+        csvwriter.writerow(Grid[ii])
+    csvfile.close()
