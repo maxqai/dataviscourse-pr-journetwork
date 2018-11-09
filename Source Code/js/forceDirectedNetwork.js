@@ -80,8 +80,10 @@ class ForceDirectedNetwork {
         let journalsNetworkInfo = this.citingTab.map( (d, i) => {
             if(i>1){
                 return {
-                    journalName: d['Cited Journal'],
-                    impactFactor: d['Impact Factor']
+                    journalName: d['Journal'],
+                    citedJournalName: d['Cited Journal'],
+                    impactFactor: d['Impact Factor'],
+                    citedJournal: d[String(this.year)]
                 }
             }
         });
@@ -92,8 +94,10 @@ class ForceDirectedNetwork {
         });
         currentJournal = currentJournal[0];
         currentJournal = {
-            journalName: 'NATURE',
-            impactFactor: currentJournal['Journal Impact Factor']
+            journalName: currentJournal['Journal'],
+            citedJournalName: currentJournal['Journal'],
+            impactFactor: currentJournal['Journal Impact Factor'],
+            citedJournal: '0'
         };
         // bring current journal to front: TODO: deal with case of journal self-cites
         journalsNetworkInfo.unshift(currentJournal);
@@ -107,6 +111,49 @@ class ForceDirectedNetwork {
         let impactFactorScale = d3.scaleLinear()
             .domain([domainMin,domainMax])
             .range([0,rangeMax]) //TODO: correction for area
+
+
+        // make nodes and links similar to format below... we don't need groups at this point
+                // {
+                //   "nodes": [
+                //     {"id": "Myriel", "group": 1},
+                //     {"id": "Napoleon", "group": 1},
+                //     {"id": "Mlle.Baptistine", "group": 1},
+                //     {"id": "Mme.Magloire", "group": 1},
+                //     {"id": "Child1", "group": 10},
+                //     {"id": "Child2", "group": 10},
+                //     {"id": "Brujon", "group": 4},
+                //     {"id": "Mme.Hucheloup", "group": 8}
+                //   ],
+                //   "links": [
+                //     {"source": "Napoleon", "target": "Myriel", "value": 1},
+                //     {"source": "Mlle.Baptistine", "target": "Myriel", "value": 8},
+                //     {"source": "Mme.Magloire", "target": "Myriel", "value": 10},
+                //     {"source": "Mme.Magloire", "target": "Mlle.Baptistine", "value": 6},
+                //     {"source": "CountessdeLo", "target": "Myriel", "value": 1},
+                //     {"source": "Mme.Hucheloup", "target": "Gavroche", "value": 1},
+                //     {"source": "Mme.Hucheloup", "target": "Enjolras", "value": 1}
+                //   ]
+                // }
+        let forceData = {
+            nodes: journalsNetworkInfo.map(d => {
+                return {
+                    id: d.citedJournalName
+                }
+            }),
+            links: journalsNetworkInfo.map(d => {
+                return {
+                    source: d.journalName,
+                    target: d.citedJournalName,
+                    value: d.impactFactor
+                }
+            })
+        };
+        console.log('forceData', forceData);
+
+        let forceSimulation = d3.forceSimulation()
+            .force("link", d3.forceLink)
+
 
 
 
