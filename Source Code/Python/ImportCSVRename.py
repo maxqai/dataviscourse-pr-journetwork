@@ -56,12 +56,21 @@ for f in l:
                     Cited.append(row)
 
 for i in range(0,len(Grid)):
-    Grid[i].append(des_word)
+    if i > 0:
+        Grid[i].append(des_word)
+    else:
+        Grid[i].append("Journal")
 for i in range(0, len(Cite)):
-    Cite[i].append(des_word)
+    if i > 0:
+        Cite[i].append(des_word)
+    else:
+        Cite[i].append("Journal")
 
 for i in range(0, len(Cited)):
-    Cited[i].append(des_word)
+    if i > 0:
+        Cited[i].append(des_word)
+    else:
+        Cited[i].append("Journal")
 
 Grid = Grid[:-2]
 print(Grid)
@@ -74,5 +83,4 @@ for i in range(0, len(NewFileNames)):
     for ii in range(0,len(Grid)):
         csvwriter.writerow(Grid[ii])
     csvfile.close()
-#    remove(OldFileNames[i])
 
