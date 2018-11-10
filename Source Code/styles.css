@@ -37,3 +37,9 @@
     width: 70%;
     position: relative;
 }
+
+.links{
+    stroke: darkred;
+    stroke-opacity: 0.4;
+    stroke-width: 2px;
+}

@@ -24,7 +24,7 @@ journalFiles.forEach( file => {
 let journalCSVs = undefined;
 Promise.all(promises).then( data => {
     journalCSVs = data;
-    console.log('values', journalCSVs);
+    // console.log('values', journalCSVs);
     let forceDirectedNetwork = new ForceDirectedNetwork(yearSlider, horizontalBars, impactTrace, journalInfoBox);
     forceDirectedNetwork.update(journalCSVs, initialYear);
 });
