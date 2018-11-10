@@ -135,6 +135,9 @@ class ForceDirectedNetwork {
                 //     {"source": "Mme.Hucheloup", "target": "Enjolras", "value": 1}
                 //   ]
                 // }
+        // d3.json('https://gist.githubusercontent.com/mbostock/4062045/raw/5916d145c8c048a6e3086915a6be464467391c62/miserables.json').then( d => console.log('json', d));
+
+
         let forceData = {
             nodes: journalsNetworkInfo.map(d => {
                 return {
@@ -152,7 +155,9 @@ class ForceDirectedNetwork {
         console.log('forceData', forceData);
 
         let forceSimulation = d3.forceSimulation()
-            .force("link", d3.forceLink)
+            .force("link", d3.forceLink().id(function(d) { return d.id;}))
+            .force('charge', d3.forceManyBody())
+            .force('center', d3.forceCenter(this.svgWidth/2, this.svgHeight/2));
 
 
 
