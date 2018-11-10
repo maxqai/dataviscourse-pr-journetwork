@@ -26,11 +26,12 @@ class ForceDirectedNetwork {
         this.svgBounds = divForceDirectedNetwork.node().getBoundingClientRect();
         this.svgWidth = this.svgBounds.width - this.margin.left - this.margin.right;
         this.svgHeight = this.svgBounds.height - this.margin.bottom - this.margin.top;
+        this.svgHeight = 800; //TODO: fix this to not be hardcoded
 
         //add the svg to the div
         this.svg = divForceDirectedNetwork.append("svg")
             .attr("width", this.svgWidth)
-            .attr("height", 800); //TODO: fix this to not be hardcoded
+            .attr("height", this.svgHeight);
 
 
 
@@ -101,8 +102,8 @@ class ForceDirectedNetwork {
         };
         // bring current journal to front: TODO: deal with case of journal self-cites
         journalsNetworkInfo.unshift(currentJournal);
-        console.log('currJournal', currentJournal);
-        console.log('journalNetworkInfo', journalsNetworkInfo);
+        // console.log('currJournal', currentJournal);
+        // console.log('journalNetworkInfo', journalsNetworkInfo);
 
 	    // make scale for circle sizes (have to sqrt for area)
         let domainMax = d3.max(journalsNetworkInfo.map(d => d.impactFactor));
@@ -137,7 +138,7 @@ class ForceDirectedNetwork {
                 // }
         // d3.json('https://gist.githubusercontent.com/mbostock/4062045/raw/5916d145c8c048a6e3086915a6be464467391c62/miserables.json').then( d => console.log('json', d));
 
-
+        console.log('journalsNetworkInfo', journalsNetworkInfo);
         let forceData = {
             nodes: journalsNetworkInfo.map(d => {
                 return {
@@ -148,17 +149,38 @@ class ForceDirectedNetwork {
                 return {
                     source: d.journalName,
                     target: d.citedJournalName,
-                    value: d.impactFactor
+                    impactFactor: d.impactFactor,
+                    citedCount: parseInt(d.citedJournal) + 1
                 }
             })
         };
-        console.log('forceData', forceData);
+        // console.log('forceData', forceData);
+
+        let citeMax = d3.max(journalsNetworkInfo.map( d => {
+            console.log('d.citedJournal', parseInt(d.citedJournal));
+            return parseInt(d.citedJournal);
+        }));
+        console.log('citeMax', citeMax);
+        let citeMin = d3.min(journalsNetworkInfo.map( d => parseInt(d.citedJournal)));
+        console.log('citeMin', citeMin);
+        let citationScale = d3.scaleLog()
+            .domain([citeMin+1, citeMax+1])
+            .range([citeMax+1, citeMin+1]);
 
         let forceSimulation = d3.forceSimulation()
-            .force("link", d3.forceLink().id(function(d) { return d.id;}))
+            .force("link", d3.forceLink()
+                .id(function(d) {
+                    // console.log('d forceLink', d);
+                    return d.id;})
+                .distance(function(d) {
+                    // console.log('d citedCount', d.citedCount, 'citationScale', citationScale(d.citedCount));
+                    return citationScale(d.citedCount)/10;
+                }))
             .force('charge', d3.forceManyBody())
-            .force('center', d3.forceCenter(this.svgWidth/2, this.svgHeight/2));
+            .force('center', d3.forceCenter(this.svgWidth/2, this.svgHeight/2))
+            .force('collision', d3.forceCollide(2.5));
 
+        console.log('svgHeight/2', this.svgHeight/2)
         let linkSVG = this.svg.append('g')
             .attr('class', 'links')
             .selectAll("line")
@@ -183,6 +205,7 @@ class ForceDirectedNetwork {
               .nodes(forceData.nodes)
               .on("tick", ticked);
 
+        //applies links
         forceSimulation.force("link")
               .links(forceData.links);
 
@@ -201,18 +224,17 @@ class ForceDirectedNetwork {
             if (!d3.event.active) forceSimulation.alphaTarget(0.3).restart();
               d.fx = d.x;
               d.fy = d.y;
-            }
-
-            function dragged(d) {
+        }
+        function dragged(d) {
               d.fx = d3.event.x;
               d.fy = d3.event.y;
-            }
+        }
 
-            function dragended(d) {
+        function dragended(d) {
               if (!d3.event.active) forceSimulation.alphaTarget(0);
               d.fx = null;
               d.fy = null;
-            }
+        }
 
         this.impactTrace.update(this.profileGrid, this.citedTab, this.citingTab);
 
