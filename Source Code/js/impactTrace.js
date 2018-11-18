@@ -15,9 +15,7 @@ class ImpactTrace {
         //add the svg to the div
         this.svg = divImpactTrace.append("svg")
             .attr("width", this.svgWidth)
-            .attr("height", 30);//TODO: fix this to not be hardcoded
-
-
+            .attr("height", 400);//TODO: fix this to not be hardcoded
 
 		//for reference: https://github.com/Caged/d3-tip
 		//Use this tool tip element to handle any hover over the chart
@@ -48,7 +46,19 @@ class ImpactTrace {
 	 *
 	 * @param journalsImpact - array of journals with their impact factor over time
 	 */
-	update (journalsImpact){
+	update (Grid, Cited, Citing){
+        console.log('Grid', Grid)
+        console.log('Cited', Cited)
+        console.log('Citing', Citing)
+
+        let maxYear = Citing.filter(d => {
+
+        })
+
+        this.Xaxis = d3.scaleLinear().domain([]).range([this.margin.left, svg.width - this.margin.right]);
+
+        this.svg.append
+
 
 			// this.tip.html((d)=> {
 			// 		let tooltip_data = {
