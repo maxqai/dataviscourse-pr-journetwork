@@ -101,9 +101,10 @@ class ForceDirectedNetwork {
             citedJournal: '0'
         };
         // bring current journal to front: TODO: deal with case of journal self-cites
+        console.log('journalsNetworkInfoPre', journalsNetworkInfo);
         journalsNetworkInfo.unshift(currentJournal);
         // console.log('currJournal', currentJournal);
-        // console.log('journalNetworkInfo', journalsNetworkInfo);
+        console.log('journalNetworkInfoPost', journalsNetworkInfo);
 
 	    // make scale for circle sizes (have to sqrt for area)
         let domainMax = d3.max(journalsNetworkInfo.map(d => d.impactFactor));
@@ -138,11 +139,26 @@ class ForceDirectedNetwork {
                 // }
         // d3.json('https://gist.githubusercontent.com/mbostock/4062045/raw/5916d145c8c048a6e3086915a6be464467391c62/miserables.json').then( d => console.log('json', d));
 
+        // find the journal self-cite location and remove it so the selected journal doesn't have two nodes...
+        let sameJournalDeleteIndex = journalsNetworkInfo.map(d => d.citedJournalName).indexOf(currentJournal.journalName, 1);
+        console.log('sameJournalDelete', sameJournalDeleteIndex);
+
+        let sameJournalDelete = journalsNetworkInfo[sameJournalDeleteIndex];
+        journalsNetworkInfo.splice(sameJournalDelete,1);
         console.log('journalsNetworkInfo', journalsNetworkInfo);
+
         let forceData = {
-            nodes: journalsNetworkInfo.map(d => {
-                return {
-                    id: d.citedJournalName
+            nodes: journalsNetworkInfo.map((d,i) => {
+                if(i === 0) {
+                    return {
+                        fx: this.svgWidth/2,
+                        fy: this.svgHeight/2,
+                        id: d.citedJournalName
+                    }
+                } else {
+                    return {
+                        id: d.citedJournalName
+                    }
                 }
             }),
             links: journalsNetworkInfo.map(d => {
@@ -154,16 +170,16 @@ class ForceDirectedNetwork {
                 }
             })
         };
-        // console.log('forceData', forceData);
+        console.log('forceData', forceData);
 
         let citeMax = d3.max(journalsNetworkInfo.map( d => {
-            console.log('d.citedJournal', parseInt(d.citedJournal));
+            // console.log('d.citedJournal', parseInt(d.citedJournal));
             return parseInt(d.citedJournal);
         }));
-        console.log('citeMax', citeMax);
+        // console.log('citeMax', citeMax);
         let citeMin = d3.min(journalsNetworkInfo.map( d => parseInt(d.citedJournal)));
-        console.log('citeMin', citeMin);
-        let citationScale = d3.scaleLog()
+        // console.log('citeMin', citeMin);
+        let citationScale = d3.scaleLog() // TODO: avoid +1 on citemax/min...
             .domain([citeMin+1, citeMax+1])
             .range([citeMax+1, citeMin+1]);
 
@@ -180,7 +196,7 @@ class ForceDirectedNetwork {
             .force('center', d3.forceCenter(this.svgWidth/2, this.svgHeight/2))
             .force('collision', d3.forceCollide(2.5));
 
-        console.log('svgHeight/2', this.svgHeight/2)
+        // console.log('svgHeight/2', this.svgHeight/2)
         let linkSVG = this.svg.append('g')
             .attr('class', 'links')
             .selectAll("line")
