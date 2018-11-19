@@ -17,7 +17,7 @@ let journalInfoBox = new JournalInfoBox();
 // let profGrid = d3.csvParseRows("data/NATUREJournalProfileGrid.csv"); // all d3 commands look at first line only for header... looks like no way around modifying the csv
 // console.log('profGrid', profGrid);
 let initialYear = 2017;
-let journalFiles = ["data/NATUREJournalProfileGrid.csv", "data/NATUREJournalCitedTab.csv", "data/NATUREJournalCitingTab.csv", "filtered data/All Journal Profile Grids.csv"];
+let journalFiles = ["data/NATUREJournalProfileGrid.csv", "data/NATUREJournalCitedTab.csv", "data/NATUREJournalCitingTab.csv", "filtered data/AllJournalCitedTab.csv", "filtered data/AllJournalCitingTab.csv", "filtered data/AllJournalProfileGrid.csv"];
 let promises = [];
 journalFiles.forEach( file => {
     promises.push(d3.csv(file));

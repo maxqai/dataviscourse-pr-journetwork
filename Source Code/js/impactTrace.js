@@ -51,15 +51,30 @@ class ImpactTrace {
         console.log('Cited', Cited)
         console.log('Citing', Citing)
 
-        let maxYear = Citing.filter(d => {
-
+        // Find the Min Grid Journal Year
+        let Years = Grid.map(d => {
+            return parseInt(d["Year"])
         })
 
-        this.Xaxis = d3.scaleLinear().domain([]).range([this.margin.left, svg.width - this.margin.right]);
+        let JIF = Grid.map(d => {
+            return parseInt(d["Journal Impact Factor"])
+        })
 
-        this.svg.append
+        let startYear = d3.min(Years)
+        let endYear = d3.max(Years)
 
+        let JIFmax = d3.max(JIF)
+        let JIFmin = d3.min(JIF)
 
+        console.log(Years)
+        console.log(startYear)
+        console.log(endYear)
+
+        // X-axis based on year range
+        let Xscale = d3.scaleLinear().domain([startYear, endYear]).range(0, this.svgWidth)
+        let Yscale = d3.scaleLinear().domain([JIFmin, JIFmax]).nice().range(0, this.svgHeight)
+
+        this.svg.append()
 			// this.tip.html((d)=> {
 			// 		let tooltip_data = {
             //
