@@ -25,7 +25,6 @@ class SearchBar {
             .attr('placeholder', 'Search...');
 
 
-
 		//for reference: https://github.com/Caged/d3-tip
 		//Use this tool tip element to handle any hover over the chart
 		// this.tip = d3.tip().attr('class', 'd3-tip')
