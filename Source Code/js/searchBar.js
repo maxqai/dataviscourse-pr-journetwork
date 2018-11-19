@@ -54,7 +54,8 @@ class SearchBar {
 	 *
 	 * @param selectedJournal - Journal selection
 	 */
-	update (selectedJournal){
+	update (){
+	    console.log('Current Text Entry: ', document.getElementById('uinput').value);
 
 			// this.tip.html((d)=> {
 			// 		let tooltip_data = {

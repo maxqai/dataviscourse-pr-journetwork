@@ -1,5 +1,6 @@
 
 let searchBar = new SearchBar();
+searchBar.update();
 
 let yearSlider = new YearSlider();
 
