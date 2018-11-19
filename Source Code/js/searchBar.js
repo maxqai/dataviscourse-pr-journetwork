@@ -55,7 +55,10 @@ class SearchBar {
 	 * @param currInput - potential journal selection
 	 */
 	update (currInput){
-	    console.log('Current Text Entry in searchBar.js: ', currInput);
+	    // console.log('Current Text Entry in searchBar.js: ', currInput);
+
+        // for time being, set default value for year
+        let year = '2017';
 
 	    // load the journal json
         let journalData = [
@@ -1698,7 +1701,7 @@ class SearchBar {
 
         let fuse = new Fuse(journalData, options); // "list" is the item array
         let searchResults = fuse.search(currInput);
-        console.log('searchResults', searchResults);
+        // console.log('searchResults', searchResults);
 
         // create ul below search box after removing any old ones
         d3.select('#ulsearch').remove();
@@ -1713,6 +1716,29 @@ class SearchBar {
             .enter()
             .append('li')
             .html(String);
+
+
+        // set events for hover and click on resulting items
+        d3.select('#ulsearch').selectAll('li')
+            .on('mouseover', function(d) {
+                d3.select(this)
+                    .classed('searchHighlight', true)
+            })
+            .on('mouseout', function(d) {
+                d3.select(this)
+                    .classed('searchHighlight', false)
+            })
+            .on('click', function(d) {
+                // return the selected journal
+                let currJournal = d3.select(this).data()[0];
+                // console.log('current selection: ', currJournal);
+                // put clicked text in search box
+                document.getElementById('uinput').value = currJournal;
+                // remove search list
+                d3.select('#ulsearch').remove();
+                // call update method of forceDirectedNetwork
+                // forceDirectedNetwork.update(journalCSVs, year, currJournal);
+            });
 
 			// this.tip.html((d)=> {
 			// 		let tooltip_data = {
