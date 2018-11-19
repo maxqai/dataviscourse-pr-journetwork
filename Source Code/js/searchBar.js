@@ -1676,8 +1676,6 @@ class SearchBar {
     "Description": "The Journal of Molecular Cell Biology (JMCB) is an international peer-reviewed journal, which is interested in inter-disciplinary studies at the cross-sections between molecular and cell biology as well as other disciplines of life sciences such as stem cell research, signaling transduction, genetics, epigenetics, genomics, developmental biology, immunology, cancer biology, molecular pathogenesis, neuroscience, and systems biology. The broad scope of JMCB reflects the current merging trend of life science disciplines and contributes to the dissemination of findings with unusual significance and broad scientific interest."
   }
 ];
-        console.log('journalData', journalData);
-
 
         let options = {
           id: "Full Journal Title",
@@ -1690,7 +1688,6 @@ class SearchBar {
           keys: [
             "Rank",
             "Full Journal Title",
-            "Journal Impact Factor",
             "Title29",
             "Title20",
             "ISSN",
@@ -1698,10 +1695,24 @@ class SearchBar {
             "Category"
         ]
         };
-        
+
         let fuse = new Fuse(journalData, options); // "list" is the item array
         let searchResults = fuse.search(currInput);
         console.log('searchResults', searchResults);
+
+        // create ul below search box after removing any old ones
+        d3.select('#ulsearch').remove();
+        let ul = d3.select('#search').append('ul')
+            .attr('id', 'ulsearch')
+            .attr('class', 'searchResults');
+
+        // now add list elements for each match, up to 10 matches
+        let abbsearchResults = searchResults.slice(0,10);
+        ul.selectAll('li')
+            .data(abbsearchResults)
+            .enter()
+            .append('li')
+            .html(String);
 
 			// this.tip.html((d)=> {
 			// 		let tooltip_data = {

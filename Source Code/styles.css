@@ -38,8 +38,15 @@
     position: relative;
 }
 
-.links{
+.links {
     stroke: darkred;
     stroke-opacity: 0.4;
     stroke-width: 2px;
+}
+
+.searchResults{
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
 }
