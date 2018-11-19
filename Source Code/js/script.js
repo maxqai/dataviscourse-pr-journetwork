@@ -1,6 +1,3 @@
-// initiate necessary objects
-
-// let forceDirectedNetwork = new ForceDirectedNetwork();
 
 let searchBar = new SearchBar();
 
@@ -11,6 +8,10 @@ let horizontalBars = new HorizontalBars();
 let impactTrace = new ImpactTrace();
 
 let journalInfoBox = new JournalInfoBox();
+
+// initiate necessary objects
+
+// let forceDirectedNetwork = new ForceDirectedNetwork();
 
 // load all data
 // begin with loading a single one... Nature!
