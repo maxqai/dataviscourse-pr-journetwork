@@ -1,6 +1,6 @@
 // class implementing the searchBar
 // adapted from votePercentageChart.js
-class searchBar {
+class SearchBar {
 
     constructor(){
         //initialize svg elements, svg sizing
