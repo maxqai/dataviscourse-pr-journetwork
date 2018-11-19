@@ -74,7 +74,12 @@ class ImpactTrace {
         let Xscale = d3.scaleLinear().domain([startYear, endYear]).range(0, this.svgWidth)
         let Yscale = d3.scaleLinear().domain([JIFmin, JIFmax]).nice().range(0, this.svgHeight)
 
-        this.svg.append()
+        let line = d3.line()
+                     .defined(d => !isNaN(d))
+                     .x(d => {return d})
+                     .y(d => {return d});
+        console.log(line(JIF));
+
 			// this.tip.html((d)=> {
 			// 		let tooltip_data = {
             //
