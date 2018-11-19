@@ -145,7 +145,7 @@ class ForceDirectedNetwork {
 
         // find the journal self-cite location and remove it so the selected journal doesn't have two nodes...
         let sameJournalDeleteIndex = journalsNetworkInfo.map(d => d.citedJournalName).indexOf(currentJournal.journalName, 1);
-        console.log('sameJournalDelete', sameJournalDeleteIndex);
+        // console.log('sameJournalDelete', sameJournalDeleteIndex);
 
         let sameJournalDelete = journalsNetworkInfo[sameJournalDeleteIndex];
         journalsNetworkInfo.splice(sameJournalDelete,1);
