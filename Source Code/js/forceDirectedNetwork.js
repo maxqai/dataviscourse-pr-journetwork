@@ -71,46 +71,67 @@ class ForceDirectedNetwork {
      * @param selectedJournal - Journal selection
      * @param year - year for display
      */
-	update (journalCSVs, year){
-        this.profileGrid = journalCSVs[0];
+	update (journalCSVs, year, journal){
+	    // let temp = journalCSVs[0].filter(d => {
+	    //     return parseInt(d.Year) === year
+        // }).map( d => d.Journal);
+	    // console.log('profGrid', temp);
+        this.profileGrid = journalCSVs[0].filter(d => {
+            return parseInt(d.Year) === year;
+        });
         this.citedTab = journalCSVs[1];
         this.citingTab = journalCSVs[2];
-        this.AllCitedTabs = journalCSVs[3];
-        this.AllCitingTabs = journalCSVs[4];
-        this.AllGrids = journalCSVs[5];
+        // this.AllCitedTabs = journalCSVs[3];
+        // this.AllCitingTabs = journalCSVs[4];
+        // this.AllGrids = journalCSVs[5];
         this.year = year;
 
-        // console.log('prfGrid', this.profileGrid);
-        // console.log('citedTab', this.citedTab);
-        // console.log('citingTab', this.citingTab);
-        // console.log('Year', this.year);
 
 
-        //
+        // create object structure
         let journalsNetworkInfo = this.citingTab.map( (d, i) => {
             if(i>1){
                 return {
                     journalName: d['Journal'],
                     citedJournalName: d['Cited Journal'],
                     impactFactor: d['Impact Factor'],
-                    citedJournal: d[String(this.year)]
+                    citationCount: d[String(this.year)]
                 }
             }
         });
-        journalsNetworkInfo = journalsNetworkInfo.slice(2);
-        // add info for current journal
-        let currentJournal = this.profileGrid.filter( obj => {
-            return obj.Year === String(this.year);
+        // console.log('initialJNI', journalsNetworkInfo);
+        journalsNetworkInfo = journalsNetworkInfo.slice(2); // get rid of blank rows
+        // console.log('postSliceJNI', journalsNetworkInfo);
+
+        // add info for current journal -- now unnecessary with large file from Brian
+        // let currentJournal = this.profileGrid.filter( obj => {
+        //     return obj.Year === String(this.year);
+        // });
+        // currentJournal = currentJournal[0];
+        // currentJournal = {
+        //     journalName: currentJournal['Journal'],
+        //     citedJournalName: currentJournal['Journal'],
+        //     impactFactor: currentJournal['Journal Impact Factor'],
+        //     citationCount: '0'
+        // };
+        // // bring current journal to front:
+        // journalsNetworkInfo.unshift(currentJournal);
+        // console.log('unshiftJNI', journalsNetworkInfo);
+        // TODO: get rid of elements in array where cited journal is "ALL Journals", "ALL OTHERS (#number)" which varies
+        journalsNetworkInfo = journalsNetworkInfo.filter( d => {
+            return d.citedJournalName !== "ALL Journals";
         });
-        currentJournal = currentJournal[0];
-        currentJournal = {
-            journalName: currentJournal['Journal'],
-            citedJournalName: currentJournal['Journal'],
-            impactFactor: currentJournal['Journal Impact Factor'],
-            citedJournal: '0'
-        };
-        // bring current journal to front:
-        journalsNetworkInfo.unshift(currentJournal);
+        journalsNetworkInfo = journalsNetworkInfo.filter( d => {
+            let string = d.citedJournalName;
+            let substring = "ALL OTHERS";
+            if(string.includes(substring)) {
+                console.log('in?');
+            } else {
+                console.log('nope');
+                return d.citedJournalName !== "ALL Journals";
+            }
+        });
+        console.log('postFilter', journalsNetworkInfo);
 
 	    // make scale for circle sizes (have to sqrt for area)
         let domainMax = d3.max(journalsNetworkInfo.map(d => d.impactFactor));
@@ -174,18 +195,18 @@ class ForceDirectedNetwork {
                     source: d.journalName,
                     target: d.citedJournalName,
                     impactFactor: d.impactFactor,
-                    citedCount: parseInt(d.citedJournal) + 1
+                    citedCount: parseInt(d.citationCount) + 1
                 }
             })
         };
         // console.log('forceData', forceData);
 
         let citeMax = d3.max(journalsNetworkInfo.map( d => {
-            // console.log('d.citedJournal', parseInt(d.citedJournal));
-            return parseInt(d.citedJournal);
+            // console.log('d.citationCount', parseInt(d.citationCount));
+            return parseInt(d.citationCount);
         }));
         // console.log('citeMax', citeMax);
-        let citeMin = d3.min(journalsNetworkInfo.map( d => parseInt(d.citedJournal)));
+        let citeMin = d3.min(journalsNetworkInfo.map( d => parseInt(d.citationCount)));
         // console.log('citeMin', citeMin);
         let citationScale = d3.scaleLog() // TODO: avoid +1 on citemax/min...
             .domain([citeMin+1, citeMax+1])
