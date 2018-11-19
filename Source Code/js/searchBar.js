@@ -50,12 +50,40 @@ class SearchBar {
 	}
 
 	/**
-	 * Creates the horizontalBars, content and tool tips
+	 * Creates the searchBar, content and tool tips
 	 *
-	 * @param selectedJournal - Journal selection
+	 * @param currInput - potential journal selection
 	 */
 	update (currInput){
 	    console.log('Current Text Entry in searchBar.js: ', currInput);
+
+	    // load the journal json
+        let journalData = d3.json('data/100_Top_Journals.json');
+        // console.log('journalData', journalData);
+
+        /*
+        let options = {
+          id: "Full Journal Title",
+          shouldSort: true,
+          threshold: 0.6,
+          location: 0,
+          distance: 100,
+          maxPatternLength: 32,
+          minMatchCharLength: 2,
+          keys: [
+            "Rank",
+            "Full Journal Title",
+            "Journal Impact Factor",
+            "Title29",
+            "Title20",
+            "ISSN",
+            "EISSN",
+            "Category"
+        ]
+        };
+        let fuse = new Fuse(list, options); // "list" is the item array
+        let result = fuse.search("nature");
+        */
 
 			// this.tip.html((d)=> {
 			// 		let tooltip_data = {
