@@ -22,7 +22,8 @@ class SearchBar {
         this.input = divSearchBar.append('input')
             .attr('id', 'uinput')
             .attr('type', 'text')
-            .attr('placeholder', 'Search...');
+            .attr('placeholder', 'Search...')
+            .attr('size', 80);
 
 
 		//for reference: https://github.com/Caged/d3-tip
