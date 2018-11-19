@@ -2,6 +2,8 @@
 
 // let forceDirectedNetwork = new ForceDirectedNetwork();
 
+let searchBar = new searchBar();
+
 let yearSlider = new YearSlider();
 
 let horizontalBars = new HorizontalBars();
