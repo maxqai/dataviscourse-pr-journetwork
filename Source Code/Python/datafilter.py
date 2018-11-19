@@ -10,7 +10,7 @@ files = os.listdir(cd)
 
 count = 0
 for ll in range(0, len(files)):
-    str = files[ll].find('JournalProfileGrid')
+    str = files[ll].find('JournalCitedTab.csv') # Swap with a name = ['JournalProfileGrid.csv', 'JournalCitingTab.csv', 'JournalCitedTab.csv']
     if str > -1:
         if count is 0:
             print(files[ll])
@@ -21,5 +21,4 @@ for ll in range(0, len(files)):
             csv = pd.read_csv(files[ll])
             frames = [JIF, csv]
             JIF = pd.concat(frames)
-print(JIF.shape)
-JIF.to_csv('C:/Users/bphil/Documents/Data Visualization/JourNetwork/dataviscourse-pr-journetwork/Source Code/filtered data/All Journal Profile Grids.csv')
+JIF.to_csv('C:/Users/bphil/Documents/Data Visualization/JourNetwork/dataviscourse-pr-journetwork/Source Code/filtered data/AllJournalCitedTab.csv')
