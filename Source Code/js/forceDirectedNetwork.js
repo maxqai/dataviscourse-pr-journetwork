@@ -60,6 +60,11 @@ class ForceDirectedNetwork {
 	    return text;
 	}
 
+	area2Radius (area) {
+	    let radius = Math.sqrt(area);
+	    return radius;
+    }
+
     /**
      * Creates the forceDirectedNetwork, content and tool tips
      *
@@ -157,11 +162,13 @@ class ForceDirectedNetwork {
                     return {
                         fx: this.svgWidth/2,
                         fy: this.svgHeight/2,
-                        id: d.citedJournalName
+                        id: d.citedJournalName,
+                        impactFactor: d.impactFactor
                     }
                 } else {
                     return {
-                        id: d.citedJournalName
+                        id: d.citedJournalName,
+                        impactFactor: d.impactFactor
                     }
                 }
             }),
@@ -201,24 +208,26 @@ class ForceDirectedNetwork {
             .force('collision', d3.forceCollide(2.5));
 
         // console.log('svgHeight/2', this.svgHeight/2)
-        let linkSVG = this.svg.append('g')
+        let links = this.svg.append('g')
             .attr('class', 'links')
             .selectAll("line")
             .data(forceData.links)
             .enter().append("line");
 
-        let nodeSVG = this.svg.append('g')
+        let nodes = this.svg.append('g')
             .attr('class', 'nodes')
             .selectAll('circle')
             .data(forceData.nodes)
             .enter().append('circle')
-            .attr('r', 2.5)
+            .attr('r', d => {
+                return this.area2Radius(d.impactFactor);
+            })
             .call(d3.drag()
                   .on("start", dragstarted)
                   .on("drag", dragged)
                   .on("end", dragended));
 
-        nodeSVG.append("title")
+        nodes.append("title")
               .text(function(d) { return d.id; });
 
         forceSimulation
@@ -230,13 +239,13 @@ class ForceDirectedNetwork {
               .links(forceData.links);
 
         function ticked() {
-            linkSVG
+            links
                 .attr("x1", function(d) { return d.source.x; })
                 .attr("y1", function(d) { return d.source.y; })
                 .attr("x2", function(d) { return d.target.x; })
                 .attr("y2", function(d) { return d.target.y; });
 
-            nodeSVG
+            nodes
                 .attr("cx", function(d) { return d.x; })
                 .attr("cy", function(d) { return d.y; });
         }
