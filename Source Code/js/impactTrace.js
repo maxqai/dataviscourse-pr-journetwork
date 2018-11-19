@@ -66,27 +66,40 @@ class ImpactTrace {
         let JIFmax = d3.max(JIF)
         let JIFmin = d3.min(JIF)
 
+        var cname = Grid[0].name
+
         // X-axis based on year range
-        this.Xscale = d3.time.scale()
+        this.Xscale = d3.scaleLinear()
                         .domain([this.startYear, this.endYear])
                         .range(0, this.svgWidth)
+        // Y-axis based on Journal Impact Factor
         this.Yscale = d3.scaleLinear()
                         .domain([JIFmin, JIFmax])
                         .range(0, this.svgHeight)
+        // Journal Name List
+        let name = Grid.map((d,i) => {
+            if (d["Journal"] !== Grid[i]["Journal"]) {
+                return d["Journal"]
+            }
+        })
+        console.log(name);
 
         // Calculate the new Grids for each Journals
-        var curr;
-        var line = d3.line()
-                     .x((d,i) => {
-                        let xval = this.Xscale(parseInt(d["Year"]))
-                        console.log(xval)
-                        return xval
-                     })
-                     .y((d,i) => {
-                        return this.Yscale(parseFloat(d["Journal Impact Factor"]))
-                      })
-        let path = this.svg.append("g")
-                           .classed("paths");
+//        var line = d3.line()
+//                     .x((d,i) => {
+//                        if (d.name == cname) {
+//                        let xval = this.Xscale(parseInt(d["Year"]))
+//                        console.log(xval)
+//                        return xval
+//                        } else {
+//                            cname = d.name;
+//                        }
+//                     })
+//                     .y((d,i) => {
+//                        return this.Yscale(parseFloat(d["Journal Impact Factor"]))
+//                      })
+//        let path = this.svg.append("g")
+//                           .classed("paths");
 
         d3.selectAll(".paths")
             .data(Grid)
