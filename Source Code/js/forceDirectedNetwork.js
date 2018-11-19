@@ -70,7 +70,11 @@ class ForceDirectedNetwork {
         this.profileGrid = journalCSVs[0];
         this.citedTab = journalCSVs[1];
         this.citingTab = journalCSVs[2];
+        this.AllCitedTabs = journalCSVs[3];
+        this.AllCitingTabs = journalCSVs[4];
+        this.AllGrids = journalCSVs[5];
         this.year = year;
+
         // console.log('prfGrid', this.profileGrid);
         // console.log('citedTab', this.citedTab);
         // console.log('citingTab', this.citingTab);
@@ -252,9 +256,7 @@ class ForceDirectedNetwork {
               d.fy = null;
         }
 
-        this.impactTrace.update(this.profileGrid, this.citedTab, this.citingTab);
-
-
+        this.impactTrace.update(this.AllGrids, this.AllCitedTabs, this.AllCitingTabs);
 
 			// this.tip.html((d)=> {
 			// 		let tooltip_data = {
