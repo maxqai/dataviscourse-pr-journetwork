@@ -25,6 +25,7 @@ let journalInfoBox = new JournalInfoBox();
 // console.log('profGrid', profGrid);
 let initialYear = 2017;
 let journalFiles = ["data/NATUREJournalProfileGrid.csv", "data/NATUREJournalCitedTab.csv", "data/NATUREJournalCitingTab.csv", "filtered data/AllJournalCitedTab.csv", "filtered data/AllJournalCitingTab.csv", "filtered data/AllJournalProfileGrid.csv"];
+// let journalFiles = ["filtered data/AllJournalProfileGrid.csv", "filtered data/AllJournalCitedTab.csv", "filtered data/AllJournalCitingTab.csv"];
 let promises = [];
 journalFiles.forEach( file => {
     promises.push(d3.csv(file));

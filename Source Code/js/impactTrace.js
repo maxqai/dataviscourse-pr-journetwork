@@ -52,34 +52,47 @@ class ImpactTrace {
         console.log('Citing', Citing)
 
         // Find the Min Grid Journal Year
-        let Years = Grid.map(d => {
+        this.Years = Grid.map(d => {
             return parseInt(d["Year"])
         })
 
         let JIF = Grid.map(d => {
-            return parseInt(d["Journal Impact Factor"])
+            return parseFloat(d["Journal Impact Factor"])
         })
 
-        let startYear = d3.min(Years)
-        let endYear = d3.max(Years)
+        this.startYear = d3.min(this.Years)
+        this.endYear = d3.max(this.Years)
 
         let JIFmax = d3.max(JIF)
         let JIFmin = d3.min(JIF)
 
-        console.log(Years)
-        console.log(startYear)
-        console.log(endYear)
-
         // X-axis based on year range
-        let Xscale = d3.scaleLinear().domain([startYear, endYear]).range(0, this.svgWidth)
-        let Yscale = d3.scaleLinear().domain([JIFmin, JIFmax]).nice().range(0, this.svgHeight)
+        this.Xscale = d3.time.scale()
+                        .domain([this.startYear, this.endYear])
+                        .range(0, this.svgWidth)
+        this.Yscale = d3.scaleLinear()
+                        .domain([JIFmin, JIFmax])
+                        .range(0, this.svgHeight)
 
-        let line = d3.line()
-                     .defined(d => !isNaN(d))
-                     .x(d => {return d})
-                     .y(d => {return d});
-        console.log(line(JIF));
+        // Calculate the new Grids for each Journals
+        var curr;
+        var line = d3.line()
+                     .x((d,i) => {
+                        let xval = this.Xscale(parseInt(d["Year"]))
+                        console.log(xval)
+                        return xval
+                     })
+                     .y((d,i) => {
+                        return this.Yscale(parseFloat(d["Journal Impact Factor"]))
+                      })
+        let path = this.svg.append("g")
+                           .classed("paths");
 
+        d3.selectAll(".paths")
+            .data(Grid)
+            .enter()
+            .append("path")
+            .attr("d", line(Grid))
 			// this.tip.html((d)=> {
 			// 		let tooltip_data = {
             //
