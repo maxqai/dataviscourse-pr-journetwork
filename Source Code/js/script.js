@@ -1,6 +1,11 @@
 
 let searchBar = new SearchBar();
-searchBar.update();
+let uInput = d3.select('#uinput');
+uInput.on('click', function() {
+    uInput.on('keyup', function() {
+        searchBar.update(document.getElementById('uinput').value);
+    })
+});
 
 let yearSlider = new YearSlider();
 
