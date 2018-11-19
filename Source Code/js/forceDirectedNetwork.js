@@ -109,11 +109,8 @@ class ForceDirectedNetwork {
             impactFactor: currentJournal['Journal Impact Factor'],
             citedJournal: '0'
         };
-        // bring current journal to front: TODO: deal with case of journal self-cites
-        console.log('journalsNetworkInfoPre', journalsNetworkInfo);
+        // bring current journal to front:
         journalsNetworkInfo.unshift(currentJournal);
-        // console.log('currJournal', currentJournal);
-        console.log('journalNetworkInfoPost', journalsNetworkInfo);
 
 	    // make scale for circle sizes (have to sqrt for area)
         let domainMax = d3.max(journalsNetworkInfo.map(d => d.impactFactor));
@@ -154,7 +151,7 @@ class ForceDirectedNetwork {
 
         let sameJournalDelete = journalsNetworkInfo[sameJournalDeleteIndex];
         journalsNetworkInfo.splice(sameJournalDelete,1);
-        console.log('journalsNetworkInfo', journalsNetworkInfo);
+        // console.log('journalsNetworkInfo', journalsNetworkInfo);
 
         let forceData = {
             nodes: journalsNetworkInfo.map((d,i) => {
@@ -181,7 +178,7 @@ class ForceDirectedNetwork {
                 }
             })
         };
-        console.log('forceData', forceData);
+        // console.log('forceData', forceData);
 
         let citeMax = d3.max(journalsNetworkInfo.map( d => {
             // console.log('d.citedJournal', parseInt(d.citedJournal));
