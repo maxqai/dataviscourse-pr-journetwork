@@ -87,7 +87,7 @@ class ForceDirectedNetwork {
         this.year = year;
 
         // Update horizontalBars graph with above values
-        this.horizontalBars.update(this.profileGrid, this.year, journal);
+        this.horizontalBars.update(this.citedTab, this.citingTab, this.year, journal);
 
         // create link structures
         let journalsLinkInfo = this.citingTab.map( (d, i) => {

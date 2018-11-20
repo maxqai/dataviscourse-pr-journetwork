@@ -49,11 +49,17 @@ class HorizontalBars {
      * @param journal - Journal selection (used for highlighting in chart
      * @param year - year for display
 	 */
-	update (profileGrid, year, journal){
+	update (cited, citing, year, journal){
 
-        console.log('profileGrid', profileGrid);
+        console.log('cited', cited);
+        console.log('citing', citing);
         console.log('year', year);
         console.log('journal', journal);
+
+        // id for the div is horizontalBars
+
+        // filter the input data by year
+        
 
 
 			// this.tip.html((d)=> {
