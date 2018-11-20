@@ -78,47 +78,24 @@ class ImpactTrace {
                         .range(0, this.svgHeight)
         // Journal Name List
         let name = Grid.map((d,i) => {
-            if (d["Journal"] !== Grid[i]["Journal"]) {
+            if (i == 0){
+                return d["Journal"]
+            } else if (d["Journal"] !== Grid[i-1]["Journal"]){
                 return d["Journal"]
             }
         })
-        console.log(name);
+        name = name.filter(d => {
+            if (d !== null){
+                return d
+            }
+        })
 
-        // Calculate the new Grids for each Journals
-//        var line = d3.line()
-//                     .x((d,i) => {
-//                        if (d.name == cname) {
-//                        let xval = this.Xscale(parseInt(d["Year"]))
-//                        console.log(xval)
-//                        return xval
-//                        } else {
-//                            cname = d.name;
-//                        }
-//                     })
-//                     .y((d,i) => {
-//                        return this.Yscale(parseFloat(d["Journal Impact Factor"]))
-//                      })
-//        let path = this.svg.append("g")
-//                           .classed("paths");
+        // Filter Data Based On Year and Names
+        name.forEach(d => {
+            this.svg.append("g")
+                    .attr("id", i)
+        });
+        this.svg.append("g")
 
-        d3.selectAll(".paths")
-            .data(Grid)
-            .enter()
-            .append("path")
-            .attr("d", line(Grid))
-			// this.tip.html((d)=> {
-			// 		let tooltip_data = {
-            //
-			// 		return this.tooltip_render(tooltip_data);
-	        //     });
-
-
-			// let bars = d3.select('#votes-percentage').select('svg').selectAll('rect')
-			// 	.call(this.tip);
-			// bars
-			// 	.on('mouseover', this.tip.show)
-			// 	.on('mouseout', this.tip.hide);
 	};
-
-
 }
