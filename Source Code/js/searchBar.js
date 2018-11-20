@@ -1738,7 +1738,7 @@ class SearchBar {
                 // remove search list
                 d3.select('#ulsearch').remove();
                 // call update method of forceDirectedNetwork
-                // forceDirectedNetwork.update(journalCSVs, year, currJournal);
+                // forceDirectedNetwork.update(journalData, year, currJournal);
             });
 
 			// this.tip.html((d)=> {

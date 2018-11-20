@@ -9,9 +9,9 @@ class ForceDirectedNetwork {
 		this.impactTrace = impactTrace;
 		this.journalInfoBox = journalInfoBox;
 		// Data - thinking I have to do this in the update since it changes
-        // this.profileGrid = journalCSVs[0];
-        // this.citedTab = journalCSVs[1];
-        // this.citingTab = journalCSVs[2];
+        // this.profileGrid = journalData[0];
+        // this.citedTab = journalData[1];
+        // this.citingTab = journalData[2];
         // this.year = initialYear;
         // console.log('prfGrid', this.profileGrid);
         // console.log('citedTab', this.citedTab);
@@ -72,7 +72,7 @@ class ForceDirectedNetwork {
      * @param year - year for display
      */
 	update (journalCSVs, year, journal){
-	    // let temp = journalCSVs[0].filter(d => {
+	    // let temp = journalData[0].filter(d => {
 	    //     return parseInt(d.Year) === year
         // }).map( d => d.Journal);
 	    // console.log('profGrid', temp);
@@ -81,11 +81,32 @@ class ForceDirectedNetwork {
         });
         this.citedTab = journalCSVs[1];
         this.citingTab = journalCSVs[2];
-        // this.AllCitedTabs = journalCSVs[3];
-        // this.AllCitingTabs = journalCSVs[4];
-        // this.AllGrids = journalCSVs[5];
+        this.journalNames = journalCSVs[3];
+        console.log('this.journalNames', this.journalNames);
         this.year = year;
 
+        // // change journal references to full journal name
+        // console.log('this.profileGrid', this.profileGrid);
+        // this.profileGrid.forEach( d => {
+        //     console.log('d profgrid', d.Journal.toUpperCase());
+        //     this.journalNames.forEach( jName => {
+        //         if(jName.Title20.toUpperCase() === d.Journal.toUpperCase()) {
+        //             d.Journal = jName['Full Journal Title'];
+        //             console.log('in Title20');
+        //         } else if(jName.Title29.toUpperCase() === d.Journal.toUpperCase()) {
+        //             d.Journal = jName['Full Journal Title'];
+        //             console.log('in Title29');
+        //         } else if(jName['Full Journal Title'].toUpperCase() === d.Journal.toUpperCase()) {
+        //             d.Journal = jName['Full Journal Title'];
+        //             console.log('in Full journal Title');
+        //         }else {
+        //             console.log('didnt match any');
+        //         }
+        //     })
+        // })
+        console.log('this.profGrid', this.profileGrid);
+
+/*
         // Update horizontalBars graph with above values
         this.horizontalBars.update(this.citedTab, this.citingTab, this.year, journal);
 
@@ -215,8 +236,8 @@ class ForceDirectedNetwork {
             links: journalsLinkInfo.map(d => {
                 // TODO: exclude links with no corresponding node
                 let journalArray = journalsNodeInfo.map( d => d.journal);
-                console.log('d', d);
-                console.log('journalArray.some', journalArray.some(d))
+                // console.log('d', d);
+                // console.log('journalArray.some', journalArray.some(d))
                 // let testsome =
                 return {
                     source: d.journalName,
@@ -314,7 +335,7 @@ class ForceDirectedNetwork {
         }
 
         this.impactTrace.update(this.AllGrids, this.AllCitedTabs, this.AllCitingTabs);
-
+*/
 			// this.tip.html((d)=> {
 			// 		let tooltip_data = {
             //

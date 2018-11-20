@@ -31,13 +31,90 @@ let promises = [];
 journalFiles.forEach( file => {
     promises.push(d3.csv(file));
 });
+promises.push(d3.json('data/100_Top_Journals.json'))
 
-let journalCSVs = undefined;
+// let journalAbbreviations = undefined;
+// d3.json('data/100_Top_Journals.json').then( d=> {
+//     console.log('journalAbbrev d', d);
+//     journalAbbreviations = d;
+//     // journalAbbreviations = {
+//     //     fullName: d['Full Journal Title'],
+//     //     title29: d['Title29'],
+//     //     title20: d['Title20']
+//     }
+// );
+// console.log('journalAbbreviations', journalAbbreviations);
+
+// let journalData = undefined;
 Promise.all(promises).then( data => {
-    journalCSVs = data;
-    // console.log('values', journalCSVs);
+    let journalData = [];
+    // change journal references to full journal name
+    //journalProfileGrid
+    // console.log('data', data);
+    for(i=0; i < 3; i++) {
+        // console.log('data i', data[i]);
+        data[i].forEach( d => {
+            // console.log('d Journal', d.Journal.toUpperCase());
+            data[3].forEach( jName => {
+                if(jName.Title20.toUpperCase() === d.Journal.toUpperCase()) {
+                    d.Journal = jName['Full Journal Title'];
+                    // console.log('in Title20');
+                } else if(jName.Title29.toUpperCase() === d.Journal.toUpperCase()) {
+                    d.Journal = jName['Full Journal Title'];
+                    // console.log('in Title29');
+                } else if(jName['Full Journal Title'].toUpperCase() === d.Journal.toUpperCase()) {
+                    d.Journal = jName['Full Journal Title'];
+                    // console.log('in Full journal Title');
+                }else {
+                    // console.log('didnt match any');
+                }
+            })
+        });
+        // case for 'Citing Journal' in journalsCitedTab
+        if(i === 1) {
+            data[i].forEach( d => {
+                // console.log('d citing journal', d['Citing Journal']);
+                data[3].forEach( jName => {
+                    if (jName.Title20.toUpperCase() === d['Citing Journal'].toUpperCase()) {
+                        d['Citing Journal'] = jName['Full Journal Title'];
+                        // console.log('in Title20');
+                    } else if (jName.Title29.toUpperCase() === d['Citing Journal'].toUpperCase()) {
+                        d['Citing Journal'] = jName['Full Journal Title'];
+                        // console.log('in Title29');
+                    } else if (jName['Full Journal Title'].toUpperCase() === d['Citing Journal'].toUpperCase()) {
+                        d['Citing Journal'] = jName['Full Journal Title'];
+                        // console.log('in Full journal Title');
+                    } else {
+                        // console.log('didnt match any');
+                    }
+                })
+            })
+        }
+        // case for 'Cited Journal' in journalsCitingTab
+        if(i === 2) {
+            data[i].forEach( d => {
+                data[3].forEach( jName => {
+                    if (jName.Title20.toUpperCase() === d['Cited Journal'].toUpperCase()) {
+                        d['Cited Journal'] = jName['Full Journal Title'];
+                        // console.log('in Title20');
+                    } else if (jName.Title29.toUpperCase() === d['Cited Journal'].toUpperCase()) {
+                        d['Cited Journal'] = jName['Full Journal Title'];
+                        // console.log('in Title29');
+                    } else if (jName['Full Journal Title'].toUpperCase() === d['Cited Journal'].toUpperCase()) {
+                        d['Cited Journal'] = jName['Full Journal Title'];
+                        // console.log('in Full journal Title');
+                    } else {
+                        // console.log('didnt match any');
+                    }
+                })
+            })
+        }
+        journalData.push(data[i]);
+    }
+
+    // console.log('fixedJournalData', journalData);
     let forceDirectedNetwork = new ForceDirectedNetwork(yearSlider, horizontalBars, impactTrace, journalInfoBox);
-    forceDirectedNetwork.update(journalCSVs, initialYear, initialJournal);
+    forceDirectedNetwork.update(journalData, initialYear, initialJournal);
 });
 // d3.csv("data/NATUREJournalProfileGrid.csv").then(data => {
 //     console.log('profGrid',data);
