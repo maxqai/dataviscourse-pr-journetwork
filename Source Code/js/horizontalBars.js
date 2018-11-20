@@ -46,9 +46,15 @@ class HorizontalBars {
 	/**
 	 * Creates the horizontalBars, content and tool tips
 	 *
-	 * @param selectedJournal - Journal selection
+     * @param journal - Journal selection (used for highlighting in chart
+     * @param year - year for display
 	 */
-	update (selectedJournal){
+	update (profileGrid, year, journal){
+
+        console.log('profileGrid', profileGrid);
+        console.log('year', year);
+        console.log('journal', journal);
+
 
 			// this.tip.html((d)=> {
 			// 		let tooltip_data = {
