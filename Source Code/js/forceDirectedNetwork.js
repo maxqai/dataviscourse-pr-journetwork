@@ -311,7 +311,7 @@ class ForceDirectedNetwork {
               d.fy = null;
         }
 
-        this.impactTrace.update(this.profileGrids, this.citedTab, this.citingTab);
+        this.impactTrace.update(journalCSVs[0], journalCSVs[1], journalCSVs[2]);
         // Update horizontalBars graph with above values
         this.horizontalBars.update(this.citedTab, this.citingTab, this.year, journal, journalCSVs[3]);
 
