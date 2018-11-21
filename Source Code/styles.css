@@ -55,4 +55,14 @@
     background-color: #338cdf;
 }
 
+.citedBars .bar {
+    fill: #505160;
+    opacity: 1;
+}
+
+.citingBars .bar {
+    fill: #598234;
+    opacity: 1;
+}
+
 }
