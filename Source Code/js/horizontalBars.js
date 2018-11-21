@@ -97,6 +97,10 @@ class HorizontalBars {
         let horzScale = d3.scaleLinear()
             .domain([0, domMax])
             .range([0, this.svgWidth]);
+        // Try out a log scale
+        // let horzScale = d3.scaleLog()
+        //     .domain([0, domMax])
+        //     .range([0, this.svgWidth]);
 
         // Sort by cited in descending order initially
         dataObj.sort((a,b) => {
@@ -122,7 +126,14 @@ class HorizontalBars {
             })
             .attr('x', 0)
             .attr('y', (d,i) => i*20 + 20)
-            .classed('bar', true);
+            .classed('bar', true)
+            .attr('id', d => {
+                if (d.Journal.toUpperCase() === journal.toUpperCase()) {
+                    return 'selectedCited'
+                } else {
+                    return null
+                }
+            });
 
         // Add text to bars
         // citedText.enter().append('text')
@@ -157,7 +168,14 @@ class HorizontalBars {
             })
             .attr('x', 0)
             .attr('y', (d,i) => i*20 + 20)
-            .classed('bar', true);
+            .classed('bar', true)
+            .attr('id', d => {
+                if (d.Journal.toUpperCase() === journal.toUpperCase()) {
+                    return 'selectedCiting'
+                } else {
+                    return null
+                }
+            });
 
         // Add text to bars
         citingText.enter().append('text')
@@ -168,7 +186,14 @@ class HorizontalBars {
             // })
             .attr('x', horzScale(yearCitingMax + 500))
             .attr('y', (d,i) => i*20 + 20)
-            .classed('bartext', true);
+            .classed('bartext', true)
+            .attr('id', d => {
+                if (d.Journal.toUpperCase() === journal.toUpperCase()) {
+                    return 'selectedBarText'
+                } else {
+                    return null
+                }
+            });
 
         // flip cited group and offset
         d3.select('.citedBars')
@@ -179,16 +204,64 @@ class HorizontalBars {
             .attr("transform", "translate(" + horzScale(yearMax + 100) + ",0)");
 
 
-        // add hover interactions
+        // add hover interactions for cited
         d3.select('.citedBars').selectAll('rect')
             .on('mouseover', function(d) {
                 d3.select(this)
-                    .attr('id', 'highlight')
+                    .attr('id', 'hlightCited');
+                let currJ = d.Journal;
+                d3.select('.citingBars').selectAll('rect')
+                    .attr('id', d => {
+                        if (currJ.toUpperCase() === d.Journal.toUpperCase()) {
+                            return 'hlightCiting'
+                        } else if (d.Journal.toUpperCase() === journal.toUpperCase()) {
+                            return 'selectedCiting'
+                        } else {
+                            return null
+                        }
+                    });
+                d3.select('.citingBars').selectAll('text')
+                    .attr('id', d => {
+                        if (currJ.toUpperCase() === d.Journal.toUpperCase()) {
+                            return 'hlightBarText'
+                        } else if (d.Journal.toUpperCase() === journal.toUpperCase()) {
+                            return 'selectedBarText'
+                        } else {
+                            return null
+                        }
+                    });
             })
             .on('mouseout', function(d) {
                 d3.select(this)
-                    .attr('id', null)
+                    .attr('id', d => {
+                        if (d.Journal.toUpperCase() === journal.toUpperCase()) {
+                            return 'selectedCited'
+                        } else {
+                            return null
+                        }
+                    });
+                let currJ = d.Journal;
+                d3.select('.citingBars').selectAll('rect')
+                    .attr('id', d => {
+                        if (d.Journal.toUpperCase() === journal.toUpperCase()) {
+                            return 'selectedCiting'
+                        } else {
+                            return null
+                        }
+                    });
+                d3.select('.citingBars').selectAll('text')
+                    .attr('id', d => {
+                        if (d.Journal.toUpperCase() === journal.toUpperCase()) {
+                            return 'selectedBarText'
+                        } else {
+                            return null
+                        }
+                    });
             })
+
+
+
+
 
 			// this.tip.html((d)=> {
 			// 		let tooltip_data = {

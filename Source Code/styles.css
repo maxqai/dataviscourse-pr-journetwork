@@ -69,8 +69,29 @@
     font-size: 0.75em;
 }
 
-#highlight {
+#hlightCited {
     fill: #6FB98F;
+}
+
+#hlightCiting {
+    fill: #6FB98F;
+}
+
+#selectedCited {
+    fill: #E38533;
+}
+
+#selectedCiting {
+    fill: #FAAE3D;
+}
+
+#selectedBarText {
+    font-weight: bold;
+    font-size: 1em;
+}
+
+#hlightBarText {
+    font-weight: bold;
 }
 
 }
