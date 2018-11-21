@@ -224,7 +224,7 @@ class ForceDirectedNetwork {
                 }
             })
         };
-        console.log('forceData', forceData);
+        // console.log('forceData', forceData);
 
 
 
@@ -247,7 +247,7 @@ class ForceDirectedNetwork {
                     return d.id;})
                 .distance(function(d) {
                     // console.log('d citedCount', d.citedCount, 'citationScale', citationScale(d.citedCount));
-                    return citationScale(d.citedCount)/10;
+                    return citationScale(d.citedCount);
                 }))
             .force('charge', d3.forceManyBody())
             .force('center', d3.forceCenter(this.svgWidth/2, this.svgHeight/2))
