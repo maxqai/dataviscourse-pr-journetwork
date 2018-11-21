@@ -110,6 +110,7 @@ Promise.all(promises).then( data => {
     });
     journalData[2] = tempJournalData;
 
+    journalData[3] = data[3]; // set up to pass top 100 info with journal info and abbreviations
 
     let forceDirectedNetwork = new ForceDirectedNetwork(yearSlider, horizontalBars, impactTrace, journalInfoBox);
     forceDirectedNetwork.update(journalData, initialYear, initialJournal);

@@ -313,7 +313,7 @@ class ForceDirectedNetwork {
 
         // this.impactTrace.update(this.AllGrids, this.AllCitedTabs, this.AllCitingTabs);
         // Update horizontalBars graph with above values
-        this.horizontalBars.update(this.citedTab, this.citingTab, this.year, journal);
+        this.horizontalBars.update(this.citedTab, this.citingTab, this.year, journal, journalCSVs[3]);
 
 			// this.tip.html((d)=> {
 			// 		let tooltip_data = {
