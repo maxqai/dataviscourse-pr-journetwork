@@ -178,6 +178,18 @@ class HorizontalBars {
         d3.select('.citingBars')
             .attr("transform", "translate(" + horzScale(yearMax + 100) + ",0)");
 
+
+        // add hover interactions
+        d3.select('.citedBars').selectAll('rect')
+            .on('mouseover', function(d) {
+                d3.select(this)
+                    .attr('id', 'highlight')
+            })
+            .on('mouseout', function(d) {
+                d3.select(this)
+                    .attr('id', null)
+            })
+
 			// this.tip.html((d)=> {
 			// 		let tooltip_data = {
             //
