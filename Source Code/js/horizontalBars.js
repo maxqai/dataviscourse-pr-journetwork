@@ -73,7 +73,8 @@ class HorizontalBars {
         let yearCitedMax = d3.max(this.cited.map(d => parseInt(d[year])));
         let yearCitingMax = d3.max(this.citing.map(d => parseInt(d[year])));
         let yearMax = d3.max([yearCitedMax, yearCitingMax]);
-        // console.log('yearMax', yearMax);
+        // Note the 3* is because it will need to be at least twice as wide to have side-by-side bars with labels
+        let domMax = 3*yearMax;
 
         // Map just the relevant data to avoid unnecessary fluff and combine citing and cited info in one object
         let currCited = this.cited.map(d => parseInt(d[year]));
@@ -86,7 +87,7 @@ class HorizontalBars {
 
         // Create linear scale for all bar charts
         let horzScale = d3.scaleLinear()
-            .domain([0, 2.5*yearMax]) // note the 2.5* is because it will need to be at least twice as wide to have side-by-side bars with labels
+            .domain([0, domMax])
             .range([0, this.svgWidth]);
 
         // Sort by cited in descending order initially
@@ -97,13 +98,13 @@ class HorizontalBars {
 
         // Try removing all old rects and text instead of worrying about updating them
         d3.select('.citedBars').selectAll('rect').remove();
-        d3.select('.citedBars').selectAll('text').remove();
+        // d3.select('.citedBars').selectAll('text').remove();
 
         // Now bind the data
         let citedBars = d3.select('.citedBars').selectAll('rect')
             .data(dataObj);
-        let citedText = d3.select('.citedBars').selectAll('text')
-            .data(dataObj);
+        // let citedText = d3.select('.citedBars').selectAll('text')
+        //     .data(dataObj);
 
         // Now create the horizontal bars for cited
         citedBars.enter().append('rect')
@@ -116,13 +117,13 @@ class HorizontalBars {
             .classed('bar', true);
 
         // Add text to bars
-        citedText.enter().append('text')
-            .text(d => d.Journal)
-            .attr('dy', this.barHeight/1.25)
-            .attr('x', d => {
-                return horzScale(d.Cited + 75)
-            })
-            .attr('y', (d,i) => i*20 + 20);
+        // citedText.enter().append('text')
+        //     .text(d => d.Journal)
+        //     .attr('dy', this.barHeight/1.25)
+        //     .attr('x', d => {
+        //         return horzScale(d.Cited + 50)
+        //     })
+        //     .attr('y', (d,i) => i*20 + 20);
 
         //
         // Now repeat process for citingBars
@@ -152,14 +153,19 @@ class HorizontalBars {
         citingText.enter().append('text')
             .text(d => d.Journal)
             .attr('dy', this.barHeight/1.25)
-            .attr('x', d => {
-                return horzScale(d.Citing + 75)
-            })
+            // .attr('x', d => {
+            //     return horzScale(d.Citing + 50)
+            // })
+            .attr('x', horzScale(yearCitingMax + 100))
             .attr('y', (d,i) => i*20 + 20);
 
         // flip cited group and offset
         d3.select('.citedBars')
-            .attr("transform", "translate(" + horzScale(yearMax) + ",0)" + "scale(-1,1)");
+            .attr("transform", "translate(" + horzScale(0.4*domMax) + ",0)" + "scale(-1,1)");
+
+        // offset citing group
+        d3.select('.citingBars')
+            .attr("transform", "translate(" + horzScale(0.405*domMax) + ",0)");
 
 			// this.tip.html((d)=> {
 			// 		let tooltip_data = {
