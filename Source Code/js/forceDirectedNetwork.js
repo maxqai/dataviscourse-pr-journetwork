@@ -114,7 +114,10 @@ class ForceDirectedNetwork {
         journalsLinkInfo = journalsLinkInfo.filter( d => {
             return d.citedJournalName !== d.journalName;
         });
-        console.log('postFilter', journalsLinkInfo);
+        // console.log('postFilterJournalLinkInfo', journalsLinkInfo);
+        journalsLinkInfo.forEach(d => {
+            // console.log('journal', d.journalName, 'JLI cited', d.citedJournalName)
+        })
 
         // create node structures
         this.profileGrid.sort( function(a,b) {

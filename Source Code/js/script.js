@@ -58,15 +58,10 @@ Promise.all(promises).then( data => {
             data[3].forEach( jName => {
                 if(jName.Title20.toUpperCase() === d.Journal.toUpperCase()) {
                     d.Journal = jName['Full Journal Title'];
-                    // console.log('in Title20');
                 } else if(jName.Title29.toUpperCase() === d.Journal.toUpperCase()) {
                     d.Journal = jName['Full Journal Title'];
-                    // console.log('in Title29');
                 } else if(jName['Full Journal Title'].toUpperCase() === d.Journal.toUpperCase()) {
                     d.Journal = jName['Full Journal Title'];
-                    // console.log('in Full journal Title');
-                }else {
-                    // console.log('didnt match any');
                 }
             })
         });
@@ -77,15 +72,10 @@ Promise.all(promises).then( data => {
                 data[3].forEach( jName => {
                     if (jName.Title20.toUpperCase() === d['Citing Journal'].toUpperCase()) {
                         d['Citing Journal'] = jName['Full Journal Title'];
-                        // console.log('in Title20');
                     } else if (jName.Title29.toUpperCase() === d['Citing Journal'].toUpperCase()) {
                         d['Citing Journal'] = jName['Full Journal Title'];
-                        // console.log('in Title29');
                     } else if (jName['Full Journal Title'].toUpperCase() === d['Citing Journal'].toUpperCase()) {
                         d['Citing Journal'] = jName['Full Journal Title'];
-                        // console.log('in Full journal Title');
-                    } else {
-                        // console.log('didnt match any');
                     }
                 })
             })
@@ -96,21 +86,49 @@ Promise.all(promises).then( data => {
                 data[3].forEach( jName => {
                     if (jName.Title20.toUpperCase() === d['Cited Journal'].toUpperCase()) {
                         d['Cited Journal'] = jName['Full Journal Title'];
-                        // console.log('in Title20');
                     } else if (jName.Title29.toUpperCase() === d['Cited Journal'].toUpperCase()) {
                         d['Cited Journal'] = jName['Full Journal Title'];
-                        // console.log('in Title29');
                     } else if (jName['Full Journal Title'].toUpperCase() === d['Cited Journal'].toUpperCase()) {
                         d['Cited Journal'] = jName['Full Journal Title'];
-                        // console.log('in Full journal Title');
-                    } else {
-                        // console.log('didnt match any');
                     }
                 })
             })
         }
         journalData.push(data[i]);
+
+
     }
+    console.log("journal ddata", journalData);
+    console.log("ddata", data);
+    // get rid of journals that aren't in top 100
+    let tempJournalData = [];
+    journalData[1].forEach( d => {
+        data[3].forEach( jName => {
+            if(jName['Full Journal Title'] === d['Citing Journal']) {
+                tempJournalData.push(d);
+                // console.log('temp', d);
+            } else {
+                // console.log('nope');
+                // console.log('d', d['cited Journal'], 'jname', jName['Full Journal Title']);
+            }
+        })
+    });
+    journalData[1] = tempJournalData;
+    tempJournalData = [];
+    journalData[2].forEach( d => {
+        data[3].forEach( jName => {
+            if(jName['Full Journal Title'] === d['Cited Journal']) {
+                tempJournalData.push(d);
+                // console.log('temp', d);
+            } else {
+                // console.log('nope');
+                // console.log('d', d['cited Journal'], 'jname', jName['Full Journal Title']);
+            }
+        })
+    });
+    journalData[2] = tempJournalData;
+    console.log('newJOurnalData', journalData);
+
 
     // console.log('fixedJournalData', journalData);
     let forceDirectedNetwork = new ForceDirectedNetwork(yearSlider, horizontalBars, impactTrace, journalInfoBox);
