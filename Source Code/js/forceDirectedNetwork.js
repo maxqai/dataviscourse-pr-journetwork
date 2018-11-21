@@ -133,7 +133,7 @@ class ForceDirectedNetwork {
 
 
 
-        /*
+
 
 	    // make scale for circle sizes (have to sqrt for area)
         let domainMax = d3.max(journalsLinkInfo.map(d => d.impactFactor));
@@ -310,8 +310,8 @@ class ForceDirectedNetwork {
               d.fx = null;
               d.fy = null;
         }
-        */
-        this.impactTrace.update(this.AllGrids, this.AllCitedTabs, this.AllCitingTabs);
+
+        // this.impactTrace.update(this.AllGrids, this.AllCitedTabs, this.AllCitingTabs);
         // Update horizontalBars graph with above values
         this.horizontalBars.update(this.citedTab, this.citingTab, this.year, journal);
 
