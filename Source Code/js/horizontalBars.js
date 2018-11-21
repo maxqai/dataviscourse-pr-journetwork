@@ -15,7 +15,13 @@ class HorizontalBars {
         //add the svg to the div
         this.svg = divHorizontalBars.append("svg")
             .attr("width", this.svgWidth)
-            .attr("height", 10000);//TODO: fix this to not be hardcoded
+            .attr("height", 3000);//TODO: fix this to not be hardcoded
+
+        //add a group for each political party to the svg
+        this.svg.append('g')
+            .classed('citedBars', true);
+        this.svg.append('g')
+            .classed('citingBars', true);
 
         //set up stable params for bars
         this.barHeight = 18;
@@ -52,22 +58,13 @@ class HorizontalBars {
 	 */
 	update (cited, citing, year, journal){
 
-        console.log('cited', cited);
-        console.log('citing', citing);
-        console.log('year', year);
-        console.log('journal', journal);
-
-        // id for the div is horizontalBars
-
-        // filter the input data by ALL Journals to get total counts for cited and citing
+        // Filter the input data by ALL Journals to get total counts for cited and citing
         this.cited = cited.filter(d => {
             return d['Citing Journal'] === 'ALL Journals';
         });
-        console.log('cited_subset', this.cited);
         this.citing = citing.filter(d => {
             return d['Cited Journal'] === 'ALL Journals';
         });
-        console.log('citing_subset', this.citing);
 
         // the following empirically found values might prove useful later:
         // max cited = 47014
@@ -78,46 +75,85 @@ class HorizontalBars {
         let yearMax = d3.max([yearCitedMax, yearCitingMax]);
         // console.log('yearMax', yearMax);
 
-        // maybe map just the relevant data to avoid unnecessary fluff and combine citing and cited info in one array
+        // Map just the relevant data to avoid unnecessary fluff and combine citing and cited info in one object
+        let currCited = this.cited.map(d => parseInt(d[year]));
+        let currCiting = this.citing.map(d => parseInt(d[year]));
+        let allJournals = this.cited.map(d => d.Journal);
+        let dataObj = [];
+        currCited.forEach((d,i) => {
+            dataObj.push({Journal: allJournals[i], Cited: d, Citing: currCiting[i]});
+        });
 
         // Create linear scale for all bar charts
         let horzScale = d3.scaleLinear()
-            .domain([0, 2.5*yearMax]) // note the 2* is because it will need to be twice as wide to have side-by-side bars
+            .domain([0, 2.5*yearMax]) // note the 2.5* is because it will need to be at least twice as wide to have side-by-side bars with labels
             .range([0, this.svgWidth]);
 
-        // sort cited in descending order (to begin)
-        this.cited.sort((a,b) => {
-            return b[year] - a[year];
+        // Sort by cited in descending order initially
+        dataObj.sort((a,b) => {
+            // console.log('a.Cited ', a.Cited, 'b.Cited ', b.Cited);
+            return b.Cited - a.Cited;
         });
-        console.log('this.cited sorted', this.cited);
-
-        //TODO: figure out a way to sort both cited and citing at the same time by one or the others properties
 
         // Try removing all old rects and text instead of worrying about updating them
-        d3.select('#horizontalBars > svg').selectAll('rect').remove();
-        d3.select('#horizontalBars > svg').selectAll('text').remove();
+        d3.select('.citedBars').selectAll('rect').remove();
+        d3.select('.citedBars').selectAll('text').remove();
 
         // Now bind the data
-        let citedBars = d3.select('#horizontalBars > svg').selectAll('rect')
-            .data(this.cited);
-        let citedText = d3.select('#horizontalBars > svg').selectAll('text')
-            .data(this.cited);
+        let citedBars = d3.select('.citedBars').selectAll('rect')
+            .data(dataObj);
+        let citedText = d3.select('.citedBars').selectAll('text')
+            .data(dataObj);
 
         // Now create the horizontal bars for cited
         citedBars.enter().append('rect')
             .attr('height', this.barHeight)
             .attr('width', d => {
-                return horzScale(parseInt(d[year]));
+                return horzScale(d.Cited);
             })
             .attr('x', 0)
-            .attr('y', (d,i) => i*20 + 20);
+            .attr('y', (d,i) => i*20 + 20)
+            .classed('bar', true);
 
         // Add text to bars
         citedText.enter().append('text')
             .text(d => d.Journal)
             .attr('dy', this.barHeight/1.25)
             .attr('x', d => {
-                return horzScale(parseInt(d[year])+75)
+                return horzScale(d.Cited + 75)
+            })
+            .attr('y', (d,i) => i*20 + 20);
+
+        //
+        // Now repeat process for citingBars
+        //
+
+        // Try removing all old rects and text instead of worrying about updating them
+        d3.select('.citingBars').selectAll('rect').remove();
+        d3.select('.citingBars').selectAll('text').remove();
+
+        // Now bind the data
+        let citingBars = d3.select('.citingBars').selectAll('rect')
+            .data(dataObj);
+        let citingText = d3.select('.citingBars').selectAll('text')
+            .data(dataObj);
+
+        // Now create the horizontal bars for citing
+        citingBars.enter().append('rect')
+            .attr('height', this.barHeight)
+            .attr('width', d => {
+                return horzScale(d.Citing);
+            })
+            .attr('x', 0)
+            .attr('y', (d,i) => i*20 + 20)
+            .classed('bar', true);
+
+        // Add text to bars
+        citingText.enter().append('text')
+            .text(d => d.Journal)
+            .attr('dy', this.barHeight/1.25)
+            .attr('x', d => {
+                return horzScale(d.Citing + 75)
             })
             .attr('y', (d,i) => i*20 + 20);
 
