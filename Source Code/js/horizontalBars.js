@@ -157,6 +157,10 @@ class HorizontalBars {
             })
             .attr('y', (d,i) => i*20 + 20);
 
+        // flip cited group and offset
+        d3.select('.citedBars')
+            .attr("transform", "translate(" + horzScale(yearMax) + ",0)" + "scale(-1,1)");
+
 			// this.tip.html((d)=> {
 			// 		let tooltip_data = {
             //
