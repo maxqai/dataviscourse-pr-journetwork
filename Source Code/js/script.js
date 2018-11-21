@@ -20,7 +20,7 @@ let journalInfoBox = new JournalInfoBox();
 
 // load all data
 let initialYear = 2017;
-let initialJournal = 'NATURE';
+let initialJournal = 'Nature';
 let journalFiles = ["filtered data/AllJournalProfileGrid.csv", "filtered data/AllJournalCitedTab.csv", "filtered data/AllJournalCitingTab.csv"];
 let promises = [];
 journalFiles.forEach( file => {
