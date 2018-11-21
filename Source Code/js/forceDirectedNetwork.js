@@ -81,34 +81,8 @@ class ForceDirectedNetwork {
         });
         this.citedTab = journalCSVs[1];
         this.citingTab = journalCSVs[2];
-        this.journalNames = journalCSVs[3];
-        console.log('this.journalNames', this.journalNames);
         this.year = year;
 
-        // // change journal references to full journal name
-        // console.log('this.profileGrid', this.profileGrid);
-        // this.profileGrid.forEach( d => {
-        //     console.log('d profgrid', d.Journal.toUpperCase());
-        //     this.journalNames.forEach( jName => {
-        //         if(jName.Title20.toUpperCase() === d.Journal.toUpperCase()) {
-        //             d.Journal = jName['Full Journal Title'];
-        //             console.log('in Title20');
-        //         } else if(jName.Title29.toUpperCase() === d.Journal.toUpperCase()) {
-        //             d.Journal = jName['Full Journal Title'];
-        //             console.log('in Title29');
-        //         } else if(jName['Full Journal Title'].toUpperCase() === d.Journal.toUpperCase()) {
-        //             d.Journal = jName['Full Journal Title'];
-        //             console.log('in Full journal Title');
-        //         }else {
-        //             console.log('didnt match any');
-        //         }
-        //     })
-        // })
-        console.log('this.profGrid', this.profileGrid);
-
-/*
-        // Update horizontalBars graph with above values
-        this.horizontalBars.update(this.citedTab, this.citingTab, this.year, journal);
 
         // create link structures
         let journalsLinkInfo = this.citingTab.map( (d, i) => {
@@ -335,7 +309,9 @@ class ForceDirectedNetwork {
         }
 
         this.impactTrace.update(this.AllGrids, this.AllCitedTabs, this.AllCitingTabs);
-*/
+        // Update horizontalBars graph with above values
+        this.horizontalBars.update(this.citedTab, this.citingTab, this.year, journal);
+
 			// this.tip.html((d)=> {
 			// 		let tooltip_data = {
             //
