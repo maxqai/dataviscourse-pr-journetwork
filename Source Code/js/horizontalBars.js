@@ -56,7 +56,7 @@ class HorizontalBars {
      * @param journal - Journal selection (used for highlighting in chart
      * @param year - year for display
 	 */
-	update (cited, citing, year, journal){
+	update (cited, citing, year, journal, top100){
 
         // Filter the input data by ALL Journals to get total counts for cited and citing
         this.cited = cited.filter(d => {
@@ -73,16 +73,24 @@ class HorizontalBars {
         let yearCitedMax = d3.max(this.cited.map(d => parseInt(d[year])));
         let yearCitingMax = d3.max(this.citing.map(d => parseInt(d[year])));
         let yearMax = d3.max([yearCitedMax, yearCitingMax]);
-        // Note the 3* is because it will need to be at least twice as wide to have side-by-side bars with labels
-        let domMax = 3*yearMax;
+        // Note the 4* is because it will need to be at least twice as wide to have side-by-side bars with labels
+        let domMax = 4*yearMax;
 
         // Map just the relevant data to avoid unnecessary fluff and combine citing and cited info in one object
         let currCited = this.cited.map(d => parseInt(d[year]));
         let currCiting = this.citing.map(d => parseInt(d[year]));
         let allJournals = this.cited.map(d => d.Journal);
+
         let dataObj = [];
         currCited.forEach((d,i) => {
-            dataObj.push({Journal: allJournals[i], Cited: d, Citing: currCiting[i]});
+            // find abbreviation for current journal
+            let currAb = [];
+            top100.forEach(d => {
+                if (d["Full Journal Title"] === allJournals[i]) {
+                    currAb.push(d.Title20)
+                }
+            });
+            dataObj.push({Journal: allJournals[i], Abbreviation: currAb[0], Cited: d, Citing: currCiting[i]});
         });
 
         // Create linear scale for all bar charts
@@ -118,12 +126,14 @@ class HorizontalBars {
 
         // Add text to bars
         // citedText.enter().append('text')
-        //     .text(d => d.Journal)
+        //     .text(d => d.Abbreviation)
         //     .attr('dy', this.barHeight/1.25)
         //     .attr('x', d => {
-        //         return horzScale(d.Cited + 50)
+        //         return horzScale(d.Cited + 500)
         //     })
-        //     .attr('y', (d,i) => i*20 + 20);
+        //     .attr('y', (d,i) => i*20 + 20)
+        //     .classed('bartext', true);
+
 
         //
         // Now repeat process for citingBars
@@ -151,21 +161,22 @@ class HorizontalBars {
 
         // Add text to bars
         citingText.enter().append('text')
-            .text(d => d.Journal)
-            .attr('dy', this.barHeight/1.25)
+            .text(d => d.Abbreviation)
+            .attr('dy', this.barHeight/1.3)
             // .attr('x', d => {
-            //     return horzScale(d.Citing + 50)
+            //     return horzScale(d.Citing + 500)
             // })
-            .attr('x', horzScale(yearCitingMax + 100))
-            .attr('y', (d,i) => i*20 + 20);
+            .attr('x', horzScale(yearCitingMax + 500))
+            .attr('y', (d,i) => i*20 + 20)
+            .classed('bartext', true);
 
         // flip cited group and offset
         d3.select('.citedBars')
-            .attr("transform", "translate(" + horzScale(0.4*domMax) + ",0)" + "scale(-1,1)");
+            .attr("transform", "translate(" + horzScale(yearMax) + ",0)" + "scale(-1,1)");
 
         // offset citing group
         d3.select('.citingBars')
-            .attr("transform", "translate(" + horzScale(0.405*domMax) + ",0)");
+            .attr("transform", "translate(" + horzScale(yearMax + 100) + ",0)");
 
 			// this.tip.html((d)=> {
 			// 		let tooltip_data = {
