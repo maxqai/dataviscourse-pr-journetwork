@@ -95,7 +95,9 @@ class ImpactTrace {
             this.svg.append("g")
                     .attr("id", i)
         });
-        this.svg.append("g")
+
+        // Organize Data into
+
 
 	};
 }
