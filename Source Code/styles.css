@@ -44,6 +44,19 @@
     stroke-width: 2px;
 }
 
+.d3-tip {
+    line-height: normal;
+    padding-left: 10px;
+    padding-right: 10px;
+    min-width: 100px;
+    border-style: groove;
+    padding: 12px;
+    background: #FFFFFF;
+    color: rgba(0, 0, 0, 0.8);
+    border-radius: 10px;
+    pointer-events: none;
+}
+
 .searchResults{
     list-style: none;
     margin: 0;

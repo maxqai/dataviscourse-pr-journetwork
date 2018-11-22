@@ -59,7 +59,7 @@ class SearchBar {
 	    // console.log('Current Text Entry in searchBar.js: ', currInput);
 
         // for time being, set default value for year
-        let year = '2017';
+        // let year = '2017';
 
 	    // load the journal json
         let journalData = [

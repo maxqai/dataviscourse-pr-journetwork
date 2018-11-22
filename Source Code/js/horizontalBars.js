@@ -28,11 +28,11 @@ class HorizontalBars {
 
 		//for reference: https://github.com/Caged/d3-tip
 		//Use this tool tip element to handle any hover over the chart
-		// this.tip = d3.tip().attr('class', 'd3-tip')
-		// 	.direction('s')
-		// 	.offset(function() {
-		// 		return [0,0];
-		// 	});
+		this.tip = d3.tip().attr('class', 'd3-tip')
+			.direction('s')
+			.offset(function() {
+				return [0,0];
+			});
     };
 
 
@@ -43,10 +43,13 @@ class HorizontalBars {
 	 * @return text HTML content for toop tip
 	 */
 	tooltip_render (tooltip_data) {
-	    let text = "<ul>";
-	    tooltip_data.result.forEach((row)=>{
-
-	    });
+	    // let text = "<h2 class ="  + this.chooseClass(tooltip_data.winner) + " >" + tooltip_data.state + "</h2>";
+        let text = "<h3>" + tooltip_data.Journal + "</h3>";
+	    text += "<ul class = searchResults>";
+	    // text += "<li class = " + this.chooseClass(row.party) + ">" + row.nominee + ":\t\t" + row.votecount + "\t(" + row.percentage + "%)" + "</li>"
+        text += "<li>Cited:\t" + tooltip_data.Cited + "</li>";
+        text += "<li>Citing:\t" + tooltip_data.Citing + "</li>";
+        text += "</ul>";
 	    return text;
 	}
 
@@ -57,6 +60,13 @@ class HorizontalBars {
      * @param year - year for display
 	 */
 	update (cited, citing, year, journal, top100){
+
+        // let tip = this.tip;
+        this.tip.html((d)=> {
+            // let tooltip_data;
+
+            return this.tooltip_render(d);
+        });
 
         // Filter the input data by ALL Journals to get total counts for cited and citing
         this.cited = cited.filter(d => {
@@ -203,12 +213,24 @@ class HorizontalBars {
         d3.select('.citingBars')
             .attr("transform", "translate(" + horzScale(yearMax + 100) + ",0)");
 
+        // d3.select('.citedBars').selectAll('rect')
+        //     .call(tip);
+        // d3.select('.citingBars').selectAll('rect')
+        //     .call(tip);
+        // d3.select('.citingBars').selectAll('text')
+        //     .call(tip);
 
         // add hover interactions for cited
         d3.select('.citedBars').selectAll('rect')
             .on('mouseover', function(d) {
+                // d3.select(this)
+                //     .append('title')
+                //     .text('Goals Scored: ' + d.value[0] + ' Goals Conceded: ' + d.value[1])
                 d3.select(this)
-                    .attr('id', 'hlightCited');
+                    .attr('id', 'hlightCited')
+                    .append('title')
+                    .text('Cited: ' + d.Cited + '; Citing: ' + d.Citing)
+                    .classed('barsTitle', true);
                 let currJ = d.Journal;
                 d3.select('.citingBars').selectAll('rect')
                     .attr('id', d => {
@@ -219,7 +241,10 @@ class HorizontalBars {
                         } else {
                             return null
                         }
-                    });
+                    })
+                    .append('title')
+                    .text('Cited: ' + d.Cited + '; Citing: ' + d.Citing)
+                    .classed('barsTitle', true);
                 d3.select('.citingBars').selectAll('text')
                     .attr('id', d => {
                         if (currJ.toUpperCase() === d.Journal.toUpperCase()) {
@@ -229,7 +254,10 @@ class HorizontalBars {
                         } else {
                             return null
                         }
-                    });
+                    })
+                    .append('title')
+                    .text('Cited: ' + d.Cited + '; Citing: ' + d.Citing)
+                    .classed('barsTitle', true);
             })
             .on('mouseout', function(d) {
                 d3.select(this)
@@ -264,7 +292,10 @@ class HorizontalBars {
         d3.select('.citingBars').selectAll('rect')
             .on('mouseover', function(d) {
                 d3.select(this)
-                    .attr('id', 'hlightCiting');
+                    .attr('id', 'hlightCiting')
+                    .append('title')
+                    .text('Cited: ' + d.Cited + '; Citing: ' + d.Citing)
+                    .classed('barsTitle', true);
                 let currJ = d.Journal;
                 d3.select('.citedBars').selectAll('rect')
                     .attr('id', d => {
@@ -275,7 +306,10 @@ class HorizontalBars {
                         } else {
                             return null
                         }
-                    });
+                    })
+                    .append('title')
+                    .text('Cited: ' + d.Cited + '; Citing: ' + d.Citing)
+                    .classed('barsTitle', true);
                 d3.select('.citingBars').selectAll('text')
                     .attr('id', d => {
                         if (currJ.toUpperCase() === d.Journal.toUpperCase()) {
@@ -285,7 +319,10 @@ class HorizontalBars {
                         } else {
                             return null
                         }
-                    });
+                    })
+                    .append('title')
+                    .text('Cited: ' + d.Cited + '; Citing: ' + d.Citing)
+                    .classed('barsTitle', true);
             })
             .on('mouseout', function(d) {
                 d3.select(this)
@@ -320,7 +357,10 @@ class HorizontalBars {
         d3.select('.citingBars').selectAll('text')
             .on('mouseover', function(d) {
                 d3.select(this)
-                    .attr('id', 'hlightBarText');
+                    .attr('id', 'hlightBarText')
+                    .append('title')
+                    .text('Cited: ' + d.Cited + '; Citing: ' + d.Citing)
+                    .classed('barsTitle', true);
                 let currJ = d.Journal;
                 d3.select('.citingBars').selectAll('rect')
                     .attr('id', d => {
@@ -331,7 +371,10 @@ class HorizontalBars {
                         } else {
                             return null
                         }
-                    });
+                    })
+                    .append('title')
+                    .text('Cited: ' + d.Cited + '; Citing: ' + d.Citing)
+                    .classed('barsTitle', true);
                 d3.select('.citedBars').selectAll('rect')
                     .attr('id', d => {
                         if (currJ.toUpperCase() === d.Journal.toUpperCase()) {
@@ -341,7 +384,10 @@ class HorizontalBars {
                         } else {
                             return null
                         }
-                    });
+                    })
+                    .append('title')
+                    .text('Cited: ' + d.Cited + '; Citing: ' + d.Citing)
+                    .classed('barsTitle', true);
             })
             .on('mouseout', function(d) {
                 d3.select(this)
@@ -374,19 +420,21 @@ class HorizontalBars {
         // TODO: Implement clicking on bars and a tooltip on hover (with full journal name and cited/citing stats)
         // TODO: Add scale and title
 
-
-			// this.tip.html((d)=> {
-			// 		let tooltip_data = {
-            //
-			// 		return this.tooltip_render(tooltip_data);
-	        //     });
-
-
-			// let bars = d3.select('#votes-percentage').select('svg').selectAll('rect')
-			// 	.call(this.tip);
-			// bars
-			// 	.on('mouseover', this.tip.show)
-			// 	.on('mouseout', this.tip.hide);
+        // d3.select('.citedBars').selectAll('rect')
+        //     .call(this.tip);
+        // d3.select('.citingBars').selectAll('rect')
+        //     .call(this.tip);
+        // d3.select('.citingBars').selectAll('text')
+        //     .call(this.tip);
+        // d3.select('.citedBars').selectAll('rect')
+        //     .on('mouseover', this.tip.show)
+        //     .on('mouseout', this.tip.hide);
+        // d3.select('.citingBars').selectAll('rect')
+        //     .on('mouseover', this.tip.show)
+        //     .on('mouseout', this.tip.hide);
+        // d3.select('.citingBars').selectAll('text')
+        //     .on('mouseover', this.tip.show)
+        //     .on('mouseout', this.tip.hide);
 	};
 
 
