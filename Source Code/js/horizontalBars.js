@@ -60,7 +60,7 @@ class HorizontalBars {
      * @param journal - Journal selection (used for highlighting in chart
      * @param year - year for display
 	 */
-	update (cited, citing, year, journal, top100){
+	update (cited, citing, year, journal, top100, dataObj){
 
         // let tip = this.tip;
         this.tip.html((d)=> {
@@ -92,17 +92,21 @@ class HorizontalBars {
         let currCiting = this.citing.map(d => parseInt(d[year]));
         let allJournals = this.cited.map(d => d.Journal);
 
-        let dataObj = [];
-        currCited.forEach((d,i) => {
-            // find abbreviation for current journal
-            let currAb = [];
-            top100.forEach(d => {
-                if (d["Full Journal Title"] === allJournals[i]) {
-                    currAb.push(d.Title20)
-                }
+        // check if dataObj has already been generated and passed in (i.e. a sort has already been applied)
+        dataObj = dataObj || [];
+        // check length to see if empty (i.e. if (dataObj.length === 0) { ... )
+        if (dataObj.length === 0) {
+            currCited.forEach((d, i) => {
+                // find abbreviation for current journal
+                let currAb = [];
+                top100.forEach(d => {
+                    if (d["Full Journal Title"] === allJournals[i]) {
+                        currAb.push(d.Title20)
+                    }
+                });
+                dataObj.push({Journal: allJournals[i], Abbreviation: currAb[0], Cited: d, Citing: currCiting[i]});
             });
-            dataObj.push({Journal: allJournals[i], Abbreviation: currAb[0], Cited: d, Citing: currCiting[i]});
-        });
+        }
 
         // Create linear scale for all bar charts
         let horzScale = d3.scaleLinear()
@@ -110,10 +114,10 @@ class HorizontalBars {
             .range([0, this.svgWidth]);
 
         // Sort by cited in descending order initially
-        dataObj.sort((a,b) => {
-            // console.log('a.Cited ', a.Cited, 'b.Cited ', b.Cited);
-            return b.Cited - a.Cited;
-        });
+        // dataObj.sort((a,b) => {
+        //     // console.log('a.Cited ', a.Cited, 'b.Cited ', b.Cited);
+        //     return b.Cited - a.Cited;
+        // });
 
         // Try removing all old rects and text instead of worrying about updating them
         d3.select('.citedBars').selectAll('rect').remove();
@@ -428,7 +432,24 @@ class HorizontalBars {
             .classed('citingHead', true);
 
         // TODO: Implement clicking on bars to select a new journal
+
+
         // TODO: Enable sorting by clicking on column headers
+        d3.select('.citedHead')
+            .on('click', function() {
+                dataObj.sort((a,b) => {
+                    return b.Cited - a.Cited;
+                });
+                // push updated data back to this update method
+                horizontalBars.update(cited, citing, year, journal, top100, dataObj);
+            });
+        d3.select('.citingHead')
+            .on('click', function() {
+                dataObj.sort((a,b) => {
+                    return b.Citing - a.Citing;
+                });
+                horizontalBars.update(cited, citing, year, journal, top100, dataObj);
+            });
 
         // d3.select('.citedBars').selectAll('rect')
         //     .call(this.tip);
