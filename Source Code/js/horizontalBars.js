@@ -25,6 +25,7 @@ class HorizontalBars {
 
         //set up stable params for bars
         this.barHeight = 18;
+        this.padding = 30;
 
 		//for reference: https://github.com/Caged/d3-tip
 		//Use this tool tip element to handle any hover over the chart
@@ -107,10 +108,6 @@ class HorizontalBars {
         let horzScale = d3.scaleLinear()
             .domain([0, domMax])
             .range([0, this.svgWidth]);
-        // Try out a log scale
-        // let horzScale = d3.scaleLog()
-        //     .domain([0, domMax])
-        //     .range([0, this.svgWidth]);
 
         // Sort by cited in descending order initially
         dataObj.sort((a,b) => {
@@ -191,9 +188,6 @@ class HorizontalBars {
         citingText.enter().append('text')
             .text(d => d.Abbreviation)
             .attr('dy', this.barHeight/1.3)
-            // .attr('x', d => {
-            //     return horzScale(d.Citing + 500)
-            // })
             .attr('x', horzScale(yearCitingMax + 500))
             .attr('y', (d,i) => i*20 + 20)
             .classed('bartext', true)
@@ -207,11 +201,11 @@ class HorizontalBars {
 
         // flip cited group and offset
         d3.select('.citedBars')
-            .attr("transform", "translate(" + (horzScale(yearMax) + 10) + ",0)" + "scale(-1,1)");
+            .attr("transform", "translate(" + (horzScale(yearMax) + this.padding - 1) + "," + 30 + ")" + "scale(-1,1)");
 
         // offset citing group
         d3.select('.citingBars')
-            .attr("transform", "translate(" + (horzScale(yearMax) + 12) + ",0)");
+            .attr("transform", "translate(" + (horzScale(yearMax) + this.padding + 1) + "," + 30 + ")");
 
         // d3.select('.citedBars').selectAll('rect')
         //     .call(tip);
@@ -223,9 +217,6 @@ class HorizontalBars {
         // add hover interactions for cited
         d3.select('.citedBars').selectAll('rect')
             .on('mouseover', function(d) {
-                // d3.select(this)
-                //     .append('title')
-                //     .text('Goals Scored: ' + d.value[0] + ' Goals Conceded: ' + d.value[1])
                 d3.select(this)
                     .attr('id', 'hlightCited')
                     .append('title')
@@ -241,10 +232,7 @@ class HorizontalBars {
                         } else {
                             return null
                         }
-                    })
-                    .append('title')
-                    .text('Cited: ' + d.Cited + '; Citing: ' + d.Citing)
-                    .classed('barsTitle', true);
+                    });
                 d3.select('.citingBars').selectAll('text')
                     .attr('id', d => {
                         if (currJ.toUpperCase() === d.Journal.toUpperCase()) {
@@ -254,10 +242,7 @@ class HorizontalBars {
                         } else {
                             return null
                         }
-                    })
-                    .append('title')
-                    .text('Cited: ' + d.Cited + '; Citing: ' + d.Citing)
-                    .classed('barsTitle', true);
+                    });
             })
             .on('mouseout', function(d) {
                 d3.select(this)
@@ -285,6 +270,7 @@ class HorizontalBars {
                             return null
                         }
                     });
+                d3.selectAll('.barsTitle').remove();
             });
 
 
@@ -306,10 +292,7 @@ class HorizontalBars {
                         } else {
                             return null
                         }
-                    })
-                    .append('title')
-                    .text('Cited: ' + d.Cited + '; Citing: ' + d.Citing)
-                    .classed('barsTitle', true);
+                    });
                 d3.select('.citingBars').selectAll('text')
                     .attr('id', d => {
                         if (currJ.toUpperCase() === d.Journal.toUpperCase()) {
@@ -320,9 +303,6 @@ class HorizontalBars {
                             return null
                         }
                     })
-                    .append('title')
-                    .text('Cited: ' + d.Cited + '; Citing: ' + d.Citing)
-                    .classed('barsTitle', true);
             })
             .on('mouseout', function(d) {
                 d3.select(this)
@@ -350,6 +330,7 @@ class HorizontalBars {
                             return null
                         }
                     });
+                d3.selectAll('.barsTitle').remove();
             });
 
 
@@ -371,10 +352,7 @@ class HorizontalBars {
                         } else {
                             return null
                         }
-                    })
-                    .append('title')
-                    .text('Cited: ' + d.Cited + '; Citing: ' + d.Citing)
-                    .classed('barsTitle', true);
+                    });
                 d3.select('.citedBars').selectAll('rect')
                     .attr('id', d => {
                         if (currJ.toUpperCase() === d.Journal.toUpperCase()) {
@@ -384,10 +362,7 @@ class HorizontalBars {
                         } else {
                             return null
                         }
-                    })
-                    .append('title')
-                    .text('Cited: ' + d.Cited + '; Citing: ' + d.Citing)
-                    .classed('barsTitle', true);
+                    });
             })
             .on('mouseout', function(d) {
                 d3.select(this)
@@ -415,22 +390,45 @@ class HorizontalBars {
                             return null
                         }
                     });
+                d3.selectAll('.barsTitle').remove();
             });
 
-        // TODO: Implement clicking on bars and a tooltip on hover (with full journal name and cited/citing stats)
-        // TODO: Add scale and title
-        // TODO: Enable sorting
+        // Place scale above bars
+        let fullScale = d3.scaleLinear()
+            .domain([-domMax/3.5, domMax/3.5])
+            .range([-this.svgWidth/3.5, this.svgWidth/3.5])
+            .nice();
 
         let xAxis = d3.axisTop();
         xAxis
-            .scale(horzScale)
+            .scale(fullScale)
+            // .ticks(2)
+            .tickValues([-10000, -5000, 0, 5000, 10000])
             .tickFormat(d3.formatPrefix(".1", 1e3));
 
         d3.select('#horizontalBars > svg').append('g')
             .classed('barAxis', true)
-            // .attr("transform", "translate(" + padding + "," + (height + padding) + ")")
-            .attr("transform", "translate(0," + 20 + ")")
+            .attr("transform", "translate(" + (horzScale(yearMax) + this.padding) + "," + 45 + ")")
             .call(xAxis);
+
+        // Add column headers above bars
+        d3.select('.citedHead').selectAll('text').remove();
+        d3.select('.citingHead').selectAll('text').remove();
+
+        d3.select('#horizontalBars > svg').append('text')
+            .text('Cited')
+            .attr('x', horzScale(0.75*yearMax))
+            .attr('y', 20)
+            .classed('citedHead', true);
+
+        d3.select('#horizontalBars > svg').append('text')
+            .text('Citing')
+            .attr('x', horzScale(1.9*yearMax))
+            .attr('y', 20)
+            .classed('citingHead', true);
+
+        // TODO: Implement clicking on bars to select a new journal
+        // TODO: Enable sorting by clicking on column headers
 
         // d3.select('.citedBars').selectAll('rect')
         //     .call(this.tip);

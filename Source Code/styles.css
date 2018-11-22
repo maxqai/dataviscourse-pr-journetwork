@@ -78,6 +78,18 @@
     opacity: 1;
 }
 
+.citedHead {
+    text-anchor: middle;
+    font-size: 1.5em;
+    fill: #004445;
+}
+
+.citingHead {
+    text-anchor: middle;
+    font-size: 1.5em;
+    fill: #2C7873;
+}
+
 .bartext {
     font-size: 0.75em;
 }
@@ -86,7 +98,7 @@
     stroke: black;
     stroke-width: 1px;
     /*font-family: serif;*/
-    /*font-size: 14px;*/
+    font-size: 0.75em;
 }
 
 #hlightCited {
