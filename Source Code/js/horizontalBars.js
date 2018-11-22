@@ -207,11 +207,11 @@ class HorizontalBars {
 
         // flip cited group and offset
         d3.select('.citedBars')
-            .attr("transform", "translate(" + horzScale(yearMax) + ",0)" + "scale(-1,1)");
+            .attr("transform", "translate(" + (horzScale(yearMax) + 10) + ",0)" + "scale(-1,1)");
 
         // offset citing group
         d3.select('.citingBars')
-            .attr("transform", "translate(" + horzScale(yearMax + 100) + ",0)");
+            .attr("transform", "translate(" + (horzScale(yearMax) + 12) + ",0)");
 
         // d3.select('.citedBars').selectAll('rect')
         //     .call(tip);
@@ -419,6 +419,18 @@ class HorizontalBars {
 
         // TODO: Implement clicking on bars and a tooltip on hover (with full journal name and cited/citing stats)
         // TODO: Add scale and title
+        // TODO: Enable sorting
+
+        let xAxis = d3.axisTop();
+        xAxis
+            .scale(horzScale)
+            .tickFormat(d3.formatPrefix(".1", 1e3));
+
+        d3.select('#horizontalBars > svg').append('g')
+            .classed('barAxis', true)
+            // .attr("transform", "translate(" + padding + "," + (height + padding) + ")")
+            .attr("transform", "translate(0," + 20 + ")")
+            .call(xAxis);
 
         // d3.select('.citedBars').selectAll('rect')
         //     .call(this.tip);

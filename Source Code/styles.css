@@ -82,6 +82,13 @@
     font-size: 0.75em;
 }
 
+.barAxis {
+    stroke: black;
+    stroke-width: 1px;
+    /*font-family: serif;*/
+    /*font-size: 14px;*/
+}
+
 #hlightCited {
     fill: #6FB98F;
 }
