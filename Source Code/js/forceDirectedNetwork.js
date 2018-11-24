@@ -228,7 +228,7 @@ class ForceDirectedNetwork {
         // console.log('citeMax', citeMax);
         let citeMin = d3.min(journalsLinkInfo.map( d => parseInt(d.citationCount)));
         // console.log('citeMin', citeMin);
-        let citationScale = d3.scaleLog() // TODO: avoid +1 on citemax/min...
+        let citationScale = d3.scaleLog()
             .domain([citeMin+1, citeMax+1])
             .range([citeMax+1, citeMin+1]);
 
@@ -241,9 +241,12 @@ class ForceDirectedNetwork {
                     // console.log('d citedCount', d.citedCount, 'citationScale', citationScale(d.citedCount));
                     return citationScale(d.citedCount);
                 }))
-            .force('charge', d3.forceManyBody())
+            .force('charge', d3.forceManyBody().strength(-100))
             .force('center', d3.forceCenter(this.svgWidth/2, this.svgHeight/2))
-            .force('collision', d3.forceCollide(2.5));
+            .force('collision', d3.forceCollide(d => {
+                // console.log('d', d);
+                return impactFactorScale(d.impactFactor);
+            }));
 
         // console.log('svgHeight/2', this.svgHeight/2)
         let links = this.svg.append('g')
