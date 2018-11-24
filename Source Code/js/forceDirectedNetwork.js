@@ -52,10 +52,6 @@ class ForceDirectedNetwork {
 	    return text;
 	}
 
-	area2Radius (area) {
-	    let radius = Math.sqrt(area);
-	    return radius;
-    }
 
     /**
      * Creates the forceDirectedNetwork, content and tool tips
@@ -203,20 +199,14 @@ class ForceDirectedNetwork {
                 }
             }),
             links: journalsLinkInfo.map(d => {
-                // TODO: exclude links with no corresponding node
-                let journalArray = journalsNodeInfo.map( d => d.journal);
-                // console.log('d', d);
-                // console.log('journalArray.some', journalArray.some(d))
-                // let testsome =
                 return {
                     source: d.journalName,
                     target: d.citedJournalName,
                     impactFactor: d.impactFactor,
-                    citedCount: parseInt(d.citationCount) + 1
+                    citedCount: parseInt(d.citationCount)+1
                 }
             })
         };
-        // console.log('forceData', forceData);
 
 
 
@@ -244,11 +234,9 @@ class ForceDirectedNetwork {
             .force('charge', d3.forceManyBody().strength(-100))
             .force('center', d3.forceCenter(this.svgWidth/2, this.svgHeight/2))
             .force('collision', d3.forceCollide(d => {
-                // console.log('d', d);
                 return impactFactorScale(d.impactFactor);
             }));
 
-        // console.log('svgHeight/2', this.svgHeight/2)
         let links = this.svg.append('g')
             .attr('class', 'links')
             .selectAll("line")
