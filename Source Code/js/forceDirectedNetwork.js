@@ -56,10 +56,12 @@ class ForceDirectedNetwork {
     /**
      * Creates the forceDirectedNetwork, content and tool tips
      *
-     * @param selectedJournal - Journal selection
+     * @param journalCSVs - loaded CSVs containing profileGrid, cited, citations
      * @param year - year for display
+     * @param journal - journal to center
+     * @param mapType - 'Citing' or 'Cited'
      */
-	update (journalCSVs, year, journal){
+	update (journalCSVs, year, journal, mapType){
 	    // let temp = journalData[0].filter(d => {
 	    //     return parseInt(d.Year) === year
         // }).map( d => d.Journal);
@@ -71,37 +73,70 @@ class ForceDirectedNetwork {
         this.citingTab = journalCSVs[2];
         this.year = year;
 
+        console.log('citing', this.citingTab);
+        console.log('cited', this.citedTab);
+
 
         // create link structures
-        let journalsLinkInfo = this.citingTab.map( (d, i) => {
-            if(i>1){
-                return {
-                    journalName: d['Journal'],
-                    citedJournalName: d['Cited Journal'],
-                    impactFactor: d['Impact Factor'],
-                    citationCount: d[String(this.year)]
+        let journalsLinkInfo = undefined;
+        if(mapType === 'Citing') {
+            journalsLinkInfo = this.citingTab.map((d, i) => {
+                if (i > 1) {
+                    return {
+                        mainJournalName: d['Journal'],
+                        citationJournalName: d['Cited Journal'],
+                        impactFactor: d['Impact Factor'],
+                        citationCount: d[String(this.year)]
+                    }
                 }
-            }
-        });
-        journalsLinkInfo = journalsLinkInfo.slice(2); // get rid of blank rows
+            });
+            journalsLinkInfo = journalsLinkInfo.slice(2); // get rid of blank rows
 
-        // get rid of elements in array where cited journal is "ALL Journals", "ALL OTHERS (#number)" which varies, and self-cites
-        journalsLinkInfo = journalsLinkInfo.filter( d => {
-            return d.citedJournalName !== "ALL Journals";
-        });
-        journalsLinkInfo = journalsLinkInfo.filter( d => {
-            let string = d.citedJournalName;
-            let substring = "ALL OTHERS";
-            if(string.includes(substring)) {
-            } else {
-                return d.citedJournalName;
-            }
-        });
-        journalsLinkInfo = journalsLinkInfo.filter( d => {
-            return d.citedJournalName !== d.journalName;
-        });
-        journalsLinkInfo.forEach(d => {
-        })
+            // get rid of elements in array where cited journal is "ALL Journals", "ALL OTHERS (#number)" which varies, and self-cites
+            journalsLinkInfo = journalsLinkInfo.filter(d => {
+                return d.citationJournalName !== "ALL Journals";
+            });
+            journalsLinkInfo = journalsLinkInfo.filter(d => {
+                let string = d.citationJournalName;
+                let substring = "ALL OTHERS";
+                if (string.includes(substring)) {
+                } else {
+                    return d.citationJournalName;
+                }
+            });
+            journalsLinkInfo = journalsLinkInfo.filter(d => {
+                return d.citationJournalName !== d.mainJournalName;
+            });
+        } else if(mapType === 'Cited') {
+            journalsLinkInfo = this.citedTab.map((d, i) => {
+                if (i > 1) {
+                    return {
+                        mainJournalName: d['Journal'],
+                        citationJournalName: d['Citing Journal'],
+                        impactFactor: d['Impact Factor'],
+                        citationCount: d[String(this.year)]
+                    }
+                }
+            });
+            journalsLinkInfo = journalsLinkInfo.slice(2); // get rid of blank rows
+
+            // get rid of elements in array where cited journal is "ALL Journals", "ALL OTHERS (#number)" which varies, and self-cites
+            journalsLinkInfo = journalsLinkInfo.filter(d => {
+                return d.citationJournalName !== "ALL Journals";
+            });
+            // journalsLinkInfo = journalsLinkInfo.filter(d => {
+            //     let string = d.citationJournalName;
+            //     let substring = "ALL OTHERS";
+            //     if (string.includes(substring)) {
+            //     } else {
+            //         return d.citationJournalName;
+            //     }
+            // });
+            journalsLinkInfo = journalsLinkInfo.filter(d => {
+                return d.citationJournalName !== d.mainJournalName;
+            });
+        }
+
 
         // create node structures
         this.profileGrid.sort( function(a,b) {
@@ -121,10 +156,6 @@ class ForceDirectedNetwork {
 	    // make scale for circle sizes (have to sqrt for area)
         let domainMax = d3.max(journalsLinkInfo.map(d => parseFloat(d.impactFactor)));
         let domainMin = d3.min(journalsLinkInfo.map(d => parseFloat(d.impactFactor)));
-        // console.log('map', journalsLinkInfo.map(d => parseFloat(d.impactFactor)));
-        // console.log('JLI', journalsLinkInfo);
-        // console.log('domainMax', domainMax);
-        // console.log('domainMin', domainMin);
         let rangeMax = 20;
         let rangeMin = 3;
         let impactFactorScale = d3.scaleSqrt()
@@ -158,7 +189,7 @@ class ForceDirectedNetwork {
 
         // now irrelevant... filtered previously
         // // find the journal self-cite location and remove it so the selected journal doesn't have two nodes...
-        // let sameJournalDeleteIndex = journalsLinkInfo.map(d => d.citedJournalName).indexOf(currentJournal.journalName, 1);
+        // let sameJournalDeleteIndex = journalsLinkInfo.map(d => d.citationJournalName).indexOf(currentJournal.mainJournalName, 1);
         // // console.log('sameJournalDelete', sameJournalDeleteIndex);
         //
         // let sameJournalDelete = journalsLinkInfo[sameJournalDeleteIndex];
@@ -171,12 +202,12 @@ class ForceDirectedNetwork {
         //             return {
         //                 fx: this.svgWidth/2, // initially fix selected journal in center
         //                 fy: this.svgHeight/2,
-        //                 id: d.citedJournalName,
+        //                 id: d.citationJournalName,
         //                 impactFactor: d.impactFactor
         //             }
         //         } else {
         //             return {
-        //                 id: d.citedJournalName,
+        //                 id: d.citationJournalName,
         //                 impactFactor: d.impactFactor
         //             }
         //         }
@@ -200,8 +231,8 @@ class ForceDirectedNetwork {
             }),
             links: journalsLinkInfo.map(d => {
                 return {
-                    source: d.journalName,
-                    target: d.citedJournalName,
+                    source: d.mainJournalName,
+                    target: d.citationJournalName,
                     impactFactor: d.impactFactor,
                     citedCount: parseInt(d.citationCount)+1
                 }

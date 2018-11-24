@@ -35,9 +35,9 @@ for profGrid in journalProfGrid:
             print('row', row)
             if journalNamePattern.match(row[0]) != None:
                 finalIndex = journalNamePattern.match(row[0]).end()
-                # journalName = {row[0][finalIndex::]: {'Years': []}}
+                # mainJournalName = {row[0][finalIndex::]: {'Years': []}}
                 journalName = row[0][finalIndex::]
-                # journalInfo.append(journalName)
+                # journalInfo.append(mainJournalName)
                 journalInfo[journalName] = {'Years': [], 'impactFactor': []}
             if str.isdigit(row[0]):
                 journalInfo[journalName]['Years'].append(int(row[0]))
