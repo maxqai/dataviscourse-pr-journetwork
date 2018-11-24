@@ -8,15 +8,7 @@ class ForceDirectedNetwork {
 		this.horizontalBars = horizontalBars;
 		this.impactTrace = impactTrace;
 		this.journalInfoBox = journalInfoBox;
-		// Data - thinking I have to do this in the update since it changes
-        // this.profileGrid = journalData[0];
-        // this.citedTab = journalData[1];
-        // this.citingTab = journalData[2];
-        // this.year = initialYear;
-        // console.log('prfGrid', this.profileGrid);
-        // console.log('citedTab', this.citedTab);
-        // console.log('citingTab', this.citingTab);
-        // console.log('initYear', this.year);
+
 
         //initialize svg elements, svg sizing
         this.margin = {top: 10, right: 50, bottom: 20, left: 50};
@@ -105,18 +97,14 @@ class ForceDirectedNetwork {
             let string = d.citedJournalName;
             let substring = "ALL OTHERS";
             if(string.includes(substring)) {
-                // console.log('in?');
             } else {
-                // console.log('nope');
                 return d.citedJournalName;
             }
         });
         journalsLinkInfo = journalsLinkInfo.filter( d => {
             return d.citedJournalName !== d.journalName;
         });
-        // console.log('postFilterJournalLinkInfo', journalsLinkInfo);
         journalsLinkInfo.forEach(d => {
-            // console.log('journal', d.journalName, 'JLI cited', d.citedJournalName)
         })
 
         // create node structures
@@ -129,19 +117,23 @@ class ForceDirectedNetwork {
                 impactFactor: d['Journal Impact Factor']
             }
         });
-        console.log('journalsNodeInfo', journalsNodeInfo);
 
 
 
 
 
 	    // make scale for circle sizes (have to sqrt for area)
-        let domainMax = d3.max(journalsLinkInfo.map(d => d.impactFactor));
-        let domainMin = d3.min(journalsLinkInfo.map(d => d.impactFactor));
-        let rangeMax = 50;
-        let impactFactorScale = d3.scaleLinear()
+        let domainMax = d3.max(journalsLinkInfo.map(d => parseFloat(d.impactFactor)));
+        let domainMin = d3.min(journalsLinkInfo.map(d => parseFloat(d.impactFactor)));
+        // console.log('map', journalsLinkInfo.map(d => parseFloat(d.impactFactor)));
+        // console.log('JLI', journalsLinkInfo);
+        // console.log('domainMax', domainMax);
+        // console.log('domainMin', domainMin);
+        let rangeMax = 20;
+        let rangeMin = 3;
+        let impactFactorScale = d3.scaleSqrt()
             .domain([domainMin,domainMax])
-            .range([0,rangeMax]); //TODO: correction for area
+            .range([rangeMin,rangeMax]); //TODO: correction for area
 
 
         // make nodes and links similar to format below... we don't need groups at this point
@@ -266,7 +258,7 @@ class ForceDirectedNetwork {
             .data(forceData.nodes)
             .enter().append('circle')
             .attr('r', d => {
-                return this.area2Radius(d.impactFactor);
+                return impactFactorScale(d.impactFactor);
             })
             .call(d3.drag()
                   .on("start", dragstarted)
