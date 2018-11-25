@@ -249,6 +249,15 @@ class ForceDirectedNetwork {
             .attr('r', d => {
                 return impactFactorScale(d.impactFactor);
             })
+            .attr('fill', d => {
+                // console.log('d', d.id);
+                if(d.id === journal){
+                    console.log('in')
+                    return 'darkblue'
+                } else {
+                    return 'darkred'
+                }
+            })
             .call(d3.drag()
                   .on("start", dragstarted)
                   .on("drag", dragged)
@@ -300,6 +309,8 @@ class ForceDirectedNetwork {
         nodes
             .on('click', function() {
                 // console.log('hello', d3.select(this)._groups[0][0].__data__.id);
+                d3.select('#network > svg').selectAll('circle').classed('selectedNode', false);
+                d3.select(this).classed('selectedNode', true);
                 let journalName = d3.select(this)._groups[0][0].__data__.id;
                 journalInfoBox.update(journalName);
             })

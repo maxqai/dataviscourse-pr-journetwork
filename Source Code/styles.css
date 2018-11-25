@@ -126,4 +126,8 @@
     font-weight: bold;
 }
 
+
+.selectedNode{
+    stroke: black;
+    stroke-width:1%;
 }
