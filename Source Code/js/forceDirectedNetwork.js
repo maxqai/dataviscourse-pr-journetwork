@@ -252,7 +252,7 @@ class ForceDirectedNetwork {
             .attr('fill', d => {
                 // console.log('d', d.id);
                 if(d.id === journal){
-                    console.log('in')
+                    // console.log('in')
                     return 'darkblue'
                 } else {
                     return 'darkred'
