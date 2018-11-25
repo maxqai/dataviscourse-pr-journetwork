@@ -106,18 +106,16 @@ class HorizontalBars {
                 });
                 dataObj.push({Journal: allJournals[i], Abbreviation: currAb[0], Cited: d, Citing: currCiting[i]});
             });
+            // Sort by cited in descending order initially
+            dataObj.sort((a,b) => {
+                return b.Cited - a.Cited;
+            });
         }
 
         // Create linear scale for all bar charts
         let horzScale = d3.scaleLinear()
             .domain([0, domMax])
             .range([0, this.svgWidth]);
-
-        // Sort by cited in descending order initially
-        // dataObj.sort((a,b) => {
-        //     // console.log('a.Cited ', a.Cited, 'b.Cited ', b.Cited);
-        //     return b.Cited - a.Cited;
-        // });
 
         // Try removing all old rects and text instead of worrying about updating them
         d3.select('.citedBars').selectAll('rect').remove();
@@ -410,14 +408,16 @@ class HorizontalBars {
             .tickValues([-10000, -5000, 0, 5000, 10000])
             .tickFormat(d3.formatPrefix(".1", 1e3));
 
+        d3.selectAll('.barAxis').remove();
+
         d3.select('#horizontalBars > svg').append('g')
             .classed('barAxis', true)
             .attr("transform", "translate(" + (horzScale(yearMax) + this.padding) + "," + 45 + ")")
             .call(xAxis);
 
         // Add column headers above bars
-        d3.select('.citedHead').selectAll('text').remove();
-        d3.select('.citingHead').selectAll('text').remove();
+        d3.selectAll('.citedHead').remove();
+        d3.selectAll('.citingHead').remove();
 
         d3.select('#horizontalBars > svg').append('text')
             .text('Cited')
@@ -433,8 +433,30 @@ class HorizontalBars {
 
         // TODO: Implement clicking on bars to select a new journal
 
+        // handle clicks on cited bar
+        d3.select('.citedBars').selectAll('rect')
+            .on('click', function(d) {
+                // console.log('cited bar click d', d);
+                // push selected journal to forceDirectedNetwork along with other needed inputs
+                // forceDirectedNetwork(  ...  )
+            });
+        // handle clicks on citing bar
+        d3.select('.citingBars').selectAll('rect')
+            .on('click', function(d) {
+                // console.log('citing bar click d', d);
+                // push selected journal to forceDirectedNetwork along with other needed inputs
+                // forceDirectedNetwork(  ...  )
+            });
+        // handle clicks on text
+        d3.select('.citingBars').selectAll('text')
+            .on('click', function(d) {
+                // console.log('text click d', d);
+                // push selected journal to forceDirectedNetwork along with other needed inputs
+                // forceDirectedNetwork(  ...  )
+            });
 
-        // TODO: Enable sorting by clicking on column headers
+        // TODO: Enable reverse sorting by clicking on column headers?
+
         d3.select('.citedHead')
             .on('click', function() {
                 dataObj.sort((a,b) => {
