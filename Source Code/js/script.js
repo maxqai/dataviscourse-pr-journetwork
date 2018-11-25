@@ -15,8 +15,6 @@ let impactTrace = new ImpactTrace();
 
 let journalInfoBox = new JournalInfoBox();
 
-// initiate necessary objects
-
 
 // load all data
 let initialYear = 2017;

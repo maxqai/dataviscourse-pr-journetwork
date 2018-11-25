@@ -73,9 +73,6 @@ class ForceDirectedNetwork {
         this.citingTab = journalCSVs[2];
         this.year = year;
 
-        console.log('citing', this.citingTab);
-        console.log('cited', this.citedTab);
-
 
         // create link structures
         let journalsLinkInfo = undefined;
@@ -187,31 +184,6 @@ class ForceDirectedNetwork {
                 // }
         // d3.json('https://gist.githubusercontent.com/mbostock/4062045/raw/5916d145c8c048a6e3086915a6be464467391c62/miserables.json').then( d => console.log('json', d));
 
-        // now irrelevant... filtered previously
-        // // find the journal self-cite location and remove it so the selected journal doesn't have two nodes...
-        // let sameJournalDeleteIndex = journalsLinkInfo.map(d => d.citationJournalName).indexOf(currentJournal.mainJournalName, 1);
-        // // console.log('sameJournalDelete', sameJournalDeleteIndex);
-        //
-        // let sameJournalDelete = journalsLinkInfo[sameJournalDeleteIndex];
-        // journalsLinkInfo.splice(sameJournalDelete,1);
-        // // console.log('journalsLinkInfo', journalsLinkInfo);
-
-        // let forceData = {
-        //     nodes: journalsLinkInfo.map((d,i) => {
-        //         if(i === 0) {
-        //             return {
-        //                 fx: this.svgWidth/2, // initially fix selected journal in center
-        //                 fy: this.svgHeight/2,
-        //                 id: d.citationJournalName,
-        //                 impactFactor: d.impactFactor
-        //             }
-        //         } else {
-        //             return {
-        //                 id: d.citationJournalName,
-        //                 impactFactor: d.impactFactor
-        //             }
-        //         }
-        //     }),
         let forceData = {
             nodes: journalsNodeInfo.map((d,i) => {
                 if(d.journal === journal) {
@@ -239,16 +211,11 @@ class ForceDirectedNetwork {
             })
         };
 
-
-
-
+        //citation scale
         let citeMax = d3.max(journalsLinkInfo.map( d => {
-            // console.log('d.citationCount', parseInt(d.citationCount));
             return parseInt(d.citationCount);
         }));
-        // console.log('citeMax', citeMax);
         let citeMin = d3.min(journalsLinkInfo.map( d => parseInt(d.citationCount)));
-        // console.log('citeMin', citeMin);
         let citationScale = d3.scaleLog()
             .domain([citeMin+1, citeMax+1])
             .range([citeMax+1, citeMin+1]);
@@ -328,6 +295,14 @@ class ForceDirectedNetwork {
         this.impactTrace.update(journalCSVs[0], journalCSVs[1], journalCSVs[2]);
         // Update horizontalBars graph with above values
         this.horizontalBars.update(this.citedTab, this.citingTab, this.year, journal, journalCSVs[3]);
+
+        //update journalInfoBox on click
+        nodes
+            .on('click', function() {
+                // console.log('hello', d3.select(this)._groups[0][0].__data__.id);
+                let journalName = d3.select(this)._groups[0][0].__data__.id;
+                journalInfoBox.update(journalName);
+            })
 
 			// this.tip.html((d)=> {
 			// 		let tooltip_data = {
