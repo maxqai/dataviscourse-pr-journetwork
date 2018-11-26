@@ -80,21 +80,27 @@ class JournalInfoBox {
         ul.append('li')
             .text(function() {
                 if (currData[0]['Title29'].toUpperCase() === currData[0]['Title20'].toUpperCase()) {
-                    return 'Common Abbreviation: ' + currData[0]['Title29'];
+                    return 'Abbreviation: ' + currData[0]['Title29'];
                 } else {
-                    return 'Common Abbreviations: ' + currData[0]['Title29'] + '; ' + currData[0]['Title20'];
+                    return 'Abbreviations: ' + currData[0]['Title29'] + '; ' + currData[0]['Title20'];
                 }
             });
         ul.append('li')
             .text('Category: ' + currData[0]['Category']);
         ul.append('li')
             .text('ISSN: ' + currData[0]['ISSN']);
-        ul.append('li')
-            .text('EISSN: ' + currData[0]['EISSN']);
-        ul.append('li')
-            .text('Website: ' + currData[0]['Link']);
-        ul.append('li')
-            .text('Wikipedia Page: ' + currData[0]['WikiLink']);
+        if (currData[0]['EISSN'] !== 'null') {
+            ul.append('li')
+                .text('EISSN: ' + currData[0]['EISSN']);
+        }
+        if (currData[0]['Link'] !== 'null') {
+            ul.append('li')
+                .html("<a href='" + currData[0]['Link'] + "' target='_blank'>Website</a>");
+        }
+        if (currData[0]['WikiLink'] !== 'null') {
+            ul.append('li')
+                .html("<a href='" + currData[0]['WikiLink'] + "' target='_blank'>Wikipedia Page</a>");
+        }
         ul.append('p')
             .text(currData[0]['Description']);
 

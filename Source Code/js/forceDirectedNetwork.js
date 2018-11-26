@@ -350,6 +350,9 @@ class ForceDirectedNetwork {
         //             this.votePercentageChart.update(selectedYear);
         //         })
         //     });
+
+        // Auto-scroll to top of page when network is redrawn (or when page is reloaded)
+        document.body.scrollTop = document.documentElement.scrollTop = 0;
 	};
 
 
