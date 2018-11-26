@@ -91,6 +91,22 @@ class ImpactTrace {
                         .domain([0, endJIF])
                         .range([this.svgHeight - this.margin.bottom, this.margin.top]);
 
+        // Create X axis
+        this.Xaxis = d3.axisBottom(this.Xscale).ticks(endYear-startYear+1,'Years');
+
+        // Create Y axis
+        this.Yaxis = d3.axisLeft(this.Yscale).ticks(Math.ceil(endJIF), 'Journal Impact Factor');
+
+        // Append Axis
+        this.svg.append("g")
+                .attr("id", "Axes")
+                .attr("transform = translate("+ this.svgHeight - this.margin.bottom + ",0)")
+                .call(this.Xaxis(startYear, endYear));
+
+        this.svg.select("#Axes")
+                .attr("transform","translate(0,30)")
+                .call(this.Yaxis(0, endJIF));
+
         // create line
         this.line = d3.line()
                       .x(e2 => {
@@ -125,20 +141,19 @@ class ImpactTrace {
             // Calculate Line Data Points
             let l1 = this.line(data);
 
-            let path = this.svg.append("g")
+            let pathed = this.svg.append("g")
                     .attr("id", "ImpactTrace")
                     .selectAll("path")
                     .data(l1);
 
             // Append Paths
-            path.enter()
+            pathed.enter()
                 .append("path")
-                .attr("d", l1)
-                .style("stroke-opacity", 0.5)
-                .style("stroke-color", "#2ca25f");
-
+                .attr("d", l1);
             // Redo Loop
         })
+
+
 
 	};
 }
