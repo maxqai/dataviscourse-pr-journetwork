@@ -137,3 +137,9 @@
     stroke: black;
     stroke-width:1%;
 }
+
+path {
+  fill: none;
+  stroke: #000;
+  stroke-width: 1.5px;
+}
