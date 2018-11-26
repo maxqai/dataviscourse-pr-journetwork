@@ -101,6 +101,12 @@
     font-size: 0.75em;
 }
 
+.infoList{
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
 #hlightCited {
     fill: #6FB98F;
 }
