@@ -57,8 +57,6 @@ class JournalInfoBox {
             return d['Full Journal Title'].toUpperCase() === selectedJournal.toUpperCase();
         });
 
-        console.log('currData', currData);
-
         d3.select('#infoBox > g').remove();
 
         d3.select('#infoBox').append('g');
