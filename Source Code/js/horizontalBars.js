@@ -406,7 +406,8 @@ class HorizontalBars {
             .scale(fullScale)
             // .ticks(2)
             .tickValues([-10000, -5000, 0, 5000, 10000])
-            .tickFormat(d3.formatPrefix(".1", 1e3));
+            .tickFormat(d => Math.abs(d));
+            // .tickFormat(d3.formatPrefix(".0", 1e3));
 
         d3.selectAll('.barAxis').remove();
 
@@ -431,28 +432,26 @@ class HorizontalBars {
             .attr('y', 20)
             .classed('citingHead', true);
 
-        // TODO: Implement clicking on bars to select a new journal
-
         // handle clicks on cited bar
         d3.select('.citedBars').selectAll('rect')
             .on('click', function(d) {
                 // console.log('cited bar click d', d);
                 // push selected journal to forceDirectedNetwork along with other needed inputs
-                // forceDirectedNetwork(  ...  )
+                // forceDirectedNetwork.update(  ...  )
             });
         // handle clicks on citing bar
         d3.select('.citingBars').selectAll('rect')
             .on('click', function(d) {
                 // console.log('citing bar click d', d);
                 // push selected journal to forceDirectedNetwork along with other needed inputs
-                // forceDirectedNetwork(  ...  )
+                // forceDirectedNetwork.update(  ...  )
             });
         // handle clicks on text
         d3.select('.citingBars').selectAll('text')
             .on('click', function(d) {
                 // console.log('text click d', d);
                 // push selected journal to forceDirectedNetwork along with other needed inputs
-                // forceDirectedNetwork(  ...  )
+                // forceDirectedNetwork.update(  ...  )
             });
 
         // TODO: Enable reverse sorting by clicking on column headers?
