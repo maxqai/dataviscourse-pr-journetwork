@@ -98,14 +98,14 @@ class ImpactTrace {
         this.Yaxis = d3.axisLeft(this.Yscale).ticks(Math.ceil(endJIF), 'Journal Impact Factor');
 
         // Append Axis
-        this.svg.append("g")
-                .attr("id", "Axes")
-                .attr("transform = translate("+ this.svgHeight - this.margin.bottom + ",0)")
-                .call(this.Xaxis(startYear, endYear));
-
-        this.svg.select("#Axes")
-                .attr("transform","translate(0,30)")
-                .call(this.Yaxis(0, endJIF));
+//        this.svg.append("g")
+//                .attr("id", "Axes")
+//                .attr("transform = translate("+ this.svgHeight - this.margin.bottom + ",0)")
+//                .call(this.Xaxis(startYear, endYear));
+//
+//        this.svg.select("#Axes")
+//                .attr("transform","translate(0,30)")
+//                .call(this.Yaxis(0, endJIF));
 
         // create line
         this.line = d3.line()
