@@ -9,13 +9,13 @@ class ImpactTrace {
 
         //fetch the svg bounds
         this.svgBounds = divImpactTrace.node().getBoundingClientRect();
-        this.svgWidth = this.svgBounds.width - this.margin.left - this.margin.right;
-        this.svgHeight = this.svgBounds.height - this.margin.bottom - this.margin.top;
+        this.svgWidth = this.svgBounds.width - this.margin.left/2 - this.margin.right/2;
+        this.svgHeight = 400;
 
         //add the svg to the div
         this.svg = divImpactTrace.append("svg")
             .attr("width", this.svgWidth)
-            .attr("height", 400);//TODO: fix this to not be hardcoded
+            .attr("height", this.svgHeight);//TODO: fix this to not be hardcoded
 
 		//for reference: https://github.com/Caged/d3-tip
 		//Use this tool tip element to handle any hover over the chart
@@ -47,57 +47,98 @@ class ImpactTrace {
 	 * @param journalsImpact - array of journals with their impact factor over time
 	 */
 	update (Grid, Cited, Citing){
-        console.log('Grid', Grid)
-        console.log('Cited', Cited)
-        console.log('Citing', Citing)
 
         // Find the Min Grid Journal Year
         this.Years = Grid.map(d => {
             return parseInt(d["Year"])
         })
 
-        let JIF = Grid.map(d => {
-            return parseFloat(d["Journal Impact Factor"])
-        })
+        // Find Min and Max Years
+        let startYear = d3.min(this.Years)
+        let endYear = d3.max(this.Years)
 
-        this.startYear = d3.min(this.Years)
-        this.endYear = d3.max(this.Years)
-
-        let JIFmax = d3.max(JIF)
-        let JIFmin = d3.min(JIF)
-
-        var cname = Grid[0].name
-
-        // X-axis based on year range
-        this.Xscale = d3.scaleLinear()
-                        .domain([this.startYear, this.endYear])
-                        .range(0, this.svgWidth)
-        // Y-axis based on Journal Impact Factor
-        this.Yscale = d3.scaleLinear()
-                        .domain([JIFmin, JIFmax])
-                        .range(0, this.svgHeight)
-        // Journal Name List
-        let name = Grid.map((d,i) => {
-            if (i == 0){
-                return d["Journal"]
-            } else if (d["Journal"] !== Grid[i-1]["Journal"]){
+        // Find All Unique Journal Names else return Undefineds
+        this.name = Grid.map((d,i) => {
+            if (i > 0){
+                if (d["Journal"] !== Grid[i-1]["Journal"]) {
+                    return d["Journal"]
+                }
+            } else {
                 return d["Journal"]
             }
-        })
-        name = name.filter(d => {
-            if (d !== null){
+        });
+        // Filter out undefined names
+        this.name = this.name.filter(d => {
+            if (d !== ""){
                 return d
             }
-        })
-
-        // Filter Data Based On Year and Names
-        name.forEach(d => {
-            this.svg.append("g")
-                    .attr("id", i)
         });
 
-        // Organize Data into
+        // Filter JIF values
+        this.JIF = Grid.map(d => {
+            return parseInt(d["Journal Impact Factor"])
+        })
 
+        let endJIF = d3.max(this.JIF);
+
+        // create Xscale based on year values
+        this.Xscale = d3.scaleLinear()
+                        .domain([startYear, endYear])
+                        .range([0, this.svgWidth - this.margin.left/2 - this.margin.right/2]);
+
+        // create Yscale based on JIF values
+        this.Yscale = d3.scaleLinear()
+                        .domain([0, endJIF])
+                        .range([this.svgHeight - this.margin.bottom, this.margin.top]);
+
+        // create line
+        this.line = d3.line()
+                      .x(e2 => {
+                        return this.Xscale(parseInt(e2["Year"]));
+                        })
+                      .y(e2 => {
+                        if (e2["Journal Impact Factor"] === "Not Available") {
+                            return this.Yscale(0);
+                        } else {
+                            return this.Yscale(parseInt(e2["Journal Impact Factor"]));
+                        }
+                        });
+
+        // append values to svg - every 100
+        var curr;
+        var Grids = Grid;
+
+        this.name.forEach((d,i) => {
+            // Filter Data
+            this.d = d;
+            let data = Grids.filter(ele1 => {
+                if (ele1.Journal === this.d) {
+                    return ele1
+                }
+            });
+
+            // Sort Data
+            let d1 = data.sort(function(e1, e2) {
+                return d3.ascending(e1.Year, e2.Year)
+            })
+
+            // Calculate Line Data Points
+            let l1 = this.line(data);
+
+            let path = this.svg.append("g")
+                    .attr("id", "ImpactTrace")
+                    .selectAll("path")
+                    .data(l1);
+
+            // Append Paths
+            path.enter()
+                .append("path")
+                .attr("d", l1)
+                .style("stroke-opacity", 0.5)
+                .style("stroke-color", "#2ca25f");
+
+            // Redo Loop
+        })
 
 	};
 }
