@@ -304,6 +304,7 @@ class ForceDirectedNetwork {
         this.impactTrace.update(journalCSVs[0], journalCSVs[1], journalCSVs[2]);
         // Update horizontalBars graph with above values
         this.horizontalBars.update(this.citedTab, this.citingTab, this.year, journal, journalCSVs[3]);
+        this.journalInfoBox.update(journal, journalCSVs[3]);
 
         //update journalInfoBox on click
         nodes
@@ -312,7 +313,7 @@ class ForceDirectedNetwork {
                 d3.select('#network > svg').selectAll('circle').classed('selectedNode', false);
                 d3.select(this).classed('selectedNode', true);
                 let journalName = d3.select(this)._groups[0][0].__data__.id;
-                journalInfoBox.update(journalName);
+                journalInfoBox.update(journalName, journalCSVs[3]);
             })
 
 			// this.tip.html((d)=> {

@@ -15,7 +15,7 @@ class JournalInfoBox {
         //add the svg to the div
         this.svg = divInfoBox.append("svg")
             .attr("width", this.svgWidth)
-            .attr("height", 30);//TODO: fix this to not be hardcoded
+            .attr("height", 800);//TODO: fix this to not be hardcoded
 
 
 
@@ -48,7 +48,10 @@ class JournalInfoBox {
 	 *
 	 * @param selectedJournal - Journal selection
 	 */
-	update (selectedJournal){
+	update (selectedJournal, jData){
+
+	    // console.log('Info Journal', selectedJournal);
+	    // console.log('Journal Data', jData);
 
 			// this.tip.html((d)=> {
 			// 		let tooltip_data = {
