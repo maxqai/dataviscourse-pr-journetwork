@@ -48,17 +48,30 @@ class ImpactTrace {
 	 */
 	update (Grid, Cited, Citing){
 
-        // Find the Min Grid Journal Year
+        // First Sort the Data
+        Grid = Grid.sort(function (e1, e2) {
+            return d3.ascending(e1.Year, e2.Year)
+        });
+
+        Cited = Cited.sort(function(e1, e2) {
+            return d3.ascending(e1.Year, e2.Year)
+        });
+
+        Citing = Citing.sort(function(e1, e2) {
+            return d3.ascending(e1.Year, e2.Year)
+        });
+
+        // Separate Years
         this.Years = Grid.map(d => {
             return parseInt(d["Year"])
-        })
+        });
 
         // Find Min and Max Years
         let startYear = d3.min(this.Years)
         let endYear = d3.max(this.Years)
 
         // Find All Unique Journal Names else return Undefineds
-        this.name = Grid.map((d,i) => {
+        let name = Grid.map((d,i) => {
             if (i > 0){
                 if (d["Journal"] !== Grid[i-1]["Journal"]) {
                     return d["Journal"]
@@ -67,8 +80,9 @@ class ImpactTrace {
                 return d["Journal"]
             }
         });
+
         // Filter out undefined names
-        this.name = this.name.filter(d => {
+        name = name.filter(d => {
             if (d !== ""){
                 return d
             }
@@ -92,68 +106,45 @@ class ImpactTrace {
                         .range([this.svgHeight - this.margin.bottom, this.margin.top]);
 
         // Create X axis
-        this.Xaxis = d3.axisBottom(this.Xscale).ticks(endYear-startYear+1,'Years');
+        this.Xaxis = d3.axisBottom(this.Xscale);
 
         // Create Y axis
-        this.Yaxis = d3.axisLeft(this.Yscale).ticks(Math.ceil(endJIF), 'Journal Impact Factor');
-
-        // Append Axis
-//        this.svg.append("g")
-//                .attr("id", "Axes")
-//                .attr("transform = translate("+ this.svgHeight - this.margin.bottom + ",0)")
-//                .call(this.Xaxis(startYear, endYear));
-//
-//        this.svg.select("#Axes")
-//                .attr("transform","translate(0,30)")
-//                .call(this.Yaxis(0, endJIF));
+        this.Yaxis = d3.axisLeft(this.Yscale);
 
         // create line
         this.line = d3.line()
                       .x(e2 => {
-                        return this.Xscale(parseInt(e2["Year"]));
+                        return this.Xscale(e2[0]);
                         })
                       .y(e2 => {
                         if (e2["Journal Impact Factor"] === "Not Available") {
                             return this.Yscale(0);
                         } else {
-                            return this.Yscale(parseInt(e2["Journal Impact Factor"]));
+                            return this.Yscale(e2[1]);
                         }
                         });
 
-        // append values to svg - every 100
-        var curr;
-        var Grids = Grid;
-
-        this.name.forEach((d,i) => {
-            // Filter Data
-            this.d = d;
-            let data = Grids.filter(ele1 => {
-                if (ele1.Journal === this.d) {
-                    return ele1
+        let lines = name.map((e1,i) => {
+            let vals = Grid.filter((e2,i) => {
+                if (e2["Journal"] === e1){
+                    return e2;
                 }
             });
 
-            // Sort Data
-            let d1 = data.sort(function(e1, e2) {
-                return d3.ascending(e1.Year, e2.Year)
-            })
+            vals = vals.map((e2,i) => {
+                return [parseInt(e2["Year"]), parseFloat(e2["Journal Impact Factor"])]
+            });
 
-            // Calculate Line Data Points
-            let l1 = this.line(data);
+            return this.line(vals);
+        });
 
-            let pathed = this.svg.append("g")
-                    .attr("id", "ImpactTrace")
-                    .selectAll("path")
-                    .data(l1);
-
-            // Append Paths
-            pathed.enter()
-                .append("path")
-                .attr("d", l1);
-            // Redo Loop
-        })
-
-
-
+        console.log(lines);
+        let lined = this.svg.append("g")
+                .attr("id", "ImpactTrace")
+                .selectAll("path")
+                .data(lines);
+        lined.exit().remove();
+        lined.enter().append("path")
+                     .attr("d", d => {return d});
 	};
 }
