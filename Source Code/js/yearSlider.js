@@ -2,7 +2,7 @@
 // adapted from votePercentageChart.js
 class YearSlider {
 
-    constructor(intialYear){
+    constructor(forceDirectedNetwork, journalData, initialYear, initialJournal, mapType){
 
         this.activeYear = initialYear;
 
@@ -43,15 +43,9 @@ class YearSlider {
         sliderText.attr('y', 25);
 
         yearSlider.on('input', function() {
-            // ++++++++ BEGIN CUT +++++++++++
             sliderText.text(this.value);
             sliderText.attr('x', yearScale(this.value));
-            // let xValue = d3.select('#dropdown_x').select('select').node().value;
-            // let yValue = d3.select('#dropdown_y').select('select').node().value;
-            // let cValue = d3.select('#dropdown_c').select('select').node().value;
-            // that.updatePlot(String(this.value), xValue, yValue, cValue);
-            // that.updateYear(String(this.value));
-            // ++++++++ END CUT +++++++++++
+            // forceDirectedNetwork.update(journalData, parseInt(this.value), initialJournal, mapType);
         });
 
 

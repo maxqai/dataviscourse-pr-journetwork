@@ -438,7 +438,7 @@ class HorizontalBars {
         // handle clicks on cited bar
         d3.select('.citedBars').selectAll('rect')
             .on('click', function(d) {
-                // console.log('cited bar click d', d);
+                console.log('cited bar click d', d);
                 // push selected journal to forceDirectedNetwork along with other needed inputs
                 // forceDirectedNetwork.update(  ...  )
             });

@@ -2,9 +2,8 @@
 // adapted from votePercentageChart.js
 class ForceDirectedNetwork {
 
-    constructor(yearSlider, horizontalBars, impactTrace, journalInfoBox){
+    constructor(horizontalBars, impactTrace, journalInfoBox){
         // Make accessible
-		this.yearSlider = yearSlider;
 		this.horizontalBars = horizontalBars;
 		this.impactTrace = impactTrace;
 		this.journalInfoBox = journalInfoBox;

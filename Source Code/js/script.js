@@ -1,7 +1,7 @@
 
 let initialYear = 2017;
 
-let yearSlider = new YearSlider(initialYear);
+// let yearSlider = new YearSlider(initialYear);
 
 let horizontalBars = new HorizontalBars();
 
@@ -103,10 +103,11 @@ Promise.all(promises).then( data => {
 
     journalData[3] = data[3]; // set up to pass top 100 info with journal info and abbreviations
 
-    let forceDirectedNetwork = new ForceDirectedNetwork(yearSlider, horizontalBars, impactTrace, journalInfoBox);
+    let forceDirectedNetwork = new ForceDirectedNetwork(horizontalBars, impactTrace, journalInfoBox);
     forceDirectedNetwork.update(journalData, initialYear, initialJournal, 'Cited');
 
     let searchBar = new SearchBar(forceDirectedNetwork);
+    let yearSlider = new YearSlider(forceDirectedNetwork, journalData, initialYear, initialJournal, 'Cited');
 
     let uInput = d3.select('#uinput');
     uInput.on('click', function() {
