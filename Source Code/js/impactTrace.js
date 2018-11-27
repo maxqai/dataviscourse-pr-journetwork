@@ -98,18 +98,34 @@ class ImpactTrace {
         // create Xscale based on year values
         this.Xscale = d3.scaleLinear()
                         .domain([startYear, endYear])
-                        .range([0, this.svgWidth - this.margin.left/2 - this.margin.right/2]);
+                        .range([this.margin.left/2, this.svgWidth - this.margin.right/2]);
 
         // create Yscale based on JIF values
         this.Yscale = d3.scaleLinear()
                         .domain([0, endJIF])
-                        .range([this.svgHeight - this.margin.bottom, this.margin.top]);
+                        .range([this.svgHeight - this.margin.bottom, 2 * this.margin.top]);
 
         // Create X axis
-        this.Xaxis = d3.axisBottom(this.Xscale);
+        this.Xaxis = d3.axisBottom();
+        this.Xaxis
+            .scale(this.Xscale);
+//            .tickValues([1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017]);
 
         // Create Y axis
-        this.Yaxis = d3.axisLeft(this.Yscale);
+        this.Yaxis = d3.axisLeft();
+        this.Yaxis
+            .scale(this.Yscale);
+
+        this.svg.append("g")
+                .classed("lineAxis", true)
+                .attr("transform","translate(" + 0 + "," + 380 + ")")
+                .call(this.Xaxis)
+
+        this.svg.append("g")
+                .classed("lineAxis", true)
+                .attr("transform","translate(" + 15 + "," + 0 + ")")
+                .call(this.Yaxis)
+
 
         // create line
         this.line = d3.line()
@@ -130,15 +146,14 @@ class ImpactTrace {
                     return e2;
                 }
             });
-
             vals = vals.map((e2,i) => {
-                return [parseInt(e2["Year"]), parseFloat(e2["Journal Impact Factor"])]
+                return [parseInt(e2["Year"]), parseFloat(e2["Journal Impact Factor"], e2["Journal"])]
             });
             return this.line(vals);
         });
 
         let lined = this.svg.append("g")
-                .attr("id", "ImpactTrace")
+                .classed("ImpactTrace", true)
                 .selectAll("path")
                 .data(lines);
         lined.exit().remove();
@@ -146,14 +161,23 @@ class ImpactTrace {
                      .attr("d", d => {return d});
 
 
-//        d3.select(".ImpactTrace")
-//          .selectAll("path")
-//                .on("mouseover", function(d) {
-//                    d3.select(this)
-//                      .attr("id", "hlightCited")
-//                      .append("title")
-//                      .text("Journal: ", d)
-//                      .classed("barsTitle", true);
-//          });
+        d3.select(".ImpactTrace")
+                .selectAll("path")
+                .on("mouseover", function(d) {
+                    d3.select(this)
+                      .attr("id", "hlightCited")
+                      .append("title")
+                      .text("Journal: ", d => {
+                        console.log(d);
+                      })
+                      .classed("barsTitle", true);
+
+                })
+                .on("mouseout", function(d) {
+                    d3.select(this)
+                      .attr("id", d => {
+                        console.log(d);
+                      })
+                });
     };
 }
