@@ -66,41 +66,43 @@ class SearchBar {
         // TODO: Add styling to results to prevent them from being full width when highlighted
 
         // create ul below search box after removing any old ones
-        d3.select('#ulsearch').remove();
-        let ul = d3.select('#search').append('ul')
-            .attr('id', 'ulsearch')
-            .attr('class', 'searchResults');
+        d3.selectAll('#ulsearch').remove();
+        if (currInput.length > 0) {
+            let ul = d3.select('#search').append('ul')
+                .attr('id', 'ulsearch')
+                .attr('class', 'searchResults');
 
-        // now add list elements for each match, up to 10 matches
-        let abbsearchResults = searchResults.slice(0,10);
-        ul.selectAll('li')
-            .data(abbsearchResults)
-            .enter()
-            .append('li')
-            .html(String);
+            // now add list elements for each match, up to 10 matches
+            let abbsearchResults = searchResults.slice(0, 10);
+            ul.selectAll('li')
+                .data(abbsearchResults)
+                .enter()
+                .append('li')
+                .html(String);
 
 
-        // set events for hover and click on resulting items
-        d3.select('#ulsearch').selectAll('li')
-            .on('mouseover', function(d) {
-                d3.select(this)
-                    .classed('searchHighlight', true)
-            })
-            .on('mouseout', function(d) {
-                d3.select(this)
-                    .classed('searchHighlight', false)
-            })
-            .on('click', function(d) {
-                // return the selected journal
-                let currJournal = d3.select(this).data()[0];
-                // console.log('current selection: ', currJournal);
-                // put clicked text in search box
-                document.getElementById('uinput').value = currJournal;
-                // remove search list
-                d3.select('#ulsearch').remove();
-                // call update method of forceDirectedNetwork with appropriate inputs
-                // forceDirectedNetwork.update( ... );
-            });
+            // set events for hover and click on resulting items
+            d3.select('#ulsearch').selectAll('li')
+                .on('mouseover', function (d) {
+                    d3.select(this)
+                        .classed('searchHighlight', true)
+                })
+                .on('mouseout', function (d) {
+                    d3.select(this)
+                        .classed('searchHighlight', false)
+                })
+                .on('click', function (d) {
+                    // return the selected journal
+                    let currJournal = d3.select(this).data()[0];
+                    // console.log('current selection: ', currJournal);
+                    // put clicked text in search box
+                    document.getElementById('uinput').value = currJournal;
+                    // remove search list
+                    d3.select('#ulsearch').remove();
+                    // call update method of forceDirectedNetwork with appropriate inputs
+                    // forceDirectedNetwork.update( ... );
+                });
+        }
 
 			// this.tip.html((d)=> {
 			// 		let tooltip_data = {

@@ -15,7 +15,7 @@ class HorizontalBars {
         //add the svg to the div
         this.svg = divHorizontalBars.append("svg")
             .attr("width", this.svgWidth)
-            .attr("height", 3000);//TODO: fix this to not be hardcoded
+            .attr("height", 400);//TODO: fix this to not be hardcoded
 
         //add a group for each political party to the svg
         this.svg.append('g')
@@ -111,8 +111,8 @@ class HorizontalBars {
                 return b.Cited - a.Cited;
             });
             // Limit results to just top 10
-            dataObj = dataObj.slice(0,10);
-            // console.log('dataObj top 10', dataObj.slice(0,10));
+            dataObj = dataObj.slice(0,15);
+            // console.log('dataObj top 15', dataObj.slice(0,15));
         }
 
         // Create linear scale for all bar charts

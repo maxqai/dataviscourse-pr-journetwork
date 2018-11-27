@@ -61,6 +61,12 @@
     list-style: none;
     margin: 0;
     padding: 0;
+    position: fixed;
+    background-color: white;
+    width: 543px;
+    border-width: 1px;
+    border-style: solid;
+    border-color: transparent #cbcfe2 #c8cee7 #c4c7d7;
 }
 
 .searchHighlight {
