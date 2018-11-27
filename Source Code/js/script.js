@@ -1,5 +1,7 @@
 
-let yearSlider = new YearSlider();
+let initialYear = 2017;
+
+let yearSlider = new YearSlider(initialYear);
 
 let horizontalBars = new HorizontalBars();
 
@@ -9,14 +11,13 @@ let journalInfoBox = new JournalInfoBox();
 
 
 // load all data
-let initialYear = 2017;
 let initialJournal = 'Nature';
 let journalFiles = ["filtered data/AllJournalProfileGrid.csv", "filtered data/AllJournalCitedTab.csv", "filtered data/AllJournalCitingTab.csv"];
 let promises = [];
 journalFiles.forEach( file => {
     promises.push(d3.csv(file));
 });
-promises.push(d3.json('data/100_Top_Journals.json'))
+promises.push(d3.json('data/100_Top_Journals.json'));
 
 
 Promise.all(promises).then( data => {
