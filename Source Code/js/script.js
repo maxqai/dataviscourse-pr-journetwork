@@ -1,10 +1,3 @@
-let searchBar = new SearchBar();
-// let uInput = d3.select('#uinput');
-// uInput.on('click', function() {
-//     uInput.on('keyup', function() {
-//         searchBar.update(document.getElementById('uinput').value);
-//     })
-// });
 
 let yearSlider = new YearSlider();
 
@@ -112,10 +105,13 @@ Promise.all(promises).then( data => {
     let forceDirectedNetwork = new ForceDirectedNetwork(yearSlider, horizontalBars, impactTrace, journalInfoBox);
     forceDirectedNetwork.update(journalData, initialYear, initialJournal, 'Cited');
 
+    let searchBar = new SearchBar(forceDirectedNetwork);
+
     let uInput = d3.select('#uinput');
     uInput.on('click', function() {
         uInput.on('keyup', function() {
-            searchBar.update(document.getElementById('uinput').value, data[3]);
+            // searchBar.update(document.getElementById('uinput').value, data[3]);
+            searchBar.update(document.getElementById('uinput').value, journalData, initialYear, 'Cited');
         })
     });
 });

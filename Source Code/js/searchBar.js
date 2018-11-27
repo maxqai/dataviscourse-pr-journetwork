@@ -2,7 +2,11 @@
 // adapted from votePercentageChart.js
 class SearchBar {
 
-    constructor(){
+    constructor(forceDirectedNetwork){
+        // make accessible
+        this.forceDirectedNetwork = forceDirectedNetwork;
+
+
         //initialize svg elements, svg sizing
         // this.margin = {top: 10, right: 50, bottom: 20, left: 50};
         // let divSearchBar = d3.select("#search").classed("horizontalBars", true);
@@ -31,13 +35,15 @@ class SearchBar {
 	 * Creates the searchBar, content and tool tips
 	 *
 	 * @param currInput - potential journal selection
-     * @param journalData - top 100 journal info as loaded from JSON
+     * @param allData - includes top 100 journal info as loaded from JSON
+     * @param year - necessary input to forceDirectedNetwork (called on click)
+     * @param mapType - necessary input to forceDirectedNetwork (called on click)
 	 */
-	update (currInput, journalData){
-	    // console.log('Current Text Entry in searchBar.js: ', currInput);
+	update (currInput, allData, year, mapType){
 
-        // for time being, set default value for year
-        // let year = '2017';
+        let forceDirectedNetwork = this.forceDirectedNetwork;
+
+        let journalData = allData[3];
 
         let options = {
           id: "Full Journal Title",
@@ -91,7 +97,7 @@ class SearchBar {
                     d3.select(this)
                         .classed('searchHighlight', false)
                 })
-                .on('click', function (d) {
+                .on('click', function () {
                     // return the selected journal
                     let currJournal = d3.select(this).data()[0];
                     // console.log('current selection: ', currJournal);
@@ -100,7 +106,7 @@ class SearchBar {
                     // remove search list
                     d3.select('#ulsearch').remove();
                     // call update method of forceDirectedNetwork with appropriate inputs
-                    // forceDirectedNetwork.update( ... );
+                    forceDirectedNetwork.update(allData, year, currJournal, mapType);
                 });
         }
 
