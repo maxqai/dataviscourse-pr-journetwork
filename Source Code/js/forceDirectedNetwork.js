@@ -253,9 +253,9 @@ class ForceDirectedNetwork {
                 // console.log('d', d.id);
                 if(d.id === journal){
                     // console.log('in')
-                    return 'darkblue'
+                    return '#e64d00'
                 } else {
-                    return 'darkred'
+                    return '#008fb3'
                 }
             })
             .call(d3.drag()
@@ -314,7 +314,7 @@ class ForceDirectedNetwork {
                 d3.select(this).classed('selectedNode', true);
                 let journalName = d3.select(this)._groups[0][0].__data__.id;
                 journalInfoBox.update(journalName, journalCSVs[3]);
-            })
+            });
 
 			// this.tip.html((d)=> {
 			// 		let tooltip_data = {

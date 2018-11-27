@@ -29,18 +29,18 @@
 
 .largeView{
     display: inline-block;
-    width: 70%;
+    width: 75%;
 }
 
 .sidebar{
     display: inline-block;
-    width: 29%;
+    width: 24%;
     position: relative;
 }
 
 .links {
-    stroke: darkred;
-    stroke-opacity: 0.075;
+    stroke: #00e600;
+    stroke-opacity: 0.135;
     stroke-width: 2px;
 }
 
@@ -134,7 +134,7 @@
 
 
 .selectedNode{
-    stroke: black;
+    stroke: #333333;
     stroke-width:1%;
 }
 
