@@ -96,12 +96,12 @@ class ImpactTrace {
         let endJIF = d3.max(this.JIF);
 
         // create Xscale based on year values
-        this.Xscale = d3.scaleLinear()
+        this.Xscale = d3.scaleTime()
                         .domain([startYear, endYear])
                         .range([this.margin.left/2, this.svgWidth - this.margin.right/2]);
 
         // create Yscale based on JIF values
-        this.Yscale = d3.scaleTime()
+        this.Yscale = d3.scaleLinear()
                         .domain([0, endJIF])
                         .range([this.svgHeight - this.margin.bottom, 2 * this.margin.top]);
 
