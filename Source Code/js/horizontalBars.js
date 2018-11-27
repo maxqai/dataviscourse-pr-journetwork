@@ -110,6 +110,9 @@ class HorizontalBars {
             dataObj.sort((a,b) => {
                 return b.Cited - a.Cited;
             });
+            // Limit results to just top 10
+            dataObj = dataObj.slice(0,10);
+            // console.log('dataObj top 10', dataObj.slice(0,10));
         }
 
         // Create linear scale for all bar charts
