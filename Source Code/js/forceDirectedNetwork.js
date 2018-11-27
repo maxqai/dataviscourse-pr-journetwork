@@ -81,8 +81,8 @@ class ForceDirectedNetwork {
                     return {
                         mainJournalName: d['Journal'],
                         citationJournalName: d['Cited Journal'],
-                        impactFactor: d['Impact Factor'],
-                        citationCount: d[String(this.year)]
+                        impactFactor: parseFloat(d['Impact Factor']),
+                        citationCount: parseInt(d[String(this.year)])
                     }
                 }
             });
@@ -109,8 +109,8 @@ class ForceDirectedNetwork {
                     return {
                         mainJournalName: d['Journal'],
                         citationJournalName: d['Citing Journal'],
-                        impactFactor: d['Impact Factor'],
-                        citationCount: d[String(this.year)]
+                        impactFactor: parseFloat(d['Impact Factor']),
+                        citationCount: parseInt(d[String(this.year)])
                     }
                 }
             });
@@ -133,6 +133,28 @@ class ForceDirectedNetwork {
             });
         }
 
+        // get rid of journals that aren't in top 100
+        let tempJournalData = [];
+        // console.log('journalsLinkInfo', journalsLinkInfo);
+        // console.log('profGrid', this.profileGrid);
+        journalsLinkInfo.forEach( d => {
+            // if(d['Citing Journal'] === 'ALL Journals') {
+            //     tempJournalData.push(d);
+            // }
+            let count = 0;
+            this.profileGrid.forEach( jName => {
+                if((jName['Journal'] === d['citationJournalName']) || jName['Journal'] === d['mainJournalName']) {
+                    // tempJournalData.push(d);
+                    count = count + 1;
+                }
+                if(count === 2) {
+                    tempJournalData.push(d);
+                }
+            })
+        });
+        // console.log('tempJournalData', tempJournalData);
+        journalsLinkInfo = tempJournalData;
+
 
         // create node structures
         this.profileGrid.sort( function(a,b) {
@@ -141,7 +163,7 @@ class ForceDirectedNetwork {
         let journalsNodeInfo = this.profileGrid.map( d => {
             return {
                 journal: d.Journal,
-                impactFactor: d['Journal Impact Factor']
+                impactFactor: parseFloat(d['Journal Impact Factor'])
             }
         });
 
@@ -150,8 +172,8 @@ class ForceDirectedNetwork {
 
 
 	    // make scale for circle sizes (have to sqrt for area)
-        let domainMax = d3.max(journalsLinkInfo.map(d => parseFloat(d.impactFactor)));
-        let domainMin = d3.min(journalsLinkInfo.map(d => parseFloat(d.impactFactor)));
+        let domainMax = d3.max(journalsLinkInfo.map(d => d.impactFactor));
+        let domainMin = d3.min(journalsLinkInfo.map(d => d.impactFactor));
         let rangeMax = 20;
         let rangeMin = 3;
         let impactFactorScale = d3.scaleSqrt()
@@ -205,16 +227,16 @@ class ForceDirectedNetwork {
                     source: d.mainJournalName,
                     target: d.citationJournalName,
                     impactFactor: d.impactFactor,
-                    citedCount: parseInt(d.citationCount)+1
+                    citedCount: d.citationCount+1
                 }
             })
         };
 
         //citation scale
         let citeMax = d3.max(journalsLinkInfo.map( d => {
-            return parseInt(d.citationCount);
+            return d.citationCount;
         }));
-        let citeMin = d3.min(journalsLinkInfo.map( d => parseInt(d.citationCount)));
+        let citeMin = d3.min(journalsLinkInfo.map( d => d.citationCount));
         let citationScale = d3.scaleLog()
             .domain([citeMin+1, citeMax+1])
             .range([citeMax+1, citeMin+1]);
@@ -270,6 +292,7 @@ class ForceDirectedNetwork {
               .on("tick", ticked);
 
         //applies links
+        // console.log('forceData.links', forceData.links);
         forceSimulation.force("link")
               .links(forceData.links);
 
