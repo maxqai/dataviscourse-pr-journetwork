@@ -117,7 +117,7 @@ class ImpactTrace {
                         return this.Xscale(e2[0]);
                         })
                       .y(e2 => {
-                        if (e2["Journal Impact Factor"] === "Not Available") {
+                        if (isNaN(e2[1])) {
                             return this.Yscale(0);
                         } else {
                             return this.Yscale(e2[1]);
@@ -134,11 +134,9 @@ class ImpactTrace {
             vals = vals.map((e2,i) => {
                 return [parseInt(e2["Year"]), parseFloat(e2["Journal Impact Factor"])]
             });
-
             return this.line(vals);
         });
 
-        console.log(lines);
         let lined = this.svg.append("g")
                 .attr("id", "ImpactTrace")
                 .selectAll("path")
@@ -146,5 +144,16 @@ class ImpactTrace {
         lined.exit().remove();
         lined.enter().append("path")
                      .attr("d", d => {return d});
-	};
+
+
+//        d3.select(".ImpactTrace")
+//          .selectAll("path")
+//                .on("mouseover", function(d) {
+//                    d3.select(this)
+//                      .attr("id", "hlightCited")
+//                      .append("title")
+//                      .text("Journal: ", d)
+//                      .classed("barsTitle", true);
+//          });
+    };
 }
