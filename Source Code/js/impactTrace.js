@@ -101,7 +101,7 @@ class ImpactTrace {
                         .range([this.margin.left/2, this.svgWidth - this.margin.right/2]);
 
         // create Yscale based on JIF values
-        this.Yscale = d3.scaleLinear()
+        this.Yscale = d3.scaleTime()
                         .domain([0, endJIF])
                         .range([this.svgHeight - this.margin.bottom, 2 * this.margin.top]);
 
@@ -114,7 +114,8 @@ class ImpactTrace {
         // Create Y axis
         this.Yaxis = d3.axisLeft();
         this.Yaxis
-            .scale(this.Yscale);
+            .scale(this.Yscale)
+            .tickValues([0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50]);
 
         this.svg.append("g")
                 .classed("lineAxis", true)
@@ -123,9 +124,17 @@ class ImpactTrace {
 
         this.svg.append("g")
                 .classed("lineAxis", true)
-                .attr("transform","translate(" + 15 + "," + 0 + ")")
+                .attr("transform","translate(" + this.margin.left/2 + "," + 0 + ")")
                 .call(this.Yaxis)
 
+        d3.select(".itTitle").remove();
+
+        this.svg.append("g")
+                .append("text")
+                .text("Journal Impact Factor")
+                .attr("x", this.Xscale(endYear * 0.5))
+                .attr("y", this.margin.top)
+                .classed("itTitle", true);
 
         // create line
         this.line = d3.line()
@@ -165,13 +174,17 @@ class ImpactTrace {
                 .selectAll("path")
                 .on("mouseover", function(d) {
                     d3.select(this)
-                      .attr("id", "hlightCited")
                       .append("title")
                       .text("Journal: ", d => {
-                        console.log(d);
+                        let pos = lines.find(function(e1,i) {
+                            if (e1 === d) {
+                                return i
+                            }
+                        })
+                        console.log(name[i]);
+                        return name[i];
                       })
                       .classed("barsTitle", true);
-
                 })
                 .on("mouseout", function(d) {
                     d3.select(this)
