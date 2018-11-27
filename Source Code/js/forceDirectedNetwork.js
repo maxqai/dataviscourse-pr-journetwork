@@ -255,6 +255,12 @@ class ForceDirectedNetwork {
                 return impactFactorScale(d.impactFactor);
             }));
 
+
+        //get rid of old links and nodes
+        d3.select('.links').selectAll('line').remove();
+        d3.select('.nodes').selectAll('circle').remove();
+
+
         let links = this.svg.append('g')
             .attr('class', 'links')
             .selectAll("line")
