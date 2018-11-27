@@ -110,9 +110,58 @@ class HorizontalBars {
             dataObj.sort((a,b) => {
                 return b.Cited - a.Cited;
             });
+
+            let origData = dataObj;
             // Limit results to just top 10
             dataObj = dataObj.slice(0,15);
-            // console.log('dataObj top 15', dataObj.slice(0,15));
+
+            // If current journal is not in top 15, add it to top of DataObj
+            let checkMatch = dataObj.filter(d => {
+                return d['Journal'].toUpperCase() === journal.toUpperCase();
+            });
+            if (checkMatch.length === 0) {
+                let journalObj = origData.filter(d => {
+                    return d['Journal'].toUpperCase() === journal.toUpperCase();
+                });
+                dataObj.unshift(journalObj[0]);
+            } else {
+                // place selected journal at top of list, for time being (i.e. until sort time)
+                let idx = [];
+                dataObj.forEach((d,i) => {
+                    if (d['Journal'].toUpperCase() === journal.toUpperCase()) {
+                        // console.log(d, i);
+                        idx.push(i);
+                    }
+                });
+                let journalObj = dataObj.slice(idx[0],idx[0]+1);
+                let newObj = [];
+                if (idx[0] === 0) {
+                    let below = dataObj.slice(idx[0]+1,dataObj.length);
+                    newObj.push(journalObj[0]);
+                    below.forEach(d => {
+                        newObj.push(d);
+                    });
+                    dataObj = newObj;
+                } else if (idx[0] === dataObj.length-1) {
+                    let above = dataObj.slice(0,dataObj.length-1);
+                    newObj.push(journalObj[0]);
+                    above.forEach(d => {
+                        newObj.push(d);
+                    });
+                    dataObj = newObj;
+                } else {
+                    let above = dataObj.slice(0,idx[0]);
+                    let below = dataObj.slice(idx[0]+1,dataObj.length);
+                    newObj.push(journalObj[0]);
+                    above.forEach(d => {
+                        newObj.push(d);
+                    });
+                    below.forEach(d => {
+                        newObj.push(d);
+                    });
+                    dataObj = newObj;
+                }
+            }
         }
 
         // Create linear scale for all bar charts

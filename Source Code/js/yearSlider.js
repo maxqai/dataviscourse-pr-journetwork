@@ -45,7 +45,7 @@ class YearSlider {
         yearSlider.on('input', function() {
             sliderText.text(this.value);
             sliderText.attr('x', yearScale(this.value));
-            // forceDirectedNetwork.update(journalData, parseInt(this.value), initialJournal, mapType);
+            forceDirectedNetwork.update(journalData, parseInt(this.value), initialJournal, mapType);
         });
 
 
