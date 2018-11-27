@@ -135,24 +135,23 @@ class ForceDirectedNetwork {
 
         // get rid of journals that aren't in top 100
         let tempJournalData = [];
-        // console.log('journalsLinkInfo', journalsLinkInfo);
-        // console.log('profGrid', this.profileGrid);
+        console.log('length JLI', journalsLinkInfo)
         journalsLinkInfo.forEach( d => {
-            // if(d['Citing Journal'] === 'ALL Journals') {
-            //     tempJournalData.push(d);
-            // }
             let count = 0;
             this.profileGrid.forEach( jName => {
                 if((jName['Journal'] === d['citationJournalName']) || jName['Journal'] === d['mainJournalName']) {
-                    // tempJournalData.push(d);
                     count = count + 1;
                 }
-                if(count === 2) {
-                    tempJournalData.push(d);
-                }
-            })
+                // if(count === 1) {
+                //     console.log('almost');
+                // }
+
+            });
+            if(count === 2) {
+                tempJournalData.push(d);
+            }
         });
-        // console.log('tempJournalData', tempJournalData);
+        console.log('tempJournalData', tempJournalData);
         journalsLinkInfo = tempJournalData;
 
 
