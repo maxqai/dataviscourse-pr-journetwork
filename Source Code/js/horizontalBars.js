@@ -298,6 +298,15 @@ class HorizontalBars {
                             return null
                         }
                     });
+                // highlight related nodes in FDN
+                d3.select('.nodes').selectAll('circle')
+                    .attr('id', d => {
+                        if (currJ.toUpperCase() === d.id.toUpperCase()) {
+                            return 'hlightCited'
+                        } else {
+                            return null
+                        }
+                    });
             })
             .on('mouseout', function(d) {
                 d3.select(this)
@@ -308,7 +317,6 @@ class HorizontalBars {
                             return null
                         }
                     });
-                let currJ = d.Journal;
                 d3.select('.citingBars').selectAll('rect')
                     .attr('id', d => {
                         if (d.Journal.toUpperCase() === journal.toUpperCase()) {
@@ -326,6 +334,8 @@ class HorizontalBars {
                         }
                     });
                 d3.selectAll('.barsTitle').remove();
+                d3.select('.nodes').selectAll('circle')
+                    .attr('id', null);
             });
 
 
@@ -357,7 +367,16 @@ class HorizontalBars {
                         } else {
                             return null
                         }
-                    })
+                    });
+                // highlight related nodes in FDN
+                d3.select('.nodes').selectAll('circle')
+                    .attr('id', d => {
+                        if (currJ.toUpperCase() === d.id.toUpperCase()) {
+                            return 'hlightCited'
+                        } else {
+                            return null
+                        }
+                    });
             })
             .on('mouseout', function(d) {
                 d3.select(this)
@@ -368,7 +387,6 @@ class HorizontalBars {
                             return null
                         }
                     });
-                let currJ = d.Journal;
                 d3.select('.citedBars').selectAll('rect')
                     .attr('id', d => {
                         if (d.Journal.toUpperCase() === journal.toUpperCase()) {
@@ -386,6 +404,8 @@ class HorizontalBars {
                         }
                     });
                 d3.selectAll('.barsTitle').remove();
+                d3.select('.nodes').selectAll('circle')
+                    .attr('id', null);
             });
 
 
@@ -418,6 +438,15 @@ class HorizontalBars {
                             return null
                         }
                     });
+                // highlight related nodes in FDN
+                d3.select('.nodes').selectAll('circle')
+                    .attr('id', d => {
+                        if (currJ.toUpperCase() === d.id.toUpperCase()) {
+                            return 'hlightCited'
+                        } else {
+                            return null
+                        }
+                    });
             })
             .on('mouseout', function(d) {
                 d3.select(this)
@@ -428,7 +457,6 @@ class HorizontalBars {
                             return null
                         }
                     });
-                let currJ = d.Journal;
                 d3.select('.citingBars').selectAll('rect')
                     .attr('id', d => {
                         if (d.Journal.toUpperCase() === journal.toUpperCase()) {
@@ -446,6 +474,9 @@ class HorizontalBars {
                         }
                     });
                 d3.selectAll('.barsTitle').remove();
+                // un-highlight any id-ed nodes in FDN
+                d3.select('.nodes').selectAll('circle')
+                    .attr('id', null);
             });
 
         // Place scale above bars
@@ -520,8 +551,6 @@ class HorizontalBars {
                 // push selected journal to forceDirectedNetwork along with other needed inputs
                 // forceDirectedNetwork.update(  ...  )
             });
-
-        // TODO: Enable reverse sorting by clicking on column headers?
 
         d3.select('.citedHead')
             .on('click', function() {

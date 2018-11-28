@@ -132,7 +132,7 @@
 
 #selectedBarText {
     font-weight: bold;
-    font-size: 1em;
+    /*font-size: 1em;*/
 }
 
 #hlightBarText {
