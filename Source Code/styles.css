@@ -150,6 +150,11 @@
     padding-left: 30px;
 }
 
+#horizontalBars {
+    position: relative;
+    top: 300px;
+    right: 50px;
+}
 
 .selectedNode{
     stroke: #333333;

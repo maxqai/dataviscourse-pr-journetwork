@@ -15,7 +15,7 @@ class HorizontalBars {
         //add the svg to the div
         this.svg = divHorizontalBars.append("svg")
             .attr("width", this.svgWidth)
-            .attr("height", 400);//TODO: fix this to not be hardcoded
+            .attr("height", 500);//TODO: fix this to not be hardcoded
 
         //add a group for each political party to the svg
         this.svg.append('g')
@@ -86,6 +86,7 @@ class HorizontalBars {
         let yearMax = d3.max([yearCitedMax, yearCitingMax]);
         // Note the 4* is because it will need to be at least twice as wide to have side-by-side bars with labels
         let domMax = 4*yearMax;
+        // let domMax = 7*yearMax;
 
         // Map just the relevant data to avoid unnecessary fluff and combine citing and cited info in one object
         let currCited = this.cited.map(d => parseInt(d[year]));
@@ -112,10 +113,10 @@ class HorizontalBars {
             });
 
             let origData = dataObj;
-            // Limit results to just top 10
-            dataObj = dataObj.slice(0,15);
+            // Limit results to just top 20
+            dataObj = dataObj.slice(0,20);
 
-            // If current journal is not in top 15, add it to top of DataObj
+            // If current journal is not in top 20, add it to top of DataObj
             let checkMatch = dataObj.filter(d => {
                 return d['Journal'].toUpperCase() === journal.toUpperCase();
             });
@@ -449,9 +450,10 @@ class HorizontalBars {
 
         // Place scale above bars
         let fullScale = d3.scaleLinear()
-            .domain([-domMax/3.5, domMax/3.5])
-            .range([-this.svgWidth/3.5, this.svgWidth/3.5])
-            .nice();
+            // .domain([-domMax/3.5, domMax/3.5])
+            .domain([-domMax/3.25, domMax/3.25])
+            .range([-this.svgWidth/3.25, this.svgWidth/3.25]);
+            // .nice();
 
         let xAxis = d3.axisTop();
         if (yearMax < 10000) {
@@ -459,13 +461,19 @@ class HorizontalBars {
                 .scale(fullScale)
                 // .ticks(2)
                 .tickValues([-10000, -5000, 0, 5000, 10000])
-                .tickFormat(d => Math.abs(d));
+                .tickFormat(d => Math.abs(d / 1000) + 'k');
+            // .tickSize(0);
             // .tickFormat(d3.formatPrefix(".0", 1e3));
+        } else if (yearMax < 40000) {
+            xAxis
+                .scale(fullScale)
+                .tickValues([-40000, -20000, 0, 20000, 40000])
+                .tickFormat(d => Math.abs(d/1000) + 'k');
         } else {
             xAxis
                 .scale(fullScale)
                 .tickValues([-50000, -25000, 0, 25000, 50000])
-                .tickFormat(d => Math.abs(d));
+                .tickFormat(d => Math.abs(d/1000) + 'k');
         }
 
         d3.selectAll('.barAxis').remove();
