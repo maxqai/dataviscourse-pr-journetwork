@@ -65,6 +65,14 @@ class ForceDirectedNetwork {
 	    //     return parseInt(d.Year) === year
         // }).map( d => d.Journal);
 	    // console.log('profGrid', temp);
+
+        // try and get year from yearSlider, if possible
+        // this is to avoid cases where the searchBar is used (which only uses initial year instead of slider year
+        let tryYear = d3.select('.slider-wrap').select('input');
+        if (tryYear._groups[0][0] !== undefined) {
+            year = parseInt(tryYear._groups[0][0].value);
+        }
+
         this.profileGrid = journalCSVs[0].filter(d => {
             return parseInt(d.Year) === year;
         });

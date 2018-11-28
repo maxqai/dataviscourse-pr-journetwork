@@ -107,12 +107,11 @@ Promise.all(promises).then( data => {
     forceDirectedNetwork.update(journalData, initialYear, initialJournal, 'Cited');
 
     let searchBar = new SearchBar(forceDirectedNetwork);
-    let yearSlider = new YearSlider(forceDirectedNetwork, journalData, initialYear, initialJournal, 'Cited');
+    let yearSlider = new YearSlider(forceDirectedNetwork, journalData, initialYear, initialJournal, 'Cited', searchBar);
 
     let uInput = d3.select('#uinput');
     uInput.on('click', function() {
         uInput.on('keyup', function() {
-            // searchBar.update(document.getElementById('uinput').value, data[3]);
             searchBar.update(document.getElementById('uinput').value, journalData, initialYear, 'Cited');
         })
     });

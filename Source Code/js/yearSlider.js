@@ -2,7 +2,7 @@
 // adapted from votePercentageChart.js
 class YearSlider {
 
-    constructor(forceDirectedNetwork, journalData, initialYear, initialJournal, mapType){
+    constructor(forceDirectedNetwork, journalData, initialYear, initialJournal, mapType, searchBar){
 
         this.activeYear = initialYear;
 
@@ -47,7 +47,6 @@ class YearSlider {
             sliderText.attr('x', yearScale(this.value));
             forceDirectedNetwork.update(journalData, parseInt(this.value), initialJournal, mapType);
         });
-
 
 
 		//for reference: https://github.com/Caged/d3-tip
