@@ -257,8 +257,8 @@ class ForceDirectedNetwork {
 
 
         //get rid of old links and nodes
-        d3.select('.links').selectAll('line').remove();
-        d3.select('.nodes').selectAll('circle').remove();
+        d3.select('.links').remove();
+        d3.select('.nodes').remove();
 
 
         let links = this.svg.append('g')
