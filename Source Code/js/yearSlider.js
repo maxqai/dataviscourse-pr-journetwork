@@ -45,7 +45,17 @@ class YearSlider {
         yearSlider.on('input', function() {
             sliderText.text(this.value);
             sliderText.attr('x', yearScale(this.value));
-            forceDirectedNetwork.update(journalData, parseInt(this.value), initialJournal, mapType);
+
+            // Determine which node was the center of the most recent FDN to keep it consistent after year change
+            let Nodes = d3.select('.nodes').selectAll('circle');
+            let currJournal = [];
+            Nodes._groups[0].forEach(d => {
+                // ***Note: the below fill value MUST be hard-coded to match the one from forceDirectedNetwork.js
+                if (d.getAttribute('fill') === '#ec7f3e') {
+                    currJournal.push(d.childNodes[0].textContent);
+                }
+            });
+            forceDirectedNetwork.update(journalData, parseInt(this.value), currJournal[0], mapType);
         });
 
 

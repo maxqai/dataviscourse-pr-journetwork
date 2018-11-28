@@ -283,7 +283,7 @@ class ForceDirectedNetwork {
                 // console.log('d', d.id);
                 if(d.id === journal){
                     // console.log('in')
-                    return '#ec7f3e'
+                    return '#ec7f3e' // *** <-- If this gets updated in the future, please update in yearSlider, as well!
                 } else {
                     return '#004647'
                 }
