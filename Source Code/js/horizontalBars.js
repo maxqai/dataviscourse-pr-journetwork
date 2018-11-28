@@ -526,7 +526,7 @@ class HorizontalBars {
 
         d3.select('#horizontalBars > svg').append('text')
             .text('Citing')
-            .attr('x', horzScale(1.9*yearMax))
+            .attr('x', horzScale(2.15*yearMax))
             .attr('y', 20)
             .classed('citingHead', true);
 
