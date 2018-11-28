@@ -133,25 +133,21 @@ class ForceDirectedNetwork {
             });
         }
 
-        // get rid of journals that aren't in top 100
+        // get rid of journals that aren't in top 100 - need to check for every year.
         let tempJournalData = [];
-        console.log('length JLI', journalsLinkInfo)
+        // console.log('length JLI', journalsLinkInfo)
         journalsLinkInfo.forEach( d => {
             let count = 0;
             this.profileGrid.forEach( jName => {
                 if((jName['Journal'] === d['citationJournalName']) || jName['Journal'] === d['mainJournalName']) {
                     count = count + 1;
                 }
-                // if(count === 1) {
-                //     console.log('almost');
-                // }
-
             });
             if(count === 2) {
                 tempJournalData.push(d);
             }
         });
-        console.log('tempJournalData', tempJournalData);
+        // console.log('tempJournalData', tempJournalData);
         journalsLinkInfo = tempJournalData;
 
 
@@ -249,7 +245,7 @@ class ForceDirectedNetwork {
                     // console.log('d citedCount', d.citedCount, 'citationScale', citationScale(d.citedCount));
                     return citationScale(d.citedCount);
                 }))
-            .force('charge', d3.forceManyBody().strength(-100))
+            .force('charge', d3.forceManyBody().strength(-60))
             .force('center', d3.forceCenter(this.svgWidth/2, this.svgHeight/2))
             .force('collision', d3.forceCollide(d => {
                 return impactFactorScale(d.impactFactor);
@@ -279,9 +275,9 @@ class ForceDirectedNetwork {
                 // console.log('d', d.id);
                 if(d.id === journal){
                     // console.log('in')
-                    return '#e64d00'
+                    return '#ec7f3e'
                 } else {
-                    return '#008fb3'
+                    return '#004647'
                 }
             })
             .call(d3.drag()
@@ -341,6 +337,41 @@ class ForceDirectedNetwork {
                 d3.select(this).classed('selectedNode', true);
                 let journalName = d3.select(this)._groups[0][0].__data__.id;
                 journalInfoBox.update(journalName, journalCSVs[3]);
+            });
+
+        // highlight other charts on node hover
+        nodes
+            .on('mouseover', function(d) {
+                for ( let child of d3.select('.citedBars')._groups[0][0].children) {
+                    if(d.id === child.__data__.Journal) {
+                        child.setAttribute('id', 'hlightCited');
+                    }
+                }
+                for ( let child of d3.select('.citingBars')._groups[0][0].children) {
+                    if(d.id === child.__data__.Journal) {
+                        console.log('in child', child);
+                        if(child.nodeName === 'rect') {
+                            child.setAttribute('id', 'hlightCited');
+                        } else if (child.nodeName === 'text') {
+                            child.setAttribute('id', 'hlightBarText');
+                        }
+
+                    }
+                }
+
+            });
+        nodes
+            .on('mouseout', function(d) {
+                for ( let child of d3.select('.citedBars')._groups[0][0].children) {
+                    if(d.id === child.__data__.Journal) {
+                        child.removeAttribute('id');
+                    }
+                }
+                for ( let child of d3.select('.citingBars')._groups[0][0].children) {
+                    if(d.id === child.__data__.Journal) {
+                        child.removeAttribute('id');
+                    }
+                }
             });
 
 			// this.tip.html((d)=> {
