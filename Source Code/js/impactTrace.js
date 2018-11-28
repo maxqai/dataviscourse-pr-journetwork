@@ -52,6 +52,7 @@ class ImpactTrace {
         Grid = Grid.sort(function (e1, e2) {
             return d3.ascending(e1.Year, e2.Year)
         });
+        var sortGrid = Grid;
 
         Cited = Cited.sort(function(e1, e2) {
             return d3.ascending(e1.Year, e2.Year)
@@ -96,8 +97,8 @@ class ImpactTrace {
         let endJIF = d3.max(this.JIF);
 
         // create Xscale based on year values
-        this.Xscale = d3.scaleTime()
-                        .domain([startYear, endYear])
+        this.Xscale = d3.scaleLinear()
+                        .domain([new Date(startYear), new Date(endYear)])
                         .range([this.margin.left/2, this.svgWidth - this.margin.right/2]);
 
         // create Yscale based on JIF values
@@ -169,28 +170,35 @@ class ImpactTrace {
         lined.enter().append("path")
                      .attr("d", d => {return d});
 
-
         d3.select(".ImpactTrace")
                 .selectAll("path")
                 .on("mouseover", function(d) {
+                    let pos = lines.map((e1,i) => {
+                        if (d === e1) {
+                            return [i];
+                        } else {
+                            return NaN;
+                        }
+                    });
+                    // Remove NaNs from pos
+                    pos = pos.filter((e1) => {if (!isNaN(e1)) {return e1}});
                     d3.select(this)
-                      .append("title")
-                      .text("Journal: ", d => {
-                        let pos = lines.find(function(e1,i) {
-                            if (e1 === d) {
-                                return i
-                            }
-                        })
-                        console.log(name[i]);
-                        return name[i];
-                      })
+                        .append("title")
+                        .text("Journal: " + sortGrid[pos[0]]["Journal"])
                       .classed("barsTitle", true);
                 })
                 .on("mouseout", function(d) {
                     d3.select(this)
                       .attr("id", d => {
-                        console.log(d);
                       })
                 });
+    function hovering(svg, lines) {
+        svg.style("position", "relative");
+
+        if ("ontouchstart" in document) {
+            svg.style("-webkit-tap-highlight-color","transparent")
+               .on("touchmove", moved)
+        }
+    }
     };
 }
