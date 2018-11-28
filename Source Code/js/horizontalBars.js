@@ -454,12 +454,19 @@ class HorizontalBars {
             .nice();
 
         let xAxis = d3.axisTop();
-        xAxis
-            .scale(fullScale)
-            // .ticks(2)
-            .tickValues([-10000, -5000, 0, 5000, 10000])
-            .tickFormat(d => Math.abs(d));
+        if (yearMax < 10000) {
+            xAxis
+                .scale(fullScale)
+                // .ticks(2)
+                .tickValues([-10000, -5000, 0, 5000, 10000])
+                .tickFormat(d => Math.abs(d));
             // .tickFormat(d3.formatPrefix(".0", 1e3));
+        } else {
+            xAxis
+                .scale(fullScale)
+                .tickValues([-50000, -25000, 0, 25000, 50000])
+                .tickFormat(d => Math.abs(d));
+        }
 
         d3.selectAll('.barAxis').remove();
 
