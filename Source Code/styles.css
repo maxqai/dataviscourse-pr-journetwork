@@ -143,6 +143,11 @@
     position: absolute;
     top: 150px;
     right: 100px;
+    border:1px solid black;
+    padding-top: 15px;
+    padding-right: 30px;
+    padding-bottom: 30px;
+    padding-left: 30px;
 }
 
 
