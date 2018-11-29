@@ -105,14 +105,10 @@ class ImpactTrace {
 
         d3.select(".itTitle").remove();
 
-//        this.svg.append("g")
-//                .append("text")
-//                .text("Journal Impact Factor")
-//                .attr("x", this.Xscale(endYear * 0.5))
-//                .attr("y", this.margin.top)
-//                .classed("itTitle", true);
-
         let cnams = Grid.columns;
+        let rectScale = d3.scaleLinear()
+                          .domain([0, cnams.length])
+                          .range([this.margin.left, this.svgWidth - this.margin.right]);
 
         this.svg.append("g")
                 .append("text")
@@ -129,15 +125,27 @@ class ImpactTrace {
                 .enter()
                 .append("rect")
                 .attr("x", (d,i) => {
-                    return (i-1) * (this.svgWidth - this.margin.left - 2 * this.margin.right) / (cnams.length-1) + 2 * this.margin.left;
+                    return rectScale(i);
                 })
                 .attr("y", this.margin.top)
                 .attr("width", this.margin.left/5)
                 .attr("height", this.margin.top)
                 .style("fill", "#43a2ca")
                 .on("mouseover", function(d,i) {
-                    d3.select(this)
-                      .style("fill", "#6FB98F");
+                    let x = d3.select(this)
+                              .attr("x", d => {
+                                return rectScale(i) - 5;
+                              })
+                              .attr("y", function(d) {
+                                return 5
+                              })
+                              .attr("width", function(d) {
+                                return 25
+                              })
+                              .attr("height", function(d) {
+                                return 20
+                              })
+                              .style("fill", "#6FB98F");
 
                     d3.select(".FD_Group")
                       .append("title")
@@ -147,9 +155,17 @@ class ImpactTrace {
                       .transition()
                       .duration(200)
                       .style("opacity", 1);
+
+                    console.log(d);
                 })
-                .on("mouseout", function(d) {
+                .on("mouseout", function(d,i) {
                     d3.select(this)
+                      .attr("x", function(d) {
+                        return rectScale(i);
+                      })
+                      .attr("y", 10)
+                      .attr("width", 50/5)
+                      .attr("height", 10)
                       .style("fill", "#43a2ca");
 
                     d3.selectAll(".tooltip")
@@ -159,8 +175,11 @@ class ImpactTrace {
                       .remove();
                 })
                 .on("click", d => {
-                    console.log(this.Grid)
-                }
+                    let vals = this.sortGrid.map((e1) => {
+                        return e1[d];
+                    })
+                    console.log(vals);
+                    }
                 );
 
         // create line
@@ -242,6 +261,7 @@ class ImpactTrace {
                                 }
                           });
 
+                        // highlight cited bars
                         d3.select('.citedBars')
                           .selectAll("rect")
                           .attr("id", e1 => {
@@ -252,6 +272,7 @@ class ImpactTrace {
                             }
                           });
 
+                        // highlight citing bars
                         d3.select('.citingBars')
                           .selectAll("rect")
                           .attr("id", e1 => {
@@ -269,6 +290,9 @@ class ImpactTrace {
                       .duration(100)
                       .style("opacity", 0)
                       .remove();
+                })
+                .on("click", function(d) {
+                    console.log(d);
                 });
     }
 };
