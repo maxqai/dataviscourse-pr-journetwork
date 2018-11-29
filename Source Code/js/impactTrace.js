@@ -18,13 +18,14 @@ class ImpactTrace {
             .attr("height", this.svgHeight);//TODO: fix this to not be hardcoded
    };
 	update (Grid, Cited, Citing){
+        // Things that need to get done: Formatting of Graph - adding X and Y Labes, Changing Year so it Looks Good, appending circle to show which line was highlighted
 
         // First Sort the Data
         Grid = Grid.sort(function (e1, e2) {
             return d3.ascending(e1.Year, e2.Year)
         });
         var sortGrid = Grid;
-
+        this.sortGrid = Grid;
 //        Cited = Cited.sort(function(e1, e2) {
 //            return d3.ascending(e1.Year, e2.Year)
 //        });
@@ -109,19 +110,11 @@ class ImpactTrace {
                 .classed("itTitle", true);
         let cnams = Grid.columns;
 
-//        this.tip.html((d)=> {
-//            // let tooltip_data;
-//            console.log(d);
-//            return this.tooltip_render(d);
-//        });
-
         this.svg.append("g")
                 .append("text")
-                .text("Filters")
+                .text("Filters: ")
                 .attr("x", this.margin.left/5)
-                .attr("y", this.margin.top * 3 / 2)
-                .style("stroke-color", " #E38533");
-
+                .attr("y", this.margin.top * 3 / 2);
 
         this.svg.select("g > FilterData").exit().remove();
         this.svg.append("g")
@@ -139,6 +132,9 @@ class ImpactTrace {
                 .attr("height", this.margin.top)
                 .style("fill", "#43a2ca")
                 .on("mouseover", function(d,i) {
+                    d3.select(this)
+                      .style("fill", "#6FB98F");
+
                     d3.select(".FD_Group")
                       .append("title")
                       .text(d)
@@ -149,14 +145,19 @@ class ImpactTrace {
                       .style("opacity", 1);
                 })
                 .on("mouseout", function(d) {
+                    d3.select(this)
+                      .style("fill", "#43a2ca");
+
                     d3.selectAll(".tooltip")
                       .transition()
                       .duration(100)
-                      .style("opacity", 0);
+                      .style("opacity", 0)
+                      .remove();
                 })
-                .on("mouseclick", d => {
-
-                });
+                .on("click", d => {
+                    console.log(this.Grid)
+                }
+                );
 
         // create line
         this.line = d3.line()
@@ -189,7 +190,25 @@ class ImpactTrace {
                 .data(lines);
         lined.exit().remove();
         lined.enter().append("path")
-                     .attr("d", d => {return d});
+                     .attr("d", d => {return d})
+                     .style("stroke", function(d) {
+                        if (name[lines.indexOf(d)] === "Nature") {
+                            return "#E38533";
+                        } else {
+                            return "#004445";
+                        }
+                     })
+                     .style("opacity", d => {
+                        if (name[lines.indexOf(d)] === "Nature") {
+                            return 1;
+                        } else {
+                            return 0.15;
+                        }
+                     })
+                     .on("mouseover", function(d,i) {
+                        d3.select(this)
+                          .style("opacity", 1);
+                     });
 
         d3.select(".ImpactTrace")
                 .selectAll("path")
