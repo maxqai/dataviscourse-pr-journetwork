@@ -189,10 +189,11 @@ class ImpactTrace {
                         } else if (!isNaN(val) && val.toString().indexOf(',') == -1) {
                             return parseInt(val);
                         // If there is no number
-                        } else (
+                        } else {
                             return 0;
-                        )
+                        }
                     })
+
                         console.log(vals);
                     }
                 );
@@ -298,6 +299,10 @@ class ImpactTrace {
                             }
                           });
 
+                        d3.select(this)
+                          .style("stroke-width", 3 + "px")
+                          .style("opacity", 1)
+                          .style("stroke", "#6FB98F");
                 })
                 .on("mouseout", function(d) {
                     d3.select(this)
@@ -305,9 +310,6 @@ class ImpactTrace {
                       .duration(100)
                       .style("opacity", 0)
                       .remove();
-                })
-                .on("click", function(d) {
-                    console.log(d);
                 });
     }
 };
