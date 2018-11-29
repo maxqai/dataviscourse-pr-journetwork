@@ -26,7 +26,6 @@ class ImpactTrace {
             return d3.ascending(e1.Year, e2.Year)
         });
         var sortGrid = Grid;
-        this.sortGrid = Grid;
 
         // Separate Years
         this.Years = Grid.map(d => {
@@ -85,7 +84,7 @@ class ImpactTrace {
         this.Yaxis = d3.axisLeft();
         this.Yaxis
             .scale(this.Yscale)
-            .tickValues([0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50]);
+            .tickValues([0, 5, 10, 15, 20, 25, 30, 35, 40, 45]);
 
         // Append X Axis
         this.svg.append("g")
@@ -96,11 +95,12 @@ class ImpactTrace {
 
         // Append X Label
         this.svg.append("g")
-                .classed("xlabel", true)
+                .classed("label", true)
                 .append("text")
                 .text("YEAR")
                 .attr("x", this.svgWidth/2)
-                .attr("y", this.svgHeight);
+                .attr("y", this.svgHeight)
+                .attr("id", "lineAxis");
 
         // Append Y Axis
         this.svg.append("g")
@@ -111,15 +111,13 @@ class ImpactTrace {
 
         // Append Y Label
         this.svg.append("g")
-                .classed("ylabel", true)
+                .classed("label", true)
                 .append("text")
+                .attr("transform", "rotate(-90)")
                 .text("Journal Impact Factor")
-                .attr("x", this.margin.left)
-                .attr("y", this.Yscale(this.svgHeight/2))
-                .attr("transform", "translate(" + this.margin.left + "," + this.Yscale(this.svgHeight/2) + ") rotate(90)")
-                .attr("fill", "black")
-                .attr("font-family", "sans-serif")
-                .attr("font-size", "11px");
+                .attr("x", -this.svgHeight/2*1.25)
+                .attr("y", this.margin.left/5*2)
+                .attr("id", "lineAxis");
 
         d3.select(".itTitle").remove();
 
@@ -129,15 +127,9 @@ class ImpactTrace {
                           .range([this.margin.left, this.svgWidth - this.margin.right]);
 
         // Append Text About Which Filter is On
-        this.svg.append("g")
-                .classed("filt_text", true)
-                .append("text")
-                .text("Filters: Journal")
-                .attr("x", this.margin.left/5)
-                .attr("y", this.margin.top * 3 / 2);
-
         this.svg.append("text")
-                .text("Filter: Blah")
+                .classed("Filt_Data_Text", true)
+                .text("Filter: Journal")
                 .attr("x", this.margin.left)
                 .attr("y", this.margin.top)
                 .classed("instruct", true)
@@ -204,7 +196,7 @@ class ImpactTrace {
                 })
                 .on("click", d => {
                     let dnam = JofInterest.indexOf(d);
-                    let vals = this.sortGrid.map((e1) => {
+                    let vals = sortGrid.map((e1) => {
                         let b = Object.keys(e1);
                         let val = e1[b[dnam]];
                         // If the number is a Float
@@ -228,7 +220,6 @@ class ImpactTrace {
                         let Yscaled = d3.scaleLinear()
                                         .domain([])
                                         .range([]);
-
 
                         d3.select(".ImpactTrace")
                           .selectAll("path")
