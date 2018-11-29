@@ -137,7 +137,7 @@ class ImpactTrace {
 
         this.svg.append("text")
                 .classed("FFilter", true)
-                .text("Filter")
+                .text("Filters: ")
                 .attr("x", this.margin.left)
                 .attr("y", this.margin.top*2.5)
 
@@ -161,15 +161,9 @@ class ImpactTrace {
                               .attr("x", d => {
                                 return rectScale(i) - 5;
                               })
-                              .attr("y", function(d) {
-                                return 0
-                              })
-                              .attr("width", function(d) {
-                                return 25
-                              })
-                              .attr("height", function(d) {
-                                return 20
-                              })
+                              .attr("y", 30)
+                              .attr("width", 30)
+                              .attr("height", 30)
                               .style("fill", "#6FB98F");
 
                     d3.select(".FD_Group")
@@ -186,12 +180,14 @@ class ImpactTrace {
                 .on("mouseout", function(d,i) {
                     let that = this;
                     d3.select(this)
+                      .transition()
+                      .duration(200)
                       .attr("x", function(d) {
                         return rectScale(i);
                       })
-                      .attr("y", that.margin.top/2)
-                      .attr("width", that.margin.left/5)
-                      .attr("height", that.margin.top)
+                      .attr("y", 40)
+                      .attr("width", 10)
+                      .attr("height", 10)
                       .style("fill", "#43a2ca");
 
                     d3.selectAll(".tooltip")
