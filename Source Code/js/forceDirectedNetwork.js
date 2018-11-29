@@ -399,6 +399,18 @@ class ForceDirectedNetwork {
         this.svg
             .call(zoom);
 
+        // Add text instructions for zooming
+        this.svg.append('text')
+            .text('CTRL + scroll to zoom')
+            .attr('y', 30)
+            .attr('x', 5)
+            .classed('instruct', true);
+        this.svg.append('text')
+            .text('CTRL + drag to pan')
+            .attr('y', 50)
+            .attr('x', 5)
+            .classed('instruct', true);
+
 			// this.tip.html((d)=> {
 			// 		let tooltip_data = {
             //
