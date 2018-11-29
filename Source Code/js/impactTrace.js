@@ -4,7 +4,7 @@ class ImpactTrace {
 
     constructor(){
         //initialize svg elements, svg sizing
-        this.margin = {top: 10, right: 50, bottom: 20, left: 50};
+        this.margin = {top: 20, right: 50, bottom: 20, left: 50};
         let divImpactTrace = d3.select("#impactTrace")
                                .classed("impactTrace", true);
 
@@ -18,7 +18,7 @@ class ImpactTrace {
             .attr("width", this.svgWidth)
             .attr("height", this.svgHeight);//TODO: fix this to not be hardcoded
    };
-	update (Grid, Cited, Citing){
+	update (Grid){
         // Things that need to get done: Formatting of Graph - adding X and Y Labels, Changing Year so it Looks Good, appending circle to show which line was highlighted
 
         // First Sort the Data
@@ -27,13 +27,6 @@ class ImpactTrace {
         });
         var sortGrid = Grid;
         this.sortGrid = Grid;
-//        Cited = Cited.sort(function(e1, e2) {
-//            return d3.ascending(e1.Year, e2.Year)
-//        });
-//
-//        Citing = Citing.sort(function(e1, e2) {
-//            return d3.ascending(e1.Year, e2.Year)
-//        });
 
         // Separate Years
         this.Years = Grid.map(d => {
@@ -75,18 +68,18 @@ class ImpactTrace {
         // create Xscale based on year values
         this.Xscale = d3.scaleLinear()
                         .domain([new Date(startYear), new Date(endYear)])
-                        .range([this.margin.left/2, this.svgWidth - this.margin.right/2]);
+                        .range([this.margin.left, this.svgWidth - this.margin.right]);
 
         // create Yscale based on JIF values
         this.Yscale = d3.scaleLinear()
                         .domain([0, endJIF])
-                        .range([this.svgHeight - this.margin.bottom, 2 * this.margin.top]);
+                        .range([this.svgHeight - 2 * this.margin.bottom, 2 * this.margin.top]);
 
         // Create X axis
         this.Xaxis = d3.axisBottom();
         this.Xaxis
-            .scale(this.Xscale);
-//            .tickValues([1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017]);
+            .scale(this.Xscale)
+            .tickValues([1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017]);
 
         // Create Y axis
         this.Yaxis = d3.axisLeft();
@@ -94,17 +87,39 @@ class ImpactTrace {
             .scale(this.Yscale)
             .tickValues([0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50]);
 
+        // Append X Axis
         this.svg.append("g")
-                .attr("transform","translate(" + 0 + "," + 380 + ")")
+                .attr("transform","translate(" + 0 + "," + this.Yscale(0) + ")")
                 .call(this.Xaxis)
                 .selectAll(".ticks")
                 .attr("id", "lineAxis");
 
+        // Append X Label
         this.svg.append("g")
-                .attr("transform","translate(" + this.margin.left/2 + "," + 0 + ")")
+                .classed("xlabel", true)
+                .append("text")
+                .text("YEAR")
+                .attr("x", this.svgWidth/2)
+                .attr("y", this.svgHeight);
+
+        // Append Y Axis
+        this.svg.append("g")
+                .attr("transform","translate(" + this.margin.left + "," + 0 + ")")
                 .call(this.Yaxis)
                 .selectAll(".ticks")
                 .attr("id", "lineAxis");
+
+        // Append Y Label
+        this.svg.append("g")
+                .classed("ylabel", true)
+                .append("text")
+                .text("Journal Impact Factor")
+                .attr("x", this.margin.left)
+                .attr("y", this.Yscale(this.svgHeight/2))
+                .attr("transform", "translate(" + this.margin.left + "," + this.Yscale(this.svgHeight/2) + ") rotate(90)")
+                .attr("fill", "black")
+                .attr("font-family", "sans-serif")
+                .attr("font-size", "11px");
 
         d3.select(".itTitle").remove();
 
@@ -113,11 +128,20 @@ class ImpactTrace {
                           .domain([0, JofInterest.length])
                           .range([this.margin.left, this.svgWidth - this.margin.right]);
 
+        // Append Text About Which Filter is On
         this.svg.append("g")
+                .classed("filt_text", true)
                 .append("text")
-                .text("Filters: ")
+                .text("Filters: Journal")
                 .attr("x", this.margin.left/5)
                 .attr("y", this.margin.top * 3 / 2);
+
+        this.svg.append("text")
+                .text("Filter: Blah")
+                .attr("x", this.margin.left)
+                .attr("y", this.margin.top)
+                .classed("instruct", true)
+                .attr("font-size", this.margin.top + "px");
 
         this.svg.select("g > FilterData").exit().remove();
         this.svg.append("g")
@@ -162,13 +186,14 @@ class ImpactTrace {
                     console.log(d);
                 })
                 .on("mouseout", function(d,i) {
+                    let that = this;
                     d3.select(this)
                       .attr("x", function(d) {
                         return rectScale(i);
                       })
-                      .attr("y", 5)
-                      .attr("width", 50/5)
-                      .attr("height", 10)
+                      .attr("y", that.margin.top/2)
+                      .attr("width", that.margin.left/5)
+                      .attr("height", that.margin.top)
                       .style("fill", "#43a2ca");
 
                     d3.selectAll(".tooltip")
@@ -193,7 +218,22 @@ class ImpactTrace {
                             return 0;
                         }
                     })
+                        // Find the Min and Max of Vals
+                        let ext = d3.extent(vals);
+                        // Get X scale
+                        let Xscaled = d3.scaleLinear()
+                                        .domain([ext])
+                                        .range([]);
 
+                        let Yscaled = d3.scaleLinear()
+                                        .domain([])
+                                        .range([]);
+
+
+                        d3.select(".ImpactTrace")
+                          .selectAll("path")
+                          .data(vals)
+                          .enter().append("")
                         console.log(vals);
                     }
                 );
@@ -248,6 +288,8 @@ class ImpactTrace {
         d3.select(".ImpactTrace")
                 .selectAll("path")
                 .on("mouseover", function(d) {
+                    let that = this;
+
                     // Find Journal Name Through Mapping
                     let pos = lines.map((e1,i) => {
                         if (d === e1) {
