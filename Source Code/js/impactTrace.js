@@ -212,16 +212,14 @@ class ImpactTrace {
 
                          // Create New Impact Trace Chart
                          // Create New X and Y axis
-                        this.Xscale = d3.scaleLinear()
+                        let Xscale = d3.scaleLinear()
                                         .domain([new Date(startYear), new Date(endYear)])
                                         .range([this.margin.left, this.svgWidth - this.margin.right]);
 
                         // create Yscale based on JIF values
-                        this.Yscale = d3.scaleLinear()
+                        let Yscale = d3.scaleLinear()
                                         .domain([ext[0], ext[1]])
                                         .range([400 - 40, 60]);
-
-
 
                          // create line function
                          let linefn = d3.line()
