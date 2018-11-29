@@ -51,6 +51,7 @@ class HorizontalBars {
         text += "<li>Cited:\t" + tooltip_data.Cited + "</li>";
         text += "<li>Citing:\t" + tooltip_data.Citing + "</li>";
         text += "</ul>";
+        text += "</ul>";
 	    return text;
 	}
 

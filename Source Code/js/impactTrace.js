@@ -16,36 +16,7 @@ class ImpactTrace {
         this.svg = divImpactTrace.append("svg")
             .attr("width", this.svgWidth)
             .attr("height", this.svgHeight);//TODO: fix this to not be hardcoded
-
-		//for reference: https://github.com/Caged/d3-tip
-		//Use this tool tip element to handle any hover over the chart
-		// this.tip = d3.tip().attr('class', 'd3-tip')
-		// 	.direction('s')
-		// 	.offset(function() {
-		// 		return [0,0];
-		// 	});
-    };
-
-
-	/**
-	 * Renders the HTML content for tool tip
-	 *
-	 * @param tooltip_data information that needs to be populated in the tool tip
-	 * @return text HTML content for toop tip
-	 */
-	tooltip_render (tooltip_data) {
-	    let text = "<ul>";
-	    tooltip_data.result.forEach((row)=>{
-
-	    });
-	    return text;
-	}
-
-	/**
-	 * Creates the horizontalBars, content and tool tips
-	 *
-	 * @param journalsImpact - array of journals with their impact factor over time
-	 */
+   };
 	update (Grid, Cited, Citing){
 
         // First Sort the Data
@@ -54,13 +25,13 @@ class ImpactTrace {
         });
         var sortGrid = Grid;
 
-        Cited = Cited.sort(function(e1, e2) {
-            return d3.ascending(e1.Year, e2.Year)
-        });
-
-        Citing = Citing.sort(function(e1, e2) {
-            return d3.ascending(e1.Year, e2.Year)
-        });
+//        Cited = Cited.sort(function(e1, e2) {
+//            return d3.ascending(e1.Year, e2.Year)
+//        });
+//
+//        Citing = Citing.sort(function(e1, e2) {
+//            return d3.ascending(e1.Year, e2.Year)
+//        });
 
         // Separate Years
         this.Years = Grid.map(d => {
@@ -136,6 +107,56 @@ class ImpactTrace {
                 .attr("x", this.Xscale(endYear * 0.5))
                 .attr("y", this.margin.top)
                 .classed("itTitle", true);
+        let cnams = Grid.columns;
+
+//        this.tip.html((d)=> {
+//            // let tooltip_data;
+//            console.log(d);
+//            return this.tooltip_render(d);
+//        });
+
+        this.svg.append("g")
+                .append("text")
+                .text("Filters")
+                .attr("x", this.margin.left/5)
+                .attr("y", this.margin.top * 3 / 2)
+                .style("stroke-color", " #E38533");
+
+
+        this.svg.select("g > FilterData").exit().remove();
+        this.svg.append("g")
+                .classed("FD_Group", true)
+                .selectAll("rect")
+                .classed("FilterData", true)
+                .data(cnams)
+                .enter()
+                .append("rect")
+                .attr("x", (d,i) => {
+                    return (i-1) * (this.svgWidth - this.margin.left - 2 * this.margin.right) / (cnams.length-1) + 2 * this.margin.left;
+                })
+                .attr("y", this.margin.top)
+                .attr("width", this.margin.left/5)
+                .attr("height", this.margin.top)
+                .style("fill", "#43a2ca")
+                .on("mouseover", function(d,i) {
+                    d3.select(".FD_Group")
+                      .append("title")
+                      .text(d)
+                      .attr("class", "tooltip")
+                      .style("opacity", 0)
+                      .transition()
+                      .duration(200)
+                      .style("opacity", 1);
+                })
+                .on("mouseout", function(d) {
+                    d3.selectAll(".tooltip")
+                      .transition()
+                      .duration(100)
+                      .style("opacity", 0);
+                })
+                .on("mouseclick", d => {
+
+                });
 
         // create line
         this.line = d3.line()
@@ -185,20 +206,17 @@ class ImpactTrace {
                     d3.select(this)
                         .append("title")
                         .text("Journal: " + sortGrid[pos[0]]["Journal"])
-                      .classed("barsTitle", true);
+                        .classed("barsTitle", true)
+                        .transition()
+                        .duration(100)
+                        .style("opacity", 0.9);
                 })
                 .on("mouseout", function(d) {
                     d3.select(this)
-                      .attr("id", d => {
-                      })
+                      .transition()
+                      .duration(100)
+                      .style("opacity", 0)
+                      .remove();
                 });
-    function hovering(svg, lines) {
-        svg.style("position", "relative");
-
-        if ("ontouchstart" in document) {
-            svg.style("-webkit-tap-highlight-color","transparent")
-               .on("touchmove", moved)
-        }
     }
-    };
-}
+};
