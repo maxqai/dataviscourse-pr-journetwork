@@ -44,6 +44,9 @@ class ImpactTrace {
         let startYear = d3.min(this.Years)
         let endYear = d3.max(this.Years)
 
+        // Find Columns worth filtering
+        let JofInterest = ["5-Year Impact Factor", "% Articles in Citable Items", "Article Influence Score", "Citable Items", "Cited Half-Life", "Citing Half-LIfe", "Eigenfactor Score", "Immediacy Index", "Impact Factor without Journal Self Cites", "Journal Impact Factor", "Normalized Eigenfactor", "Total Cites", "avgJIFPercentile"];
+
         // Find All Unique Journal Names else return Undefineds
         let name = Grid.map((d,i) => {
             if (i > 0){
@@ -107,7 +110,7 @@ class ImpactTrace {
 
         let cnams = Grid.columns;
         let rectScale = d3.scaleLinear()
-                          .domain([0, cnams.length])
+                          .domain([0, JofInterest.length])
                           .range([this.margin.left, this.svgWidth - this.margin.right]);
 
         this.svg.append("g")
@@ -121,13 +124,13 @@ class ImpactTrace {
                 .classed("FD_Group", true)
                 .selectAll("rect")
                 .classed("FilterData", true)
-                .data(cnams)
+                .data(JofInterest)
                 .enter()
                 .append("rect")
                 .attr("x", (d,i) => {
                     return rectScale(i);
                 })
-                .attr("y", this.margin.top)
+                .attr("y", this.margin.top/2)
                 .attr("width", this.margin.left/5)
                 .attr("height", this.margin.top)
                 .style("fill", "#43a2ca")
@@ -137,7 +140,7 @@ class ImpactTrace {
                                 return rectScale(i) - 5;
                               })
                               .attr("y", function(d) {
-                                return 5
+                                return 0
                               })
                               .attr("width", function(d) {
                                 return 25
@@ -163,7 +166,7 @@ class ImpactTrace {
                       .attr("x", function(d) {
                         return rectScale(i);
                       })
-                      .attr("y", 10)
+                      .attr("y", 5)
                       .attr("width", 50/5)
                       .attr("height", 10)
                       .style("fill", "#43a2ca");
@@ -175,10 +178,22 @@ class ImpactTrace {
                       .remove();
                 })
                 .on("click", d => {
+                    let dnam = JofInterest.indexOf(d);
                     let vals = this.sortGrid.map((e1) => {
-                        return e1[d];
+                        let b = Object.keys(e1);
+                        let val = e1[b[dnam]];
+                        // If the number is a Float
+                        if (!isNaN(val) && val.toString().indexOf('.') != -1) {
+                            return parseFloat(val);
+                        // if the number is an Integer
+                        } else if (!isNaN(val) && val.toString().indexOf(',') == -1) {
+                            return parseInt(val);
+                        // If there is no number
+                        } else (
+                            return 0;
+                        )
                     })
-                    console.log(vals);
+                        console.log(vals);
                     }
                 );
 
