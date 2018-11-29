@@ -72,7 +72,7 @@ class ImpactTrace {
         // create Yscale based on JIF values
         this.Yscale = d3.scaleLinear()
                         .domain([0, endJIF])
-                        .range([this.svgHeight - 2 * this.margin.bottom, 2 * this.margin.top]);
+                        .range([this.svgHeight - 2 * this.margin.bottom, 3 * this.margin.top]);
 
         // Create X axis
         this.Xaxis = d3.axisBottom();
@@ -124,16 +124,22 @@ class ImpactTrace {
         let cnams = Grid.columns;
         let rectScale = d3.scaleLinear()
                           .domain([0, JofInterest.length])
-                          .range([this.margin.left, this.svgWidth - this.margin.right]);
+                          .range([this.margin.left*2, this.svgWidth - this.margin.right]);
 
         // Append Text About Which Filter is On
         this.svg.append("text")
                 .classed("Filt_Data_Text", true)
-                .text("Filter: Journal")
+                .text("Current Filter: Journal")
                 .attr("x", this.margin.left)
                 .attr("y", this.margin.top)
                 .classed("instruct", true)
                 .attr("font-size", this.margin.top + "px");
+
+        this.svg.append("text")
+                .classed("FFilter", true)
+                .text("Filter")
+                .attr("x", this.margin.left)
+                .attr("y", this.margin.top*2.5)
 
         this.svg.select("g > FilterData").exit().remove();
         this.svg.append("g")
@@ -146,9 +152,9 @@ class ImpactTrace {
                 .attr("x", (d,i) => {
                     return rectScale(i);
                 })
-                .attr("y", this.margin.top/2)
+                .attr("y", this.margin.top*2)
                 .attr("width", this.margin.left/5)
-                .attr("height", this.margin.top)
+                .attr("height", this.margin.top/2)
                 .style("fill", "#43a2ca")
                 .on("mouseover", function(d,i) {
                     let x = d3.select(this)
