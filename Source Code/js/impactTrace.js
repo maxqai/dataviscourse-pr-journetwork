@@ -5,7 +5,8 @@ class ImpactTrace {
     constructor(){
         //initialize svg elements, svg sizing
         this.margin = {top: 10, right: 50, bottom: 20, left: 50};
-        let divImpactTrace = d3.select("#impactTrace").classed("impactTrace", true);
+        let divImpactTrace = d3.select("#impactTrace")
+                               .classed("impactTrace", true);
 
         //fetch the svg bounds
         this.svgBounds = divImpactTrace.node().getBoundingClientRect();
@@ -18,7 +19,7 @@ class ImpactTrace {
             .attr("height", this.svgHeight);//TODO: fix this to not be hardcoded
    };
 	update (Grid, Cited, Citing){
-        // Things that need to get done: Formatting of Graph - adding X and Y Labes, Changing Year so it Looks Good, appending circle to show which line was highlighted
+        // Things that need to get done: Formatting of Graph - adding X and Y Labels, Changing Year so it Looks Good, appending circle to show which line was highlighted
 
         // First Sort the Data
         Grid = Grid.sort(function (e1, e2) {
@@ -91,23 +92,26 @@ class ImpactTrace {
             .tickValues([0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50]);
 
         this.svg.append("g")
-                .classed("lineAxis", true)
                 .attr("transform","translate(" + 0 + "," + 380 + ")")
                 .call(this.Xaxis)
+                .selectAll(".ticks")
+                .attr("id", "lineAxis");
 
         this.svg.append("g")
-                .classed("lineAxis", true)
                 .attr("transform","translate(" + this.margin.left/2 + "," + 0 + ")")
                 .call(this.Yaxis)
+                .selectAll(".ticks")
+                .attr("id", "lineAxis");
 
         d3.select(".itTitle").remove();
 
-        this.svg.append("g")
-                .append("text")
-                .text("Journal Impact Factor")
-                .attr("x", this.Xscale(endYear * 0.5))
-                .attr("y", this.margin.top)
-                .classed("itTitle", true);
+//        this.svg.append("g")
+//                .append("text")
+//                .text("Journal Impact Factor")
+//                .attr("x", this.Xscale(endYear * 0.5))
+//                .attr("y", this.margin.top)
+//                .classed("itTitle", true);
+
         let cnams = Grid.columns;
 
         this.svg.append("g")
@@ -236,7 +240,28 @@ class ImpactTrace {
                                 } else {
                                 return null
                                 }
-                          })
+                          });
+
+                        d3.select('.citedBars')
+                          .selectAll("rect")
+                          .attr("id", e1 => {
+                            if (sortGrid[pos[0]]["Journal"] === e1["Journal"]) {
+                                return 'hlightCited'
+                            } else {
+                                return null
+                            }
+                          });
+
+                        d3.select('.citingBars')
+                          .selectAll("rect")
+                          .attr("id", e1 => {
+                            if (sortGrid[pos[0]]["Journal"] === e1["Journal"]) {
+                                return 'hlightCited'
+                            } else {
+                                return null
+                            }
+                          });
+
                 })
                 .on("mouseout", function(d) {
                     d3.select(this)
