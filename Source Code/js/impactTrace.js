@@ -209,6 +209,38 @@ class ImpactTrace {
                             .data(vals)
                             .enter().append("")
                             console.log(vals);
+
+                         // Create New Impact Trace Chart
+                         // Create New X and Y axis
+                        this.Xscale = d3.scaleLinear()
+                                        .domain([new Date(startYear), new Date(endYear)])
+                                        .range([this.margin.left, this.svgWidth - this.margin.right]);
+
+                        // create Yscale based on JIF values
+                        this.Yscale = d3.scaleLinear()
+                                        .domain([ext[0], ext[1]])
+                                        .range([400 - 40, 60]);
+
+
+
+                         // create line function
+                         let linefn = d3.line()
+                                        .x(e2 => {
+                                            return
+                                        })
+
+                         // Selects all paths
+                         let lines = d3.select(".impactTrace")
+                                       .select("svg")
+                                       .select(".ImpactTrace")
+                                       .selectAll("path");
+                         // Removes paths
+                         lines.remove();
+                         lines.data(vals)
+                              .append()
+                           .selectAll
+                           .remove();
+
                         }
                     )
                 })
@@ -231,7 +263,6 @@ class ImpactTrace {
                       .style("opacity", 0)
                       .remove();
                 });
-
 
         // create line
         this.line = d3.line()
