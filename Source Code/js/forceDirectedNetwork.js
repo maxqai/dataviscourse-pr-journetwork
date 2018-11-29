@@ -391,11 +391,13 @@ class ForceDirectedNetwork {
         let zoom = d3.zoom()
             .on('zoom', () => {
                 gWrap.attr('transform',d3.event.transform);
+            })
+            .filter(function() {
+                return d3.event.ctrlKey;
             });
 
         this.svg
             .call(zoom);
-            // .on('wheel.zoom',null);
 
 			// this.tip.html((d)=> {
 			// 		let tooltip_data = {
