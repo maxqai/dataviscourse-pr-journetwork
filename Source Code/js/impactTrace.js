@@ -204,21 +204,19 @@ class ImpactTrace {
                         } else {
                             return 0.15;
                         }
-                     })
-                     .on("mouseover", function(d,i) {
-                        d3.select(this)
-                          .style("opacity", 1);
                      });
 
         d3.select(".ImpactTrace")
                 .selectAll("path")
                 .on("mouseover", function(d) {
+                    // Find Journal Name Through Mapping
                     let pos = lines.map((e1,i) => {
                         if (d === e1) {
                             return [i];
                         } else {
                             return NaN;
                         }
+
                     });
                     // Remove NaNs from pos
                     pos = pos.filter((e1) => {if (!isNaN(e1)) {return e1}});
@@ -229,6 +227,16 @@ class ImpactTrace {
                         .transition()
                         .duration(100)
                         .style("opacity", 0.9);
+
+                    // highlight related nodes in FDN
+                        d3.select('.nodes').selectAll('circle')
+                          .attr('id', e1 => {
+                                if (sortGrid[pos[0]]["Journal"].toUpperCase() === e1.id.toUpperCase()) {
+                                    return 'hlightCited'
+                                } else {
+                                return null
+                                }
+                          })
                 })
                 .on("mouseout", function(d) {
                     d3.select(this)
