@@ -176,6 +176,41 @@ class ImpactTrace {
                       .style("opacity", 1);
 
                     console.log(d);
+                    d3.select(this)
+                      .on("click", d => {
+                        let dnam = JofInterest.indexOf(d);
+                        let vals = sortGrid.map((e1) => {
+                            let b = Object.keys(e1);
+                            let val = e1[b[dnam]];
+                            // If the number is a Float
+                            if (!isNaN(val) && val.toString().indexOf('.') != -1) {
+                                return parseFloat(val);
+                            // if the number is an Integer
+                            } else if (!isNaN(val) && val.toString().indexOf(',') == -1) {
+                                return parseInt(val);
+                            // If there is no number
+                            } else {
+                                return 0;
+                            }
+                        })
+                            // Find the Min and Max of Vals
+                            let ext = d3.extent(vals);
+                            // Get X scale
+                            let Xscaled = d3.scaleLinear()
+                                            .domain([ext])
+                                            .range([]);
+
+                          let Yscaled = d3.scaleLinear()
+                                            .domain([])
+                                            .range([]);
+
+                            d3.select(".ImpactTrace")
+                            .selectAll("path")
+                            .data(vals)
+                            .enter().append("")
+                            console.log(vals);
+                        }
+                    )
                 })
                 .on("mouseout", function(d,i) {
                     let that = this;
@@ -195,41 +230,8 @@ class ImpactTrace {
                       .duration(100)
                       .style("opacity", 0)
                       .remove();
-                })
-                .on("click", d => {
-                    let dnam = JofInterest.indexOf(d);
-                    let vals = sortGrid.map((e1) => {
-                        let b = Object.keys(e1);
-                        let val = e1[b[dnam]];
-                        // If the number is a Float
-                        if (!isNaN(val) && val.toString().indexOf('.') != -1) {
-                            return parseFloat(val);
-                        // if the number is an Integer
-                        } else if (!isNaN(val) && val.toString().indexOf(',') == -1) {
-                            return parseInt(val);
-                        // If there is no number
-                        } else {
-                            return 0;
-                        }
-                    })
-                        // Find the Min and Max of Vals
-                        let ext = d3.extent(vals);
-                        // Get X scale
-                        let Xscaled = d3.scaleLinear()
-                                        .domain([ext])
-                                        .range([]);
+                });
 
-                        let Yscaled = d3.scaleLinear()
-                                        .domain([])
-                                        .range([]);
-
-                        d3.select(".ImpactTrace")
-                          .selectAll("path")
-                          .data(vals)
-                          .enter().append("")
-                        console.log(vals);
-                    }
-                );
 
         // create line
         this.line = d3.line()
