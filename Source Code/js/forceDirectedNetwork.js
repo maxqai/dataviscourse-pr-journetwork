@@ -403,12 +403,12 @@ class ForceDirectedNetwork {
         this.svg.append('text')
             .text('CTRL + scroll to zoom')
             .attr('y', 30)
-            .attr('x', 5)
+            .attr('x', 15)
             .classed('instruct', true);
         this.svg.append('text')
             .text('CTRL + drag to pan')
             .attr('y', 50)
-            .attr('x', 5)
+            .attr('x', 15)
             .classed('instruct', true);
 
 			// this.tip.html((d)=> {
