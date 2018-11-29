@@ -10,7 +10,7 @@ class ForceDirectedNetwork {
 
 
         //initialize svg elements, svg sizing
-        this.margin = {top: 10, right: 50, bottom: 20, left: 50};
+        this.margin = {top: 10, right: 100, bottom: 20, left: 50};
         let divForceDirectedNetwork = d3.select("#network").classed("network", true);
 
         //fetch the svg bounds
@@ -264,14 +264,19 @@ class ForceDirectedNetwork {
         d3.select('.links').remove();
         d3.select('.nodes').remove();
 
+        //add encompassing group for the zoom
+        let gWrap = this.svg.append('g')
+            .attr('class', 'everything');
 
-        let links = this.svg.append('g')
+        let links = gWrap.append('g')
+        // let links = this.svg.append('g')
             .attr('class', 'links')
             .selectAll("line")
             .data(forceData.links)
             .enter().append("line");
 
-        let nodes = this.svg.append('g')
+        let nodes = gWrap.append('g')
+        // let nodes = this.svg.append('g')
             .attr('class', 'nodes')
             .selectAll('circle')
             .data(forceData.nodes)
@@ -381,6 +386,16 @@ class ForceDirectedNetwork {
                     }
                 }
             });
+
+        // Add zoom feature to FDN
+        let zoom = d3.zoom()
+            .on('zoom', () => {
+                gWrap.attr('transform',d3.event.transform);
+            });
+
+        this.svg
+            .call(zoom);
+            // .on('wheel.zoom',null);
 
 			// this.tip.html((d)=> {
 			// 		let tooltip_data = {
