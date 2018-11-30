@@ -15,7 +15,7 @@ class HorizontalBars {
         //add the svg to the div
         this.svg = divHorizontalBars.append("svg")
             .attr("width", 1.4*this.svgWidth)
-            .attr("height", 500);//TODO: fix this to not be hardcoded
+            .attr("height", 395);//TODO: fix this to not be hardcoded
 
         //add a group for each political party to the svg
         this.svg.append('g')
