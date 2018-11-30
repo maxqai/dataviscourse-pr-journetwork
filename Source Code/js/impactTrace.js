@@ -420,8 +420,13 @@ class ImpactTrace {
                 return nstr;
              })
              .style("opacity", 0)
-             .on("mouseover", function(e1, i, paths) {
-                let l0 = lines[i];
+             .on("mouseover", mouseover)
+             .on("mouseout", mouseout);
+//                let l2 = d3.select(".ImpactTrace").selectAll("path")._groups[0][i];
+//                l2.style.opacity = 1;
+
+        function mouseover(d) {
+            let l0 = lines[i];
                 let l1 = d3.select(".ImpactTrace").selectAll("path")._groups[0];
                 let des_l1 = [];
                 l1.forEach((e2,i) => {
@@ -436,17 +441,15 @@ class ImpactTrace {
                       .style("opacity",1)
                       .style("stroke", "black")
                       .style("stroke-width", 10);
-                })
+                });
+        };
 
-                })
-//                let l2 = d3.select(".ImpactTrace").selectAll("path")._groups[0][i];
-//                l2.style.opacity = 1;
-                .on("mouseout", function(d) {
-                     d3.select(this)
-                          .style("opacity", 0.1)
-                          .style("stroke-width", 1)
-                          .style("stroke", "#6FB98F")
-             });
+        function mouseout(d) {
+            d3.select(this)
+              .style("opacity", 0.1)
+              .style("stroke-width", 1)
+              .style("stroke", "#6FB98F")
+        };
 
         // Give the lines interactivity properties
 //        d3.select(".ImpactTrace")
