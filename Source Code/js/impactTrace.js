@@ -316,7 +316,19 @@ class ImpactTrace {
                       .remove();
                 });
 
-        // create line
+        // Create Voronoi Function
+        let voronoi = d3.voronoi()
+                        .x(function(d) {return this.Xscale(d)})
+                        .y(function(d) {
+                            if (isNaN(d[0])){
+                                return this.Yscale(0);
+                            } else {
+                                return this.Yscale(d)
+                            }
+                        })
+                        .extent([[-this.margin.left, -this.margin.top][this.svgWidth + this.margin.right, this.svgHeight + this.margin.bottom]]);
+
+        // Create Line Function
         this.line = d3.line()
                       .x(e2 => {
                         return this.Xscale(e2[0]);
