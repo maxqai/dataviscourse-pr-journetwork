@@ -175,7 +175,6 @@ class ImpactTrace {
                       .duration(200)
                       .style("opacity", 1);
 
-                    console.log(d);
                     d3.select(this)
                       .on("click", d => {
                         let dnam = JofInterest.indexOf(d);
@@ -208,8 +207,7 @@ class ImpactTrace {
                         d3.select(".ImpactTrace")
                           .selectAll("path")
                           .data(vals)
-                          .enter().append("")
-                          console.log(vals);
+                          .enter().append("path");
 
                          // Create New Impact Trace Chart
                          // Create New X and Y axis
@@ -260,7 +258,7 @@ class ImpactTrace {
                              .data(voronoi.polygons(d3.merge(vals)))
                              .enter.append("path")
                              .attr("d", function(d) {
-                                return d ? "M" + d.join("L") + "Z" : null
+                                return d ? "M" + d.join("L") + "Z" : 0
                              })
                              .on("mouseover", function(d) {
                                 d3.select(d)
@@ -319,7 +317,6 @@ class ImpactTrace {
         // Create Voronoi Function
         let voronoi = d3.voronoi()
                         .x(function(d) {
-                            console.log(d);
                             return Xscale(d)
                         })
                         .y(function(d) {
@@ -351,7 +348,7 @@ class ImpactTrace {
                 }
             });
             vals = vals.map((e2,i) => {
-                return [parseInt(e2["Year"]), parseFloat(e2["Journal Impact Factor"], e2["Journal"])]
+                return [parseInt(e2["Year"]), parseFloat(e2["Journal Impact Factor"])]
             });
             return this.line(vals);
         });
@@ -390,14 +387,27 @@ class ImpactTrace {
                             .attr("class", "voronoi");
 
         voron.selectAll("path")
-             .data(voronoi.polygons(d3.merge(sortGrid.map(d => {
-                if (isNaN(parseFloat(d["Journal Impact Factor"]))) {
-                    return [parseInt(d["Year"]), 0];
-                } else {
-                    return [parseInt(d["Year"]), parseFloat(d["Journal Impact Factor"])];
-                }
+             .data(voronoi.polygons(d3.merge(
+                name.map((e1,i) => {
+                    let vals = Grid.filter((e2,i) => {
+                    if (e2["Journal"] === e1){
+                        return e2;
+                    }
+                    });
+
+                vals = vals.map((e2,i) => {
+                    return [parseInt(e2["Year"]), parseFloat(e2["Journal Impact Factor"])]
+                });
+
+                return vals;
              }))))
-             .enter().append("path");
+             .enter().append("path")
+             .attr("d", function(d) {
+                console.log(d);
+                return d ? "M" + d.join("L") + "Z" : 0;
+             })
+             .on("mouseover", console.log("MouseOver"))
+             .on("mouseout", console.log("MouseOut"));
 
         // Give the lines interactivity properties
         d3.select(".ImpactTrace")
