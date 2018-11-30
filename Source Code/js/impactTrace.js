@@ -122,7 +122,6 @@ class ImpactTrace {
 
         d3.select(".itTitle").remove();
 
-        let cnams = Grid.columns;
         let rectScale = d3.scaleLinear()
                           .domain([0, JofInterest.length])
                           .range([this.margin.left*3, this.svgWidth - this.margin.right]);
@@ -177,17 +176,43 @@ class ImpactTrace {
                       .style("opacity", 1);
                 })
                 .on("click", d => {
-                    // Find the Filter of Interest Position
-                    let values = sortGrid.map(e1 => {
-                        let sGnames = Object.keys(e1);
-                        let sGpos = sGnames.indexOf(d);
-                        let year = e1["Year"];
-                        let val = parseFloat(e1[sGnames[sGpos]]);
-                        if (isNaN(val)) {
-                            val = 0;
-                        }
-                        return [year, val]
-                    })
+                    // Create a Line Function
+                    let line = d3.line()
+                                 .x(e2 => {
+                                    return Xscale(e2[0]);
+                                 })
+                                 .y(e2 => {
+                                    if (isNaN(e2[1])) {
+                                        return Yscale(0);
+                                    } else {
+                                        return Yscale(e2[1]);
+                                    }
+                                 });
+                    // Map Data points and create path strings
+                    let lines =  name.map((e1,i) => {
+                        // Filter Data Based On Journal
+                        let vals = Grid.filter((e2,i) => {
+                            if (e2["Journal"] === e1){
+                                return e2;
+                            }
+                        });
+                        // Find the Column of Interest
+//                        let year = parseInt(e1["Year"]);
+//                        let val =   parseFloat(e1[sGnames[sGpos]]);
+                        // Compute the line
+                        vals = vals.map((e2,i) => {
+                            let sGnames = Object.keys(e2);
+                            let sGpos = [];
+                            sGnames.forEach((e3,i1) => {
+                                if (e3 === d) {
+                                    sGpos = i1;
+                                }
+                            });
+                            return [parseInt(e2["Year"]), parseFloat(e2[sGnames[sGpos]])]
+                        });
+                        return line(vals)
+                    });
+
 
                     // Find the Min and Max of Vals
                     let ext = d3.extent(values);
@@ -202,32 +227,31 @@ class ImpactTrace {
                         .domain([ext[0], ext[1]])
                         .range([360, 60]).nice();
 
-                    // Line Function
-                    let line = d3.line()
-                                .x(e2 => {
-                                    return Xscale(e2[0]);
-                                })
-                                .y(e2 => {
-                                    if (isNaN(e2[1])) {
-                                return Yscale(0);
-                                } else {
-                                    return Yscale(e2[1]);
-                                }
-                    });
+                    let values2 = line(values);
 
-                    d3.select(".ImpactTrace")
-                      .selectAll("path")
-                      .remove();
+                    let lined = this.svg.append("g")
+                            .classed("ImpactTrace", true)
+                            .selectAll("path")
+                            .data(lines);
 
-                    d3.select(".ImpactTrace")
-                      .selectAll("path")
-                      .data(values)
-                      .enter().append("path")
-                      .attr("stroke", "black")
-                      .attr("opacity", 1)
-                      .attr("stroke-width", 3);
+                    lined.exit().remove();
 
-
+                    lined.enter().append("path")
+                         .attr("d", d => {return d})
+                         .style("stroke", function(d) {
+                            if (name[lines.indexOf(d)] === "Nature") {
+                                return "#E38533";
+                            } else {
+                                return "#004445";
+                            }
+                        })
+                        .style("opacity", d => {
+                            if (name[lines.indexOf(d)] === "Nature") {
+                                return 1;
+                            } else {
+                                return 0.15;
+                            }
+                        });
                 })
                 .on("mouseout", function(d,i) {
                     let that = this;
@@ -288,7 +312,6 @@ class ImpactTrace {
             });
             return this.line(vals)
         });
-
 //        let voronois =  name.map((e1,i) => {
 //            let vals = Grid.filter((e2,i) => {
 //                if (e2["Journal"] === e1){
