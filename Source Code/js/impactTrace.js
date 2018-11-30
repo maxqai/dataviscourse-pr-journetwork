@@ -190,35 +190,20 @@ class ImpactTrace {
                     })
 
                     // Find the Min and Max of Vals
-                    let ext = d3.extent(vals);
+                    let ext = d3.extent(values);
 
                     // Get X scale
                     let Xscaled = d3.scaleLinear()
                                     .domain([1997, 2017])
-                                    .range([25, 375]);
+                                    .range([20, 380]).nice();
 
                     // create Yscale based on JIF values
                     let Yscaled = d3.scaleLinear()
                         .domain([ext[0], ext[1]])
-                        .range([340, 60]);
+                        .range([360, 60]).nice();
 
-                    d3.select(".ImpactTrace")
-                      .selectAll("path")
-                      .data(vals)
-                      .enter().append("path");
-
-                     // Create New Impact Trace Chart
-                     // Create New X and Y axis
-                    let Xscale = d3.scaleLinear()
-                                    .domain([new Date(startYear), new Date(endYear)])
-                                    .range([20, 380]).nice();
-
-                    // create Yscale based on JIF values
-                    let Yscale = d3.scaleLinear()
-                                    .domain([ext[0], ext[1]])
-                                    .range([400 - 40, 60]).nice();
-
-                let line = d3.line()
+                    // Line Function
+                    let line = d3.line()
                                 .x(e2 => {
                                     return Xscale(e2[0]);
                                 })
@@ -228,7 +213,21 @@ class ImpactTrace {
                                 } else {
                                     return Yscale(e2[1]);
                                 }
-                      });
+                    });
+
+                    d3.select(".ImpactTrace")
+                      .selectAll("path")
+                      .remove();
+
+                    d3.select(".ImpactTrace")
+                      .selectAll("path")
+                      .data(values)
+                      .enter().append("path")
+                      .attr("stroke", "black")
+                      .attr("opacity", 1)
+                      .attr("stroke-width", 3);
+
+
                 })
                 .on("mouseout", function(d,i) {
                     let that = this;
