@@ -193,28 +193,29 @@ class ImpactTrace {
                                 return 0;
                             }
                         })
-                            // Find the Min and Max of Vals
-                            let ext = d3.extent(vals);
-                            // Get X scale
-                            let Xscaled = d3.scaleLinear()
-                                            .domain([ext])
-                                            .range([]);
 
-                          let Yscaled = d3.scaleLinear()
-                                            .domain([])
-                                            .range([]);
+                        // Find the Min and Max of Vals
+                        let ext = d3.extent(vals);
+                        // Get X scale
+                        let Xscaled = d3.scaleLinear()
+                                        .domain([ext])
+                                        .range([]);
 
-                            d3.select(".ImpactTrace")
-                            .selectAll("path")
-                            .data(vals)
-                            .enter().append("")
-                            console.log(vals);
+                        let Yscaled = d3.scaleLinear()
+                                        .domain([])
+                                        .range([]);
+
+                        d3.select(".ImpactTrace")
+                          .selectAll("path")
+                          .data(vals)
+                          .enter().append("")
+                          console.log(vals);
 
                          // Create New Impact Trace Chart
                          // Create New X and Y axis
                         let Xscale = d3.scaleLinear()
                                         .domain([new Date(startYear), new Date(endYear)])
-                                        .range([this.margin.left, this.svgWidth - this.margin.right]);
+                                        .range([20, 380]);
 
                         // create Yscale based on JIF values
                         let Yscale = d3.scaleLinear()
@@ -222,23 +223,49 @@ class ImpactTrace {
                                         .range([400 - 40, 60]);
 
                          // create line function
-                         let linefn = d3.line()
-                                        .x(e2 => {
-                                            return
-                                        })
+                        let linefn = d3.line()
+                                       .x(e2 => {
+                                            return Xscale(e2[0]);
+                                       })
+                                       .y(e2 => {
+                                            if (isNaN(e2[1])) {
+                                                return Yscale[0];
+                                            } else {
+                                                return Yscale(e2[1]);
+                                            }
+                                       });
 
-                         // Selects all paths
-                         let lines = d3.select(".impactTrace")
-                                       .select("svg")
-                                       .select(".ImpactTrace")
-                                       .selectAll("path");
-                         // Removes paths
-                         lines.remove();
-                         lines.data(vals)
-                              .append()
-                           .selectAll
+                        // Pathing
+                        d3.select(".impactTrace")
+                           .select("svg")
+                           .select(".ImpactTrace")
+                           .selectAll("path")
                            .remove();
 
+                        d3.select(".impactTrace")
+                           .select("svg")
+                           .select(".ImpactTrace")
+                           .selectAll("path")
+                           .data(vals)
+                           .enter()
+                           .append(path)
+                           .attr("d", d => {
+                               return d
+                           })
+                           .style("stroke", function(d) {
+                            if (name[lines.indexOf(d)] === "Nature") {
+                                return "#E38533";
+                            } else {
+                                return "#004445";
+                            }
+                            .style("opacity", d => {
+                                if (name[lines.indexOf(d)] === "Nature") {
+                                    return 1;
+                                } else {
+                                    return 0.15;
+                                }
+                           })
+                     });
                         }
                     )
                 })
