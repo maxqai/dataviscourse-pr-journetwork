@@ -16,7 +16,7 @@ class ForceDirectedNetwork {
         this.svgBounds = divForceDirectedNetwork.node().getBoundingClientRect();
         this.svgWidth = this.svgBounds.width - this.margin.left - this.margin.right;
         this.svgHeight = this.svgBounds.height - this.margin.bottom - this.margin.top;
-        this.svgHeight = 930; //TODO: fix this to not be hardcoded
+        this.svgHeight = 930;
 
         //add the svg to the div
         this.svg = divForceDirectedNetwork.append("svg")
@@ -339,6 +339,8 @@ class ForceDirectedNetwork {
                     }
                 }
             });
+
+        // Todo: On links hover, change color so that you can see where it goes to
 
         // Add zoom feature to FDN
         let zoom = d3.zoom()
