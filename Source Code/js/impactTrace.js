@@ -250,12 +250,13 @@ class ImpactTrace {
                                return d
                            })
                            .style("stroke", function(d) {
-                            if (name[lines.indexOf(d)] === "Nature") {
-                                return "#E38533";
-                            } else {
-                                return "#004445";
-                            }
-                            .style("opacity", d => {
+                                if (name[lines.indexOf(d)] === "Nature") {
+                                    return "#E38533";
+                                } else {
+                                    return "#004445";
+                                }
+                           })
+                           .style("opacity", d => {
                                 if (name[lines.indexOf(d)] === "Nature") {
                                     return 1;
                                 } else {
