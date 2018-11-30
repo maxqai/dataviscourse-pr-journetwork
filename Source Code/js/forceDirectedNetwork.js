@@ -8,49 +8,22 @@ class ForceDirectedNetwork {
 		this.impactTrace = impactTrace;
 		this.journalInfoBox = journalInfoBox;
 
-
         //initialize svg elements, svg sizing
-        this.margin = {top: 10, right: 100, bottom: 20, left: 50};
+        this.margin = {top: 10, right: 120, bottom: 20, left: 50};
         let divForceDirectedNetwork = d3.select("#network").classed("network", true);
 
         //fetch the svg bounds
         this.svgBounds = divForceDirectedNetwork.node().getBoundingClientRect();
         this.svgWidth = this.svgBounds.width - this.margin.left - this.margin.right;
         this.svgHeight = this.svgBounds.height - this.margin.bottom - this.margin.top;
-        this.svgHeight = 800; //TODO: fix this to not be hardcoded
+        this.svgHeight = 930; //TODO: fix this to not be hardcoded
 
         //add the svg to the div
         this.svg = divForceDirectedNetwork.append("svg")
             .attr("width", this.svgWidth)
             .attr("height", this.svgHeight);
 
-
-
-
-		//for reference: https://github.com/Caged/d3-tip
-		//Use this tool tip element to handle any hover over the chart
-		// this.tip = d3.tip().attr('class', 'd3-tip')
-		// 	.direction('s')
-		// 	.offset(function() {
-		// 		return [0,0];
-		// 	});
     };
-
-
-	/**
-	 * Renders the HTML content for tool tip
-	 *
-	 * @param tooltip_data information that needs to be populated in the tool tip
-	 * @return text HTML content for toop tip
-	 */
-	tooltip_render (tooltip_data) {
-	    let text = "<ul>";
-	    tooltip_data.result.forEach((row)=>{
-
-	    });
-	    return text;
-	}
-
 
     /**
      * Creates the forceDirectedNetwork, content and tool tips
@@ -61,10 +34,6 @@ class ForceDirectedNetwork {
      * @param mapType - 'Citing' or 'Cited'
      */
 	update (journalCSVs, year, journal, mapType){
-	    // let temp = journalData[0].filter(d => {
-	    //     return parseInt(d.Year) === year
-        // }).map( d => d.Journal);
-	    // console.log('profGrid', temp);
 
         // try and get year from yearSlider, if possible
         // this is to avoid cases where the searchBar is used (which only uses initial year instead of slider year
@@ -128,14 +97,6 @@ class ForceDirectedNetwork {
             journalsLinkInfo = journalsLinkInfo.filter(d => {
                 return d.citationJournalName !== "ALL Journals";
             });
-            // journalsLinkInfo = journalsLinkInfo.filter(d => {
-            //     let string = d.citationJournalName;
-            //     let substring = "ALL OTHERS";
-            //     if (string.includes(substring)) {
-            //     } else {
-            //         return d.citationJournalName;
-            //     }
-            // });
             journalsLinkInfo = journalsLinkInfo.filter(d => {
                 return d.citationJournalName !== d.mainJournalName;
             });
@@ -143,7 +104,6 @@ class ForceDirectedNetwork {
 
         // get rid of journals that aren't in top 100 - need to check for every year.
         let tempJournalData = [];
-        // console.log('length JLI', journalsLinkInfo)
         journalsLinkInfo.forEach( d => {
             let count = 0;
             this.profileGrid.forEach( jName => {
@@ -155,7 +115,6 @@ class ForceDirectedNetwork {
                 tempJournalData.push(d);
             }
         });
-        // console.log('tempJournalData', tempJournalData);
         journalsLinkInfo = tempJournalData;
 
 
@@ -171,9 +130,6 @@ class ForceDirectedNetwork {
         });
 
 
-
-
-
 	    // make scale for circle sizes (have to sqrt for area)
         let domainMax = d3.max(journalsLinkInfo.map(d => d.impactFactor));
         let domainMin = d3.min(journalsLinkInfo.map(d => d.impactFactor));
@@ -182,31 +138,6 @@ class ForceDirectedNetwork {
         let impactFactorScale = d3.scaleSqrt()
             .domain([domainMin,domainMax])
             .range([rangeMin,rangeMax]); //TODO: correction for area
-
-
-        // make nodes and links similar to format below... we don't need groups at this point
-                // {
-                //   "nodes": [
-                //     {"id": "Myriel", "group": 1},
-                //     {"id": "Napoleon", "group": 1},
-                //     {"id": "Mlle.Baptistine", "group": 1},
-                //     {"id": "Mme.Magloire", "group": 1},
-                //     {"id": "Child1", "group": 10},
-                //     {"id": "Child2", "group": 10},
-                //     {"id": "Brujon", "group": 4},
-                //     {"id": "Mme.Hucheloup", "group": 8}
-                //   ],
-                //   "links": [
-                //     {"source": "Napoleon", "target": "Myriel", "value": 1},
-                //     {"source": "Mlle.Baptistine", "target": "Myriel", "value": 8},
-                //     {"source": "Mme.Magloire", "target": "Myriel", "value": 10},
-                //     {"source": "Mme.Magloire", "target": "Mlle.Baptistine", "value": 6},
-                //     {"source": "CountessdeLo", "target": "Myriel", "value": 1},
-                //     {"source": "Mme.Hucheloup", "target": "Gavroche", "value": 1},
-                //     {"source": "Mme.Hucheloup", "target": "Enjolras", "value": 1}
-                //   ]
-                // }
-        // d3.json('https://gist.githubusercontent.com/mbostock/4062045/raw/5916d145c8c048a6e3086915a6be464467391c62/miserables.json').then( d => console.log('json', d));
 
         let forceData = {
             nodes: journalsNodeInfo.map((d,i) => {
@@ -265,6 +196,7 @@ class ForceDirectedNetwork {
         d3.select('.nodes').remove();
 
         //add encompassing group for the zoom
+        d3.select('.everything').remove();
         let gWrap = this.svg.append('g')
             .attr('class', 'everything');
 
@@ -306,7 +238,6 @@ class ForceDirectedNetwork {
               .on("tick", ticked);
 
         //applies links
-        // console.log('forceData.links', forceData.links);
         forceSimulation.force("link")
               .links(forceData.links);
 
@@ -400,6 +331,7 @@ class ForceDirectedNetwork {
             .call(zoom);
 
         // Add text instructions for zooming
+        d3.select('#network > svg').selectAll('text').remove();
         this.svg.append('text')
             .text('CTRL + scroll to zoom')
             .attr('y', 30)
@@ -410,41 +342,6 @@ class ForceDirectedNetwork {
             .attr('y', 50)
             .attr('x', 15)
             .classed('instruct', true);
-
-			// this.tip.html((d)=> {
-			// 		let tooltip_data = {
-            //
-			// 		return this.tooltip_render(tooltip_data);
-	        //     });
-
-
-			// let bars = d3.select('#votes-percentage').select('svg').selectAll('rect')
-			// 	.call(this.tip);
-			// bars
-			// 	.on('mouseover', this.tip.show)
-			// 	.on('mouseout', this.tip.hide);
-        //TODO: When adding interactivity, use something like below
-        // circles
-        //     .attr("cx", d => yearScale(d.YEAR))
-        //     .attr("cy", this.svgHeight/3)
-        //     .attr("r", 10)
-        //     .attr("class", d => this.chooseClass(d.PARTY))
-        //     .on('mouseover', function() {
-        //         d3.select(this).classed('highlighted', true)
-        //     })
-        //     .on('mouseout', function() {
-        //         d3.select(this).classed('highlighted', false)
-        //     })
-        //     .on('click', d =>  {
-        //         d3.select("#year-chart").selectAll("circle").classed('selected', false);
-        //         d3.select("#year-chart").selectAll("circle").filter(selYear => selYear.YEAR === d.YEAR)
-        //             .classed('selected', true);
-        //         d3.csv("data/Year_Timeline_" + d.YEAR + ".csv").then(selectedYear => {
-        //             this.electoralVoteChart.update(selectedYear, this.colorScale);
-        //             this.tileChart.update(selectedYear, this.colorScale);
-        //             this.votePercentageChart.update(selectedYear);
-        //         })
-        //     });
 
         // Auto-scroll to top of page when network is redrawn (or when page is reloaded)
         document.body.scrollTop = document.documentElement.scrollTop = 0;

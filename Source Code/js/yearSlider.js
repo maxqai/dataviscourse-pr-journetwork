@@ -58,51 +58,29 @@ class YearSlider {
             forceDirectedNetwork.update(journalData, parseInt(this.value), currJournal[0], mapType);
         });
 
-
-		//for reference: https://github.com/Caged/d3-tip
-		//Use this tool tip element to handle any hover over the chart
-		// this.tip = d3.tip().attr('class', 'd3-tip')
-		// 	.direction('s')
-		// 	.offset(function() {
-		// 		return [0,0];
-		// 	});
     };
 
-
-	/**
-	 * Renders the HTML content for tool tip
-	 *
-	 * @param tooltip_data information that needs to be populated in the tool tip
-	 * @return text HTML content for tool tip
-	 */
-	tooltip_render (tooltip_data) {
-	    let text = "<ul>";
-	    tooltip_data.result.forEach((row)=>{
-
-	    });
-	    return text;
-	}
-
-	/**
-	 * Creates the yearSlider, content and tool tips
-	 *
-	 * @param yearArray - Array of available years
-	 */
-	update (yearArray){
-
-			// this.tip.html((d)=> {
-			// 		let tooltip_data = {
-            //
-			// 		return this.tooltip_render(tooltip_data);
-	        //     });
-
-
-			// let bars = d3.select('#votes-percentage').select('svg').selectAll('rect')
-			// 	.call(this.tip);
-			// bars
-			// 	.on('mouseover', this.tip.show)
-			// 	.on('mouseout', this.tip.hide);
-	};
+    //
+	// /**
+	//  * Creates the yearSlider, content and tool tips
+	//  *
+	//  * @param yearArray - Array of available years
+	//  */
+	// update (yearArray){
+    //
+	// 		// this.tip.html((d)=> {
+	// 		// 		let tooltip_data = {
+    //         //
+	// 		// 		return this.tooltip_render(tooltip_data);
+	//         //     });
+    //
+    //
+	// 		// let bars = d3.select('#votes-percentage').select('svg').selectAll('rect')
+	// 		// 	.call(this.tip);
+	// 		// bars
+	// 		// 	.on('mouseover', this.tip.show)
+	// 		// 	.on('mouseout', this.tip.hide);
+	// };
 
 
 }

@@ -50,9 +50,6 @@ class JournalInfoBox {
 	 */
 	update (selectedJournal, jData){
 
-	    // console.log('Info Journal', selectedJournal);
-	    // console.log('Journal Data', jData);
-
         let currData = jData.filter(d => {
             return d['Full Journal Title'].toUpperCase() === selectedJournal.toUpperCase();
         });
@@ -102,20 +99,6 @@ class JournalInfoBox {
         ul.append('p')
             .text(currData[0]['Description']);
 
-
-
-			// this.tip.html((d)=> {
-			// 		let tooltip_data = {
-            //
-			// 		return this.tooltip_render(tooltip_data);
-	        //     });
-
-
-			// let bars = d3.select('#votes-percentage').select('svg').selectAll('rect')
-			// 	.call(this.tip);
-			// bars
-			// 	.on('mouseover', this.tip.show)
-			// 	.on('mouseout', this.tip.hide);
 	};
 
 

@@ -58,8 +58,12 @@ class HorizontalBars {
 	/**
 	 * Creates the horizontalBars, content and tool tips
 	 *
-     * @param journal - Journal selection (used for highlighting in chart
+     * @param cited - cited information for each year of journal data
+     * @param citing - citing information for each year of journal data
      * @param year - year for display
+     * @param journal - Journal selection (used for highlighting in chart
+     * @param top100 - journal abbreviations and other parameters for top 100 journals
+     * @param dataObj - cited and citing data that has been recursively sorted
 	 */
 	update (cited, citing, year, journal, top100, dataObj){
 
@@ -114,10 +118,10 @@ class HorizontalBars {
             });
 
             let origData = dataObj;
-            // Limit results to just top 20
-            dataObj = dataObj.slice(0,20);
+            // Limit results to just top 15
+            dataObj = dataObj.slice(0,15);
 
-            // If current journal is not in top 20, add it to top of DataObj
+            // If current journal is not in top 15, add it to top of DataObj
             let checkMatch = dataObj.filter(d => {
                 return d['Journal'].toUpperCase() === journal.toUpperCase();
             });

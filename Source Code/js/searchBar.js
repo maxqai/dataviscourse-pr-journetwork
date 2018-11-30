@@ -6,21 +6,6 @@ class SearchBar {
         // make accessible
         this.forceDirectedNetwork = forceDirectedNetwork;
 
-
-        //initialize svg elements, svg sizing
-        // this.margin = {top: 10, right: 50, bottom: 20, left: 50};
-        // let divSearchBar = d3.select("#search").classed("horizontalBars", true);
-        //
-        // //fetch the svg bounds
-        // this.svgBounds = divSearchBar.node().getBoundingClientRect();
-        // this.svgWidth = this.svgBounds.width - this.margin.left - this.margin.right;
-        // this.svgHeight = this.svgBounds.height - this.margin.bottom - this.margin.top;
-        //
-        // //add the svg to the div
-        // this.svg = divSearchBar.append("svg")
-        //     .attr("width", this.svgWidth)
-        //     .attr("height", 30);
-
         let divSearchBar = d3.select('#search');
 
         this.input = divSearchBar.append('input')
@@ -110,18 +95,6 @@ class SearchBar {
                 });
         }
 
-			// this.tip.html((d)=> {
-			// 		let tooltip_data = {
-            //
-			// 		return this.tooltip_render(tooltip_data);
-	        //     });
-
-
-			// let bars = d3.select('#votes-percentage').select('svg').selectAll('rect')
-			// 	.call(this.tip);
-			// bars
-			// 	.on('mouseover', this.tip.show)
-			// 	.on('mouseout', this.tip.hide);
 	};
 
 

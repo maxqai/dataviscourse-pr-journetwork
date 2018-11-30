@@ -1,26 +1,3 @@
-/*.fullView{*/
-    /*display: inline-block;*/
-    /*width: 100%;*/
-/*}*/
-
-/*.sub_content {*/
-    /*display: inline-block;*/
-    /*width: 40%;*/
-    /*position: relative;*/
-    /*padding-right: 2%*/
-/*}*/
-
-/*.sideBar {*/
-    /*display: inline-block;*/
-    /*width: 15%;*/
-    /*float:right;*/
-/*}*/
-
-/*.tile_view{*/
-    /*display: inline-block;*/
-    /*width: 80%;*/
-    /*position: relative;*/
-/*}*/
 
 .fullView{
     display: inline-block;
@@ -151,18 +128,20 @@
 
 #infoBox {
     position: absolute;
-    top: 150px;
-    right: 100px;
+    top: 200px;
+    right: 10px;
     border:1px solid black;
     padding-top: 15px;
     padding-right: 30px;
-    padding-bottom: 30px;
+    padding-bottom: 15px;
     padding-left: 30px;
+    width: 475px;
+    background-color: white;
 }
 
 #horizontalBars {
     position: relative;
-    top: 300px;
+    top: 125px;
     right: 50px;
 }
 
