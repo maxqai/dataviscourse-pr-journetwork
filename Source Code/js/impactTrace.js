@@ -364,6 +364,13 @@ class ImpactTrace {
                         } else {
                             return 0.15;
                         }
+                     })
+                     .style("stroke-width", d => {
+                        if (name[lines.indexOf(d)] === "Nature") {
+                            return 10;
+                        } else {
+                            return 1;
+                        }
                      });
 
 //        let voron = this.svg.append("g")
