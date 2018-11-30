@@ -125,7 +125,7 @@ class ImpactTrace {
         let cnams = Grid.columns;
         let rectScale = d3.scaleLinear()
                           .domain([0, JofInterest.length])
-                          .range([this.margin.left*2, this.svgWidth - this.margin.right]);
+                          .range([this.margin.left*3, this.svgWidth - this.margin.right]);
 
         // Append Text About Which Filter is On
         this.svg.append("text")
@@ -406,7 +406,12 @@ class ImpactTrace {
              .data(voronois)
              .enter().append("path")
              .attr("d", d => {
-                return d ? "M" + d.join("L") : null;
+                let str = d ? "M" + d.join("L") : null;
+                let nstr = str.replace(/L+/g,"L");
+                while (nstr[nstr.length-1] === "L") {
+                    nstr = nstr.slice(0,-1);
+                };
+                return nstr;
              })
              .style("opacity", 0)
              .on("mouseover", function(d) {
@@ -417,7 +422,8 @@ class ImpactTrace {
                 focus.attr("transform","translate(" + (d.data) + "," + (y.data.value) + ")");
                 focus.select("text").text(d.data.city.name)
              })
-             .on("mouseout", function(d) {
+             .on("mouseout", function() {
+                console.log(d);
                 d3.select(d.data.city.line).classed("city_hover", false);
                 focus.attr("transform","translate(-100, -100)");
              });
