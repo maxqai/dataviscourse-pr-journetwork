@@ -242,10 +242,7 @@ class ImpactTrace {
                            .selectAll("path")
                            .remove();
 
-                        d3.select(".impactTrace")
-                           .select("svg")
-                           .select(".ImpactTrace")
-                           .selectAll("path")
+                        d3.selectAll(".ImpactTrace > path")
                            .data(vals)
                            .enter()
                            .append(path)
