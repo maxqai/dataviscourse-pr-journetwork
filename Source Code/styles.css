@@ -145,9 +145,14 @@
     right: 50px;
 }
 
+#FDNCenter {
+    fill: #ec7f3e;
+}
+
 .selectedNode{
+    fill: #6FB98F;
     stroke: #333333;
-    stroke-width:1%;
+    stroke-width: 2px;
 }
 
 .instruct {

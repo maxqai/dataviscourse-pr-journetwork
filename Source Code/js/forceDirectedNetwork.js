@@ -283,9 +283,11 @@ class ForceDirectedNetwork {
                 journalInfoBox.update(journalName, journalCSVs[3]);
             });
 
-        // highlight other charts on node hover
+        // highlight all charts on node hover
         nodes
             .on('mouseover', function(d) {
+                d3.select(this)
+                    .attr('id', 'hlightCited');
                 for ( let child of d3.select('.citedBars')._groups[0][0].children) {
                     if(d.id === child.__data__.Journal) {
                         child.setAttribute('id', 'hlightCited');
@@ -293,7 +295,6 @@ class ForceDirectedNetwork {
                 }
                 for ( let child of d3.select('.citingBars')._groups[0][0].children) {
                     if(d.id === child.__data__.Journal) {
-                        console.log('in child', child);
                         if(child.nodeName === 'rect') {
                             child.setAttribute('id', 'hlightCited');
                         } else if (child.nodeName === 'text') {
@@ -306,13 +307,33 @@ class ForceDirectedNetwork {
             });
         nodes
             .on('mouseout', function(d) {
+                d3.select(this)
+                    .attr('id', d => {
+                        if (d.id.toUpperCase() === journal.toUpperCase()) {
+                            return 'FDNCenter'
+                        } else {
+                            return null
+                        }
+                    });
                 for ( let child of d3.select('.citedBars')._groups[0][0].children) {
-                    if(d.id === child.__data__.Journal) {
+                    if (d.id === journal) {
+                        if (d.id === child.__data__.Journal) {
+                            child.setAttribute('id', 'selectedCited')
+                        }
+                    } else if(d.id === child.__data__.Journal) {
                         child.removeAttribute('id');
                     }
                 }
                 for ( let child of d3.select('.citingBars')._groups[0][0].children) {
-                    if(d.id === child.__data__.Journal) {
+                    if (d.id === journal) {
+                        if (d.id === child.__data__.Journal) {
+                            if (child.nodeName === 'rect') {
+                                child.setAttribute('id', 'selectedCiting')
+                            } else if (child.nodeName === 'text') {
+                                child.setAttribute('id', 'selectedBarText')
+                            }
+                        }
+                    } else if(d.id === child.__data__.Journal) {
                         child.removeAttribute('id');
                     }
                 }
