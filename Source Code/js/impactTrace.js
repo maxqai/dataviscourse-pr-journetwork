@@ -188,6 +188,9 @@ class ImpactTrace {
                                         return Yscale(e2[1]);
                                     }
                                  });
+                    // Find Min and Max Data Points
+                    var ext = [100000, 0];
+
                     // Map Data points and create path strings
                     let lines =  name.map((e1,i) => {
                         // Filter Data Based On Journal
@@ -208,34 +211,48 @@ class ImpactTrace {
                                     sGpos = i1;
                                 }
                             });
-                            return [parseInt(e2["Year"]), parseFloat(e2[sGnames[sGpos]])]
+                            let y1 = parseInt(e2["Year"]);
+                            let v1 = parseFloat(e2[sGnames[sGpos]]);
+                            if (isNaN(v1)) {
+                                v1 = 0;
+                            };
+                            return [y1, v1]
                         });
-                        return line(vals)
+                        // Find Min and Max Values to rewrite scales
+                        let a = d3.extent(vals);
+
+                        if (a[0][1] < ext[0]) {
+                            ext[0] = a[0][1]
+                        };
+
+                        if (a[1][1] > ext[1]) {
+                            ext[1] = a[1][1]
+                        }
+
+                        return vals
                     });
 
+                    Yscale = d3.scaleLinear().domain([ext[0], ext[1]])
+                                             .range([[this.svgHeight - 2 * this.margin.bottom, 3 * this.margin.top]]);
 
-                    // Find the Min and Max of Vals
-                    let ext = d3.extent(values);
 
-                    // Get X scale
-                    let Xscaled = d3.scaleLinear()
-                                    .domain([1997, 2017])
-                                    .range([20, 380]).nice();
-
-                    // create Yscale based on JIF values
-                    let Yscaled = d3.scaleLinear()
-                        .domain([ext[0], ext[1]])
-                        .range([360, 60]).nice();
-
-                    let values2 = line(values);
+//                    // Get X scale
+//                    let Xscaled = d3.scaleLinear()
+//                                    .domain([1997, 2017])
+//                                    .range([20, 380]).nice();
+//
+//                    // create Yscale based on JIF values
+//                    let Yscaled = d3.scaleLinear()
+//                        .domain([ext[0], ext[1]])
+//                        .range([360, 60]).nice();
+//
+//                    let values2 = line(values);
 
                     let lined = this.svg.append("g")
                             .classed("ImpactTrace", true)
                             .selectAll("path")
                             .data(lines);
-
                     lined.exit().remove();
-
                     lined.enter().append("path")
                          .attr("d", d => {return d})
                          .style("stroke", function(d) {
@@ -244,7 +261,7 @@ class ImpactTrace {
                             } else {
                                 return "#004445";
                             }
-                        })
+                            })
                         .style("opacity", d => {
                             if (name[lines.indexOf(d)] === "Nature") {
                                 return 1;
