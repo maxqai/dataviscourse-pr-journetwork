@@ -261,8 +261,9 @@ class ImpactTrace {
                              .attr("d", function(d) {
                                 return d ? "M" + d.join("L") + "Z" : null;
                              })
-                             .on("mouseover", function(d) {
-                                d3.select(d)
+                             .on("mouseover", function() {
+                                d3.select(d).classed("city_hover", true);
+
                              })
                              .on("mouseout", )
 
@@ -411,10 +412,12 @@ class ImpactTrace {
                 while (nstr[nstr.length-1] === "L") {
                     nstr = nstr.slice(0,-1);
                 };
+                nstr = nstr.join("Z");
                 return nstr;
              })
              .style("opacity", 0)
              .on("mouseover", function(d) {
+                d3.select()
                 console.log(d);
                 d3.select(d.data.city.line)
                   .classed("city_hover", true);
@@ -422,7 +425,7 @@ class ImpactTrace {
                 focus.attr("transform","translate(" + (d.data) + "," + (y.data.value) + ")");
                 focus.select("text").text(d.data.city.name)
              })
-             .on("mouseout", function() {
+             .on("mouseout", function(d) {
                 console.log(d);
                 d3.select(d.data.city.line).classed("city_hover", false);
                 focus.attr("transform","translate(-100, -100)");
