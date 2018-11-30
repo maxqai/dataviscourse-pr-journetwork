@@ -25,7 +25,7 @@ class ImpactTrace {
         Grid = Grid.sort(function (e1, e2) {
             return d3.ascending(e1.Year, e2.Year)
         });
-        var sortGrid = Grid;
+        let sortGrid = Grid;
 
         // Separate Years
         this.Years = Grid.map(d => {
@@ -165,7 +165,8 @@ class ImpactTrace {
                               .attr("y", 30)
                               .attr("width", 30)
                               .attr("height", 30)
-                              .style("fill", "#6FB98F");
+                              .style("fill", "#6FB98F")
+                              .style("z-index", 700);
 
                     d3.select(".FD_Group")
                       .append("title")
@@ -355,7 +356,7 @@ class ImpactTrace {
                         });
 
         // Filter Data
-        let lines =  name.map((e1,i) => {
+        var lines =  name.map((e1,i) => {
             let vals = Grid.filter((e2,i) => {
                 if (e2["Journal"] === e1){
                     return e2;
@@ -419,85 +420,100 @@ class ImpactTrace {
                 return nstr;
              })
              .style("opacity", 0)
-             .on("mouseover", function(d, sortGrid) {
-                let l1 = d3.select(this)
-                           .style("opacity", 1)
-                           .style("stroke-width", "4px")
-                           .style("stroke", "#000")
-             })
-             .on("mouseout", function(d) {
-                d3.select(this)
-                  .style("opacity", 0.1)
-                  .style("stroke-width", "1px")
-                  .style("stroke", "#6FB98F")
+             .on("mouseover", function(e1, i, paths) {
+                let l0 = lines[i];
+                let l1 = d3.select(".ImpactTrace").selectAll("path")._groups[0];
+                let des_l1 = [];
+                l1.forEach((e2,i) => {
+                    if (e2.__data__ === l0) {
+                        des_l1.push(i)
+                    };
+                });
+                console.log(des_l1);
+                des_l1.forEach(d => {
+                    d3.select(".ImpactTrace")
+                      .select("path:nth-child("+ des_l1[0] +")")
+                      .style("opacity",1)
+                      .style("stroke", "black")
+                      .style("stroke-width", 10);
+                })
+
+                })
+//                let l2 = d3.select(".ImpactTrace").selectAll("path")._groups[0][i];
+//                l2.style.opacity = 1;
+                .on("mouseout", function(d) {
+                     d3.select(this)
+                          .style("opacity", 0.1)
+                          .style("stroke-width", 1)
+                          .style("stroke", "#6FB98F")
              });
 
         // Give the lines interactivity properties
-        d3.select(".ImpactTrace")
-                .selectAll("path")
-                .on("mouseover", function(d) {
-                    // Find Journal Name Through Mapping
-                    let pos = lines.map((e1,i) => {
-                        if (d === e1) {
-                            return [i];
-                        } else {
-                            return NaN;
-                        }
-
-                    });
-                    // Remove NaNs from pos
-                    pos = pos.filter((e1) => {if (!isNaN(e1)) {return e1}});
-                    d3.select(this)
-                        .append("title")
-                        .text("Journal: " + sortGrid[pos[0]]["Journal"])
-                        .classed("barsTitle", true)
-                        .transition()
-                        .duration(100)
-                        .style("opacity", 0.9);
-
-                    // highlight related nodes in FDN
-                        d3.select('.nodes').selectAll('circle')
-                          .attr('id', e1 => {
-                                if (sortGrid[pos[0]]["Journal"].toUpperCase() === e1.id.toUpperCase()) {
-                                    return 'hlightCited'
-                                } else {
-                                return null
-                                }
-                          });
-
-                        // highlight cited bars
-                        d3.select('.citedBars')
-                          .selectAll("rect")
-                          .attr("id", e1 => {
-                            if (sortGrid[pos[0]]["Journal"] === e1["Journal"]) {
-                                return 'hlightCited'
-                            } else {
-                                return null
-                            }
-                          });
-
-                        // highlight citing bars
-                        d3.select('.citingBars')
-                          .selectAll("rect")
-                          .attr("id", e1 => {
-                            if (sortGrid[pos[0]]["Journal"] === e1["Journal"]) {
-                                return 'hlightCited'
-                            } else {
-                                return null
-                            }
-                          });
-
-//                        d3.select(this)
-//                          .style("stroke-width", 3 + "px")
-//                          .style("opacity", 1)
-//                          .style("stroke", "#6FB98F");
-                })
-                .on("mouseout", function(d) {
+//        d3.select(".ImpactTrace")
+//                .selectAll("path")
+//                .on("mouseover", function(d) {
+//                    // Find Journal Name Through Mapping
+//                    let pos = lines.map((e1,i) => {
+//                        if (d === e1) {
+//                            return [i];
+//                        } else {
+//                            return NaN;
+//                        }
+//
+//                    });
+//                    // Remove NaNs from pos
+//                    pos = pos.filter((e1) => {if (!isNaN(e1)) {return e1}});
 //                    d3.select(this)
-//                      .transition()
-//                      .duration(100)
-//                      .style("opacity", 0)
-//                      .remove();
-                });
+//                        .append("title")
+//                        .text("Journal: " + sortGrid[pos[0]]["Journal"])
+//                        .classed("barsTitle", true)
+//                        .transition()
+//                        .duration(100)
+//                        .style("opacity", 0.9);
+//
+//                    // highlight related nodes in FDN
+//                        d3.select('.nodes').selectAll('circle')
+//                          .attr('id', e1 => {
+//                                if (sortGrid[pos[0]]["Journal"].toUpperCase() === e1.id.toUpperCase()) {
+//                                    return 'hlightCited'
+//                                } else {
+//                                return null
+//                                }
+//                          });
+//
+//                        // highlight cited bars
+//                        d3.select('.citedBars')
+//                          .selectAll("rect")
+//                          .attr("id", e1 => {
+//                            if (sortGrid[pos[0]]["Journal"] === e1["Journal"]) {
+//                                return 'hlightCited'
+//                            } else {
+//                                return null
+//                            }
+//                          });
+//
+//                        // highlight citing bars
+//                        d3.select('.citingBars')
+//                          .selectAll("rect")
+//                          .attr("id", e1 => {
+//                            if (sortGrid[pos[0]]["Journal"] === e1["Journal"]) {
+//                                return 'hlightCited'
+//                            } else {
+//                                return null
+//                            }
+//                          });
+//
+////                        d3.select(this)
+////                          .style("stroke-width", 3 + "px")
+////                          .style("opacity", 1)
+////                          .style("stroke", "#6FB98F");
+//                })
+//                .on("mouseout", function(d) {
+////                    d3.select(this)
+////                      .transition()
+////                      .duration(100)
+////                      .style("opacity", 0)
+////                      .remove();
+//                });
     }
 };
