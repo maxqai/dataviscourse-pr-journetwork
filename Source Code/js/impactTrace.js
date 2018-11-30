@@ -18,7 +18,7 @@ class ImpactTrace {
             .attr("width", this.svgWidth)
             .attr("height", this.svgHeight);//TODO: fix this to not be hardcoded
    };
-	update (Grid){
+	update (Grid, currJournal){
         // Things that need to get done: Formatting of Graph - adding X and Y Labels, Changing Year so it Looks Good, appending circle to show which line was highlighted
 
         // First Sort the Data
