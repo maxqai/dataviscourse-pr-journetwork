@@ -90,7 +90,7 @@
 }
 
 #lineAxis {
-    stroke: black
+    stroke: black;
     stroke-width: 1px;
     foot-size: 0.5em;
 }
@@ -107,6 +107,12 @@
 
 #hlightCiting {
     fill: #6FB98F;
+}
+
+#hlightLink {
+    stroke: rgb(0, 0, 0);
+    stroke-opacity: 0.9;
+    stroke-width: 3px;
 }
 
 #selectedCited {

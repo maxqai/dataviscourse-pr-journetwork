@@ -137,7 +137,7 @@ class ForceDirectedNetwork {
         let rangeMin = 3;
         let impactFactorScale = d3.scaleSqrt()
             .domain([domainMin,domainMax])
-            .range([rangeMin,rangeMax]); //TODO: correction for area
+            .range([rangeMin,rangeMax]);
 
         let forceData = {
             nodes: journalsNodeInfo.map((d,i) => {
@@ -286,6 +286,7 @@ class ForceDirectedNetwork {
         // highlight all charts on node hover
         nodes
             .on('mouseover', function(d) {
+                console.log('thisnode', this)
                 d3.select(this)
                     .style('cursor','pointer')
                     .attr('id', 'hlightCited');
@@ -340,7 +341,18 @@ class ForceDirectedNetwork {
                 }
             });
 
-        // Todo: On links hover, change color so that you can see where it goes to
+        // On links hover, change color so that you can see where it goes to
+        links
+            .on('mouseover', function(d) {
+                // console.log('hello', 'd', d);
+                // console.log('this', d3.select(this))
+                d3.select(this)
+                    .attr('id', 'hlightLink');
+            })
+            .on('mouseout', function(d) {
+                d3.select(this)
+                    .attr('id', null)
+            });
 
         // Add zoom feature to FDN
         let zoom = d3.zoom()
