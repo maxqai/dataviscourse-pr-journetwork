@@ -412,7 +412,7 @@ class ImpactTrace {
                 while (nstr[nstr.length-1] === "L") {
                     nstr = nstr.slice(0,-1);
                 };
-                nstr = nstr.join("Z");
+                nstr = nstr + "Z";
                 return nstr;
              })
              .style("opacity", 0)
