@@ -198,8 +198,8 @@ class ImpactTrace {
                         let ext = d3.extent(vals);
                         // Get X scale
                         let Xscaled = d3.scaleLinear()
-                                        .domain([ext])
-                                        .range([]);
+                                        .domain([ext[0], ext[1]])
+                                        .range([25, 375]);
 
                         let Yscaled = d3.scaleLinear()
                                         .domain([])
@@ -259,7 +259,7 @@ class ImpactTrace {
                              .data(voronoi.polygons(d3.merge(vals)))
                              .enter.append("path")
                              .attr("d", function(d) {
-                                return d ? "M" + d.join("L") + "Z" : 0
+                                return d ? "M" + d.join("L") + "Z" : null;
                              })
                              .on("mouseover", function(d) {
                                 d3.select(d)
@@ -316,18 +316,18 @@ class ImpactTrace {
                 });
 
         // Create Voronoi Function
-        let voronoi = d3.voronoi()
+        this.voronoi = d3.voronoi()
                         .x(function(d) {
-                            return Xscale(d)
+                            return Xscale(d[0])
                         })
                         .y(function(d) {
-                            if (isNaN(d[0])) {
+                            if (isNaN(d[1])) {
                                 return Yscale(0);
                             } else {
-                                return Yscale(d)
+                                return Yscale(d[1])
                             }
                         })
-                        .extent([[-this.margin.left, -this.margin.top], [this.svgWidth + this.margin.right, this.svgheight + this.margin.bottom]]);
+                        .extent([[-50, -20], [539.5 + 25, 400 + 25]]);
 
         // Create Line Function
         this.line = d3.line()
@@ -342,7 +342,8 @@ class ImpactTrace {
                         }
                         });
 
-        let lines = name.map((e1,i) => {
+        // Filter Data
+        let lines =  name.map((e1,i) => {
             let vals = Grid.filter((e2,i) => {
                 if (e2["Journal"] === e1){
                     return e2;
@@ -351,14 +352,30 @@ class ImpactTrace {
             vals = vals.map((e2,i) => {
                 return [parseInt(e2["Year"]), parseFloat(e2["Journal Impact Factor"])]
             });
-            return this.line(vals);
+            return this.line(vals)
         });
+
+        let voronois =  name.map((e1,i) => {
+            let vals = Grid.filter((e2,i) => {
+                if (e2["Journal"] === e1){
+                    return e2;
+                }
+            });
+            vals = vals.map((e2,i) => {
+                return [parseInt(e2["Year"]), parseFloat(e2["Journal Impact Factor"])]
+            });
+            return this.voronoi(vals)
+        });
+        console.log(voronois);
+
 
         let lined = this.svg.append("g")
                             .classed("ImpactTrace", true)
                             .selectAll("path")
                             .data(lines);
+
         lined.exit().remove();
+
         lined.enter().append("path")
                      .attr("d", d => {return d})
                      .style("stroke", function(d) {
@@ -388,27 +405,22 @@ class ImpactTrace {
                             .attr("class", "voronoi");
 
         voron.selectAll("path")
-             .data(voronoi.polygons(d3.merge(
-                name.map((e1,i) => {
-                    let vals = Grid.filter((e2,i) => {
-                    if (e2["Journal"] === e1){
-                        return e2;
-                    }
-                    });
-
-                vals = vals.map((e2,i) => {
-                    return [parseInt(e2["Year"]), parseFloat(e2["Journal Impact Factor"])]
-                });
-
-                return vals;
-             }))))
+             .data()
              .enter().append("path")
-             .attr("d", function(d) {
+             .attr("d", d => {
                 console.log(d);
-                return d ? "M" + d.join("L") + "Z" : 0;
              })
-             .on("mouseover", console.log("MouseOver"))
-             .on("mouseout", console.log("MouseOut"));
+             .on("mouseover", function(d) {
+                d3.select(d.data.city.line)
+                  .classed("city_hover", true);
+                d.data.city.line.parentNode.appendChild("d.data.city.line");
+                focus.attr("transform","translate(" + (d.data) + "," + (y.data.value) + ")");
+                focus.select("text").text(d.data.city.name)
+             })
+             .on("mouseout", function(d) {
+                d3.select(d.data.city.line).classed("city_hover", false);
+                focus.attr("transform","translate(-100, -100)");
+             });
 
         // Give the lines interactivity properties
         d3.select(".ImpactTrace")

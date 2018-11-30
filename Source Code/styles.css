@@ -175,6 +175,10 @@
     fill: #d3d3d3;
 }
 
+.city_hover {
+  stroke: #000;
+}
+
 .info {
     margin-left: 10px;
 }
