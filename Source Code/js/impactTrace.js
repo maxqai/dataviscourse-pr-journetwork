@@ -263,8 +263,8 @@ class ImpactTrace {
                                     return 0.15;
                                 }
                            })
-                     });
-                        }
+
+                        });
                     )
                 })
                 .on("mouseout", function(d,i) {
