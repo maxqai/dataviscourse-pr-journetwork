@@ -189,7 +189,20 @@ class ImpactTrace {
                                     }
                                  });
                     // Find Min and Max Data Points
-                    var ext = [100000, 0];
+                    let ext = d3.extent(Grid.map((e1,i) => {
+                        let idx = parseFloat(Grid[i][d]);
+                        if (isNaN(idx)) {
+                            idx = 0;
+                        }
+                        return idx;
+                    }));
+
+                    // In case all of them are 0s
+                    if (ext[1] === 0) {
+                        ext[1] = 5;
+                    }
+                    Yscale = d3.scaleLinear().domain([ext[0], ext[1]])
+                                             .range([[this.svgHeight - 2 * this.margin.bottom, 3 * this.margin.top]]);
 
                     // Map Data points and create path strings
                     let lines =  name.map((e1,i) => {
@@ -218,23 +231,8 @@ class ImpactTrace {
                             };
                             return [y1, v1]
                         });
-                        // Find Min and Max Values to rewrite scales
-                        let a = d3.extent(vals);
-
-                        if (a[0][1] < ext[0]) {
-                            ext[0] = a[0][1]
-                        };
-
-                        if (a[1][1] > ext[1]) {
-                            ext[1] = a[1][1]
-                        }
-
-                        return vals
+                        return line(vals)
                     });
-
-                    Yscale = d3.scaleLinear().domain([ext[0], ext[1]])
-                                             .range([[this.svgHeight - 2 * this.margin.bottom, 3 * this.margin.top]]);
-
 
 //                    // Get X scale
 //                    let Xscaled = d3.scaleLinear()
@@ -254,16 +252,19 @@ class ImpactTrace {
                             .data(lines);
                     lined.exit().remove();
                     lined.enter().append("path")
-                         .attr("d", d => {return d})
-                         .style("stroke", function(d) {
-                            if (name[lines.indexOf(d)] === "Nature") {
+                         .attr("d", e1 => {
+                            console.log(e1);
+                            return e1
+                         })
+                         .style("stroke", function(e1) {
+                            if (name[lines.indexOf(e1)] === "Nature") {
                                 return "#E38533";
                             } else {
                                 return "#004445";
                             }
                             })
-                        .style("opacity", d => {
-                            if (name[lines.indexOf(d)] === "Nature") {
+                        .style("opacity", e1 => {
+                            if (name[lines.indexOf(e1)] === "Nature") {
                                 return 1;
                             } else {
                                 return 0.15;
