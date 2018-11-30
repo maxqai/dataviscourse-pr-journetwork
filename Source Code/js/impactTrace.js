@@ -364,10 +364,8 @@ class ImpactTrace {
             vals = vals.map((e2,i) => {
                 return [parseInt(e2["Year"]), parseFloat(e2["Journal Impact Factor"])]
             });
-            return this.voronoi(vals)
+            return this.voronoi(vals).polygons()
         });
-        console.log(voronois);
-
 
         let lined = this.svg.append("g")
                             .classed("ImpactTrace", true)
@@ -405,10 +403,10 @@ class ImpactTrace {
                             .attr("class", "voronoi");
 
         voron.selectAll("path")
-             .data()
+             .data(voronois)
              .enter().append("path")
              .attr("d", d => {
-                console.log(d);
+                return d ? "M" + d.join("L") : null;
              })
              .on("mouseover", function(d) {
                 d3.select(d.data.city.line)
