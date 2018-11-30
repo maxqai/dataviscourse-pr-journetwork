@@ -161,6 +161,7 @@
 
 .city_hover {
   stroke: #000;
+  stroke-opacity: 1;
 }
 
 .info {

@@ -221,24 +221,33 @@ class ImpactTrace {
                                         .domain([ext[0], ext[1]])
                                         .range([400 - 40, 60]).nice();
 
-                         // create line function
-                        let linefn = d3.line()
-                                       .x(e2 => {
-                                            return Xscale(e2[0]);
-                                       })
-                                       .y(e2 => {
-                                            if (isNaN(e2[1])) {
-                                                return Yscale[0];
-                                            } else {
-                                                return Yscale(e2[1]);
-                                            }
-                                       });
-
                         // Voronoi diagrams
+                        // Create Voronoi Function
                         let voronoi = d3.voronoi()
-                                        .x(function(d) {return Xscale(d)})
-                                        .y(function(d) {return Yscale(d)})
-                                        .extent([[20, 20], [400 + 20, 400 + 20]]);
+                            .x(function(d) {
+                                return Xscale(d[0]) + 200
+                            })
+                            .y(function(d) {
+                                if (isNaN(d[1])) {
+                                    return Yscale(0);
+                                } else {
+                                    return Yscale(d[1])
+                                }
+                            })
+                        .extent([[-50, -20], [539.5 + 25, 400 + 25]]);
+
+                        // Create Line Function
+                      let line = d3.line()
+                                    .x(e2 => {
+                                        return Xscale(e2[0]);
+                                    })
+                                    .y(e2 => {
+                                        if (isNaN(e2[1])) {
+                                    return Yscale(0);
+                                    } else {
+                                        return Yscale(e2[1]);
+                                    }
+                      });
 
                         // Append Circle Nodes
                         let svg = d3.select(".impactTrace").select("svg");
@@ -261,11 +270,13 @@ class ImpactTrace {
                              .attr("d", function(d) {
                                 return d ? "M" + d.join("L") + "Z" : null;
                              })
-                             .on("mouseover", function() {
+                             .on("mouseover", function(d) {
                                 d3.select(d).classed("city_hover", true);
-
+                                d3.select(".ImpactTrace")
                              })
-                             .on("mouseout", )
+                             .on("mouseout", function(d) {
+
+                             });
 
                         // Pathing
                         svg.select(".ImpactTrace")
@@ -319,7 +330,7 @@ class ImpactTrace {
         // Create Voronoi Function
         this.voronoi = d3.voronoi()
                         .x(function(d) {
-                            return Xscale(d[0])
+                            return Xscale(d[0]) + 200
                         })
                         .y(function(d) {
                             if (isNaN(d[1])) {
@@ -392,14 +403,6 @@ class ImpactTrace {
                         }
                      });
 
-        // Append Circles for Focus
-        let focus = this.svg.append("g")
-                            .attr("transform", "translate(-100, -100)")
-                            .attr("class", "focus");
-
-        focus.append("text")
-             .attr("y", -10);
-
         let voron = this.svg.append("g")
                             .attr("class", "voronoi");
 
@@ -416,27 +419,23 @@ class ImpactTrace {
                 return nstr;
              })
              .style("opacity", 0)
-             .on("mouseover", function(d) {
-                d3.select()
-                console.log(d);
-                d3.select(d.data.city.line)
-                  .classed("city_hover", true);
-                d.data.city.line.parentNode.appendChild("d.data.city.line");
-                focus.attr("transform","translate(" + (d.data) + "," + (y.data.value) + ")");
-                focus.select("text").text(d.data.city.name)
+             .on("mouseover", function(d, sortGrid) {
+                let l1 = d3.select(this)
+                           .style("opacity", 1)
+                           .style("stroke-width", "4px")
+                           .style("stroke", "#000")
              })
              .on("mouseout", function(d) {
-                console.log(d);
-                d3.select(d.data.city.line).classed("city_hover", false);
-                focus.attr("transform","translate(-100, -100)");
+                d3.select(this)
+                  .style("opacity", 0.1)
+                  .style("stroke-width", "1px")
+                  .style("stroke", "#6FB98F")
              });
 
         // Give the lines interactivity properties
         d3.select(".ImpactTrace")
                 .selectAll("path")
                 .on("mouseover", function(d) {
-                    let that = this;
-
                     // Find Journal Name Through Mapping
                     let pos = lines.map((e1,i) => {
                         if (d === e1) {
@@ -488,17 +487,17 @@ class ImpactTrace {
                             }
                           });
 
-                        d3.select(this)
-                          .style("stroke-width", 3 + "px")
-                          .style("opacity", 1)
-                          .style("stroke", "#6FB98F");
+//                        d3.select(this)
+//                          .style("stroke-width", 3 + "px")
+//                          .style("opacity", 1)
+//                          .style("stroke", "#6FB98F");
                 })
                 .on("mouseout", function(d) {
-                    d3.select(this)
-                      .transition()
-                      .duration(100)
-                      .style("opacity", 0)
-                      .remove();
+//                    d3.select(this)
+//                      .transition()
+//                      .duration(100)
+//                      .style("opacity", 0)
+//                      .remove();
                 });
     }
 };
