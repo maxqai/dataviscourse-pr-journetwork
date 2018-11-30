@@ -287,6 +287,7 @@ class ForceDirectedNetwork {
         nodes
             .on('mouseover', function(d) {
                 d3.select(this)
+                    .style('cursor','pointer')
                     .attr('id', 'hlightCited');
                 for ( let child of d3.select('.citedBars')._groups[0][0].children) {
                     if(d.id === child.__data__.Journal) {

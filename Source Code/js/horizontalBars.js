@@ -557,6 +557,9 @@ class HorizontalBars {
 
         // Sort bars by cited when clicked
         d3.select('.citedHead')
+            .on('mouseover', function() {
+                d3.select(this).style('cursor','pointer');
+            })
             .on('click', function() {
                 dataObj.sort((a,b) => {
                     return b.Cited - a.Cited;
@@ -566,6 +569,9 @@ class HorizontalBars {
             });
         // Sort bars by citing when clicked
         d3.select('.citingHead')
+            .on('mouseover', function() {
+                d3.select(this).style('cursor','pointer');
+            })
             .on('click', function() {
                 dataObj.sort((a,b) => {
                     return b.Citing - a.Citing;
