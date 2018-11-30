@@ -215,12 +215,12 @@ class ImpactTrace {
                          // Create New X and Y axis
                         let Xscale = d3.scaleLinear()
                                         .domain([new Date(startYear), new Date(endYear)])
-                                        .range([20, 380]);
+                                        .range([20, 380]).nice();
 
                         // create Yscale based on JIF values
                         let Yscale = d3.scaleLinear()
                                         .domain([ext[0], ext[1]])
-                                        .range([400 - 40, 60]);
+                                        .range([400 - 40, 60]).nice();
 
                          // create line function
                         let linefn = d3.line()
@@ -235,10 +235,40 @@ class ImpactTrace {
                                             }
                                        });
 
+                        // Voronoi diagrams
+                        let voronoi = d3.voronoi()
+                                        .x(function(d) {return Xscale(d)})
+                                        .y(function(d) {return Yscale(d)})
+                                        .extent([[20, 20], [400 + 20, 400 + 20]]);
+
+                        // Append Circle Nodes
+                        let svg = d3.select(".impactTrace").select("svg");
+                        let focus = svg.append("g")
+                                       .attr("transform", "translate(-100,-100)")
+                                       .attr("class", focus);
+
+                        focus.append("circle")
+                             .attr("r", 4);
+
+                        focus.append("text")
+                             .attr("y", -10);
+
+                        let vG = svg.append("g")
+                                    .classed("voron", true);
+
+                        voron.selectAll("path")
+                             .data(voronoi.polygons(d3.merge(vals)))
+                             .enter.append("path")
+                             .attr("d", function(d) {
+                                return d ? "M" + d.join("L") + "Z" : null
+                             })
+                             .on("mouseover", function(d) {
+                                d3.select(d)
+                             })
+                             .on("mouseout", )
+
                         // Pathing
-                        d3.select(".impactTrace")
-                           .select("svg")
-                           .select(".ImpactTrace")
+                        svg.select(".ImpactTrace")
                            .selectAll("path")
                            .remove();
 
@@ -265,7 +295,6 @@ class ImpactTrace {
                            })
 
                         });
-                    )
                 })
                 .on("mouseout", function(d,i) {
                     let that = this;
