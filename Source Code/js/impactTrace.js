@@ -65,30 +65,30 @@ class ImpactTrace {
         let endJIF = d3.max(this.JIF);
 
         // create Xscale based on year values
-        this.Xscale = d3.scaleLinear()
+        let Xscale = d3.scaleLinear()
                         .domain([new Date(startYear), new Date(endYear)])
                         .range([this.margin.left, this.svgWidth - this.margin.right]);
 
         // create Yscale based on JIF values
-        this.Yscale = d3.scaleLinear()
+        let Yscale = d3.scaleLinear()
                         .domain([0, endJIF])
                         .range([this.svgHeight - 2 * this.margin.bottom, 3 * this.margin.top]);
 
         // Create X axis
         this.Xaxis = d3.axisBottom();
         this.Xaxis
-            .scale(this.Xscale)
+            .scale(Xscale)
             .tickValues([1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017]);
 
         // Create Y axis
         this.Yaxis = d3.axisLeft();
         this.Yaxis
-            .scale(this.Yscale)
+            .scale(Yscale)
             .tickValues([0, 5, 10, 15, 20, 25, 30, 35, 40, 45]);
 
         // Append X Axis
         this.svg.append("g")
-                .attr("transform","translate(" + 0 + "," + this.Yscale(0) + ")")
+                .attr("transform","translate(" + 0 + "," + Yscale(0) + ")")
                 .call(this.Xaxis)
                 .selectAll(".ticks")
                 .attr("id", "lineAxis");
@@ -318,26 +318,29 @@ class ImpactTrace {
 
         // Create Voronoi Function
         let voronoi = d3.voronoi()
-                        .x(function(d) {return this.Xscale(d)})
+                        .x(function(d) {
+                            console.log(d);
+                            return Xscale(d)
+                        })
                         .y(function(d) {
-                            if (isNaN(d[0])){
-                                return this.Yscale(0);
+                            if (isNaN(d[0])) {
+                                return Yscale(0);
                             } else {
-                                return this.Yscale(d)
+                                return Yscale(d)
                             }
                         })
-                        .extent([[-this.margin.left, -this.margin.top][this.svgWidth + this.margin.right, this.svgHeight + this.margin.bottom]]);
+                        .extent([[-this.margin.left, -this.margin.top], [this.svgWidth + this.margin.right, this.svgheight + this.margin.bottom]]);
 
         // Create Line Function
         this.line = d3.line()
                       .x(e2 => {
-                        return this.Xscale(e2[0]);
+                        return Xscale(e2[0]);
                         })
                       .y(e2 => {
                         if (isNaN(e2[1])) {
-                            return this.Yscale(0);
+                            return Yscale(0);
                         } else {
-                            return this.Yscale(e2[1]);
+                            return Yscale(e2[1]);
                         }
                         });
 
@@ -354,9 +357,9 @@ class ImpactTrace {
         });
 
         let lined = this.svg.append("g")
-                .classed("ImpactTrace", true)
-                .selectAll("path")
-                .data(lines);
+                            .classed("ImpactTrace", true)
+                            .selectAll("path")
+                            .data(lines);
         lined.exit().remove();
         lined.enter().append("path")
                      .attr("d", d => {return d})
@@ -375,6 +378,28 @@ class ImpactTrace {
                         }
                      });
 
+        // Append Circles for Focus
+        let focus = this.svg.append("g")
+                            .attr("transform", "translate(-100, -100)")
+                            .attr("class", "focus");
+
+        focus.append("text")
+             .attr("y", -10);
+
+        let voron = this.svg.append("g")
+                            .attr("class", "voronoi");
+
+        voron.selectAll("path")
+             .data(voronoi.polygons(d3.merge(sortGrid.map(d => {
+                if (isNaN(parseFloat(d["Journal Impact Factor"]))) {
+                    return [parseInt(d["Year"]), 0];
+                } else {
+                    return [parseInt(d["Year"]), parseFloat(d["Journal Impact Factor"])];
+                }
+             }))))
+             .enter().append("path");
+
+        // Give the lines interactivity properties
         d3.select(".ImpactTrace")
                 .selectAll("path")
                 .on("mouseover", function(d) {
