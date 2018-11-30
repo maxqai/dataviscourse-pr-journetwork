@@ -4,7 +4,7 @@ class HorizontalBars {
 
     constructor(){
         //initialize svg elements, svg sizing
-        this.margin = {top: 10, right: 50, bottom: 20, left: 50};
+        this.margin = {top: 10, right: 10, bottom: 20, left: 10};
         let divHorizontalBars = d3.select("#horizontalBars").classed("horizontalBars", true);
 
         //fetch the svg bounds
@@ -14,7 +14,7 @@ class HorizontalBars {
 
         //add the svg to the div
         this.svg = divHorizontalBars.append("svg")
-            .attr("width", this.svgWidth)
+            .attr("width", 1.4*this.svgWidth)
             .attr("height", 500);//TODO: fix this to not be hardcoded
 
         //add a group for each political party to the svg
@@ -25,7 +25,8 @@ class HorizontalBars {
 
         //set up stable params for bars
         this.barHeight = 18;
-        this.padding = 30;
+        // this.padding = 30;
+        this.padding = 50;
 
 		//for reference: https://github.com/Caged/d3-tip
 		//Use this tool tip element to handle any hover over the chart
@@ -90,8 +91,9 @@ class HorizontalBars {
         let yearCitingMax = d3.max(this.citing.map(d => parseInt(d[year])));
         let yearMax = d3.max([yearCitedMax, yearCitingMax]);
         // Note the 4* is because it will need to be at least twice as wide to have side-by-side bars with labels
-        let domMax = 4*yearMax;
+        // let domMax = 4*yearMax;
         // let domMax = 7*yearMax;
+        let domMax = 2.1*yearMax;
 
         // Map just the relevant data to avoid unnecessary fluff and combine citing and cited info in one object
         let currCited = this.cited.map(d => parseInt(d[year]));
@@ -485,21 +487,39 @@ class HorizontalBars {
             });
 
         // Place scale above bars
+        let divis = [];
+        if (year === 2017) {
+            divis.push(1.7);
+        } else if (year === 2016) {
+            divis.push(1.9);
+        } else if (year === 2015) {
+            divis.push(1.98);
+        } else if (year === 2014) {
+            divis.push(1.79);
+        } else if (year === 2013) {
+            divis.push(1.78);
+        } else if (year === 2012) {
+            divis.push(1.86);
+        } else if (year === 2011) {
+            divis.push(2.1);
+        } else if (year === 2010) {
+            divis.push(2.08);
+        } else if (year === 2009) {
+            divis.push(2);
+        } else if (year === 2008) {
+            divis.push(1.78);
+        }
+
         let fullScale = d3.scaleLinear()
-            // .domain([-domMax/3.5, domMax/3.5])
-            .domain([-domMax/3.25, domMax/3.25])
-            .range([-this.svgWidth/3.25, this.svgWidth/3.25]);
-            // .nice();
+            .domain([-domMax/divis[0], domMax/divis[0]])
+            .range([-this.svgWidth/divis[0], this.svgWidth/divis[0]]);
 
         let xAxis = d3.axisTop();
         if (yearMax < 10000) {
             xAxis
                 .scale(fullScale)
-                // .ticks(2)
                 .tickValues([-10000, -5000, 0, 5000, 10000])
                 .tickFormat(d => Math.abs(d / 1000) + 'k');
-            // .tickSize(0);
-            // .tickFormat(d3.formatPrefix(".0", 1e3));
         } else if (yearMax < 40000) {
             xAxis
                 .scale(fullScale)
@@ -525,38 +545,17 @@ class HorizontalBars {
 
         d3.select('#horizontalBars > svg').append('text')
             .text('Cited')
-            .attr('x', horzScale(0.75*yearMax))
+            .attr('x', horzScale(0.69*yearMax))
             .attr('y', 20)
             .classed('citedHead', true);
 
         d3.select('#horizontalBars > svg').append('text')
             .text('Citing')
-            .attr('x', horzScale(2.15*yearMax))
+            .attr('x', horzScale(1.9*yearMax))
             .attr('y', 20)
             .classed('citingHead', true);
 
-        // handle clicks on cited bar
-        d3.select('.citedBars').selectAll('rect')
-            .on('click', function(d) {
-                console.log('cited bar click d', d);
-                // push selected journal to forceDirectedNetwork along with other needed inputs
-                // forceDirectedNetwork.update(  ...  )
-            });
-        // handle clicks on citing bar
-        d3.select('.citingBars').selectAll('rect')
-            .on('click', function(d) {
-                // console.log('citing bar click d', d);
-                // push selected journal to forceDirectedNetwork along with other needed inputs
-                // forceDirectedNetwork.update(  ...  )
-            });
-        // handle clicks on text
-        d3.select('.citingBars').selectAll('text')
-            .on('click', function(d) {
-                // console.log('text click d', d);
-                // push selected journal to forceDirectedNetwork along with other needed inputs
-                // forceDirectedNetwork.update(  ...  )
-            });
-
+        // Sort bars by cited when clicked
         d3.select('.citedHead')
             .on('click', function() {
                 dataObj.sort((a,b) => {
@@ -565,6 +564,7 @@ class HorizontalBars {
                 // push updated data back to this update method
                 horizontalBars.update(cited, citing, year, journal, top100, dataObj);
             });
+        // Sort bars by citing when clicked
         d3.select('.citingHead')
             .on('click', function() {
                 dataObj.sort((a,b) => {

@@ -12,7 +12,7 @@
 .sidebar{
     display: inline-block;
     width: 24%;
-    position: relative;
+    /*position: relative;*/
 }
 
 .links {
@@ -142,7 +142,7 @@
 #horizontalBars {
     position: relative;
     top: 125px;
-    right: 50px;
+    right: 150px;
 }
 
 #FDNCenter {
