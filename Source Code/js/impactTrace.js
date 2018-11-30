@@ -408,7 +408,9 @@ class ImpactTrace {
              .attr("d", d => {
                 return d ? "M" + d.join("L") : null;
              })
+             .style("opacity", 0)
              .on("mouseover", function(d) {
+                console.log(d);
                 d3.select(d.data.city.line)
                   .classed("city_hover", true);
                 d.data.city.line.parentNode.appendChild("d.data.city.line");
