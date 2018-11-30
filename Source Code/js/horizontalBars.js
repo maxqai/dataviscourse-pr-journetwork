@@ -4,7 +4,7 @@ class HorizontalBars {
 
     constructor(){
         //initialize svg elements, svg sizing
-        this.margin = {top: 10, right: 10, bottom: 20, left: 10};
+        this.margin = {top: 10, right: 20, bottom: 20, left: 20};
         let divHorizontalBars = d3.select("#horizontalBars").classed("horizontalBars", true);
 
         //fetch the svg bounds
@@ -15,9 +15,9 @@ class HorizontalBars {
         //add the svg to the div
         this.svg = divHorizontalBars.append("svg")
             .attr("width", 1.4*this.svgWidth)
-            .attr("height", 500);//TODO: fix this to not be hardcoded
+            .attr("height", 500);
 
-        //add a group for each political party to the svg
+        //add a group for each type to the svg
         this.svg.append('g')
             .classed('citedBars', true);
         this.svg.append('g')

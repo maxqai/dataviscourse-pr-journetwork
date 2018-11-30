@@ -16,7 +16,7 @@ class ImpactTrace {
         //add the svg to the div
         this.svg = divImpactTrace.append("svg")
             .attr("width", this.svgWidth)
-            .attr("height", this.svgHeight);//TODO: fix this to not be hardcoded
+            .attr("height", this.svgHeight);
    };
 	update (Grid){
         // Things that need to get done: Formatting of Graph - adding X and Y Labels, Changing Year so it Looks Good, appending circle to show which line was highlighted

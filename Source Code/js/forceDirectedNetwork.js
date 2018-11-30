@@ -142,7 +142,6 @@ class ForceDirectedNetwork {
         let forceData = {
             nodes: journalsNodeInfo.map((d,i) => {
                 if(d.journal === journal) {
-                    // console.log('selJOurnal', d.journal);
                     return {
                         fx: this.svgWidth/2, // initially fix selected journal in center
                         fy: this.svgHeight/2,
@@ -178,10 +177,8 @@ class ForceDirectedNetwork {
         let forceSimulation = d3.forceSimulation()
             .force("link", d3.forceLink()
                 .id(function(d) {
-                    // console.log('d forceLink', d);
                     return d.id;})
                 .distance(function(d) {
-                    // console.log('d citedCount', d.citedCount, 'citationScale', citationScale(d.citedCount));
                     return citationScale(d.citedCount);
                 }))
             .force('charge', d3.forceManyBody().strength(-60))
@@ -217,9 +214,7 @@ class ForceDirectedNetwork {
                 return impactFactorScale(d.impactFactor);
             })
             .attr('fill', d => {
-                // console.log('d', d.id);
                 if(d.id === journal){
-                    // console.log('in')
                     return '#ec7f3e' // *** <-- If this gets updated in the future, please update in yearSlider, as well!
                 } else {
                     return '#004647'
@@ -276,7 +271,6 @@ class ForceDirectedNetwork {
         //update journalInfoBox on click
         nodes
             .on('click', function() {
-                // console.log('hello', d3.select(this)._groups[0][0].__data__.id);
                 d3.select('#network > svg').selectAll('circle').classed('selectedNode', false);
                 d3.select(this).classed('selectedNode', true);
                 let journalName = d3.select(this)._groups[0][0].__data__.id;
@@ -286,7 +280,6 @@ class ForceDirectedNetwork {
         // highlight all charts on node hover
         nodes
             .on('mouseover', function(d) {
-                console.log('thisnode', this)
                 d3.select(this)
                     .style('cursor','pointer')
                     .attr('id', 'hlightCited');
@@ -344,8 +337,6 @@ class ForceDirectedNetwork {
         // On links hover, change color so that you can see where it goes to
         links
             .on('mouseover', function(d) {
-                // console.log('hello', 'd', d);
-                // console.log('this', d3.select(this))
                 d3.select(this)
                     .attr('id', 'hlightLink');
             })

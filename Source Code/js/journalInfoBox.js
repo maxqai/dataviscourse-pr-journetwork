@@ -15,7 +15,7 @@ class JournalInfoBox {
         // //add the svg to the div
         // this.svg = divInfoBox.append("svg")
         //     .attr("width", this.svgWidth)
-        //     .attr("height", 30);//TODO: fix this to not be hardcoded
+        //     .attr("height", 30);
 
 
 
