@@ -18,23 +18,24 @@ class ImpactTrace {
             .attr("width", this.svgWidth)
             .attr("height", this.svgHeight);
    };
-	update (Grid){
-        // Things that need to get done: Formatting of Graph - adding X and Y Labels, Changing Year so it Looks Good, appending circle to show which line was highlighted
+	update (Grid, currJournal){
+        this.svg.selectAll("g").remove(); // Makes sure changes to selected groups works
 
+        // Things that need to get done: Formatting of Graph - adding X and Y Labels, Changing Year so it Looks Good, appending circle to show which line was highlighted
         // First Sort the Data
         Grid = Grid.sort(function (e1, e2) {
             return d3.ascending(e1.Year, e2.Year)
         });
-        let sortGrid = Grid;
+        let sortGrid = Grid; // Gives ascending year values
 
         // Separate Years
-        this.Years = Grid.map(d => {
+        let Years = Grid.map(d => {
             return parseInt(d["Year"])
         });
 
         // Find Min and Max Years
-        let startYear = d3.min(this.Years)
-        let endYear = d3.max(this.Years)
+        let startYear = d3.min(Years)
+        let endYear = d3.max(Years)
 
         // Find Columns worth filtering
         let JofInterest = ["5-Year Impact Factor", "% Articles in Citable Items", "Article Influence Score", "Citable Items", "Cited Half-Life", "Citing Half-LIfe", "Eigenfactor Score", "Immediacy Index", "Impact Factor without Journal Self Cites", "Journal Impact Factor", "Normalized Eigenfactor", "Total Cites", "avgJIFPercentile"];
@@ -58,11 +59,11 @@ class ImpactTrace {
         });
 
         // Filter JIF values
-        this.JIF = Grid.map(d => {
+        let JIF = Grid.map(d => {
             return parseInt(d["Journal Impact Factor"])
         })
 
-        let endJIF = d3.max(this.JIF);
+        let endJIF = d3.max(JIF);
 
         // create Xscale based on year values
         let Xscale = d3.scaleLinear()
@@ -92,7 +93,7 @@ class ImpactTrace {
                 .attr("transform","translate(" + 0 + "," + Yscale(0) + ")")
                 .call(this.Xaxis)
                 .selectAll(".ticks")
-                .attr("id", "lineAxis");
+                .attr("id", "xlineAxis");
 
         // Append X Label
         this.svg.append("g")
@@ -101,28 +102,28 @@ class ImpactTrace {
                 .text("YEAR")
                 .attr("x", this.svgWidth/2)
                 .attr("y", this.svgHeight)
-                .attr("id", "lineAxis");
+                .attr("id", "xlineAxis");
 
         // Append Y Axis
         this.svg.append("g")
+                .attr("id", "ylineAxis")
                 .attr("transform","translate(" + this.margin.left + "," + 0 + ")")
                 .call(this.Yaxis)
-                .selectAll(".ticks")
-                .attr("id", "lineAxis");
+                .selectAll(".ticks");
 
         // Append Y Label
         this.svg.append("g")
                 .classed("label", true)
+                .attr("id", "ylabel")
                 .append("text")
                 .attr("transform", "rotate(-90)")
                 .text("Journal Impact Factor")
-                .attr("x", -this.svgHeight/2*1.25)
+                .attr("x", -this.svgHeight/2)
                 .attr("y", this.margin.left/5*2)
-                .attr("id", "lineAxis");
+                .attr("text-anchor", "middle");
 
-        d3.select(".itTitle").remove();
+//        d3.select(".itTitle").remove();
 
-        let cnams = Grid.columns;
         let rectScale = d3.scaleLinear()
                           .domain([0, JofInterest.length])
                           .range([this.margin.left*3, this.svgWidth - this.margin.right]);
@@ -142,6 +143,8 @@ class ImpactTrace {
                 .attr("x", this.margin.left)
                 .attr("y", this.margin.top*2.5)
 
+        let buff = 30;
+
         this.svg.select("g > FilterData").exit().remove();
         this.svg.append("g")
                 .classed("FD_Group", true)
@@ -158,15 +161,14 @@ class ImpactTrace {
                 .attr("height", this.margin.top/2)
                 .style("fill", "#43a2ca")
                 .on("mouseover", function(d,i) {
-                    let x = d3.select(this)
+                    d3.select(this)
                               .attr("x", d => {
                                 return rectScale(i) - 5;
                               })
-                              .attr("y", 30)
-                              .attr("width", 30)
-                              .attr("height", 30)
-                              .style("fill", "#6FB98F")
-                              .style("z-index", 700);
+                              .attr("y", buff)
+                              .attr("width", buff)
+                              .attr("height", buff)
+                              .style("fill", "#6FB98F");
 
                     d3.select(".FD_Group")
                       .append("title")
@@ -174,139 +176,203 @@ class ImpactTrace {
                       .attr("class", "tooltip")
                       .style("opacity", 0)
                       .transition()
-                      .duration(200)
+                      .duration(100)
                       .style("opacity", 1);
+                })
+                .on("click", d => {
+                     // Makes sure changes to selected groups works
+                    d3.select(".Filt_Data_Text").remove();
+                    d3.select(".impactTrace")
+                      .select("svg")
+                      .append("text")
+                      .classed("Filt_Data_Text", true)
+                      .text("Current Filter: " + d)
+                      .attr("x", 50)
+                      .attr("y", 20)
+                      .classed("instruct", true)
+                      .attr("font-size", 20 + "px");
 
-                    d3.select(this)
-                      .on("click", d => {
-                        let dnam = JofInterest.indexOf(d);
-                        let vals = sortGrid.map((e1) => {
-                            let b = Object.keys(e1);
-                            let val = e1[b[dnam]];
-                            // If the number is a Float
-                            if (!isNaN(val) && val.toString().indexOf('.') != -1) {
-                                return parseFloat(val);
-                            // if the number is an Integer
-                            } else if (!isNaN(val) && val.toString().indexOf(',') == -1) {
-                                return parseInt(val);
-                            // If there is no number
-                            } else {
-                                return 0;
-                            }
-                        })
+                    // Find Min and Max Data Points
+                    let ext = d3.extent(Grid.map((e1,i) => {
+                        let idx = parseFloat(Grid[i][d]);
+                        if (isNaN(idx)) {
+                            idx = 0;
+                        }
+                        return idx;
+                    }));
 
-                        // Find the Min and Max of Vals
-                        let ext = d3.extent(vals);
-                        // Get X scale
-                        let Xscaled = d3.scaleLinear()
-                                        .domain([ext[0], ext[1]])
-                                        .range([25, 375]);
+                    // In case all of them are 0s
+                    if (ext[1] === 0) {
+                        ext[1] = 5;
+                    }
+                    let Taylorscale = d3.scaleLinear().domain([ext[0], ext[1]]).range([360, 60]);
 
-                        let Yscaled = d3.scaleLinear()
-                                        .domain([])
-                                        .range([]);
+                    let steps = [0,0,0,0,0,0,0,0,0,0];
+                    let idx1 = (ext[1] - ext[0])/10;
+                    for (i = 0; i < 10; i++) {
+                       steps[i] = ext[0] + i*idx1;
+                    };
 
-                        d3.select(".ImpactTrace")
-                          .selectAll("path")
-                          .data(vals)
-                          .enter().append("path");
+                    d3.select("#ylineAxis").remove();
+                    d3.select("#ylabel").remove();
 
-                         // Create New Impact Trace Chart
-                         // Create New X and Y axis
-                        let Xscale = d3.scaleLinear()
-                                        .domain([new Date(startYear), new Date(endYear)])
-                                        .range([20, 380]).nice();
+                    let Yaxis = d3.axisLeft().scale(Taylorscale).tickValues(steps);
 
-                        // create Yscale based on JIF values
-                        let Yscale = d3.scaleLinear()
-                                        .domain([ext[0], ext[1]])
-                                        .range([400 - 40, 60]).nice();
+                    d3.select(".impactTrace")
+                      .select("svg")
+                      .append("g")
+                      .attr("transform","translate(" + 50 + "," + -1 + ")")
+                      .attr("id", "ylineAxis")
+                      .call(Yaxis);
 
-                        // Voronoi diagrams
-                        // Create Voronoi Function
-                        let voronoi = d3.voronoi()
-                            .x(function(d) {
-                                return Xscale(d[0]) + 200
-                            })
-                            .y(function(d) {
-                                if (isNaN(d[1])) {
-                                    return Yscale(0);
-                                } else {
-                                    return Yscale(d[1])
-                                }
-                            })
-                        .extent([[-50, -20], [539.5 + 25, 400 + 25]]);
+                    d3.select(".impactTrace")
+                      .select("svg")
+                      .append("g")
+                      .attr("id", "ylabel")
+                      .append("text")
+                      .attr("transform", "rotate(-90)")
+                      .text(d)
+                      .attr("x", -200)
+                      .attr("y", 20)
+                      .attr("text-anchor", "middle");
 
-                        // Create Line Function
-                      let line = d3.line()
-                                    .x(e2 => {
-                                        return Xscale(e2[0]);
-                                    })
-                                    .y(e2 => {
-                                        if (isNaN(e2[1])) {
-                                    return Yscale(0);
+                    // Create a Line Function
+                    let line = d3.line()
+                                 .x(e2 => {
+                                    return Xscale(e2[0]);
+                                 })
+                                 .y(e2 => {
+                                    if (isNaN(e2[1])) {
+                                        return Taylorscale(0);
                                     } else {
-                                        return Yscale(e2[1]);
+                                        return Taylorscale(e2[1]);
                                     }
-                      });
+                                 });
 
-                        // Append Circle Nodes
-                        let svg = d3.select(".impactTrace").select("svg");
-                        let focus = svg.append("g")
-                                       .attr("transform", "translate(-100,-100)")
-                                       .attr("class", focus);
-
-                        focus.append("circle")
-                             .attr("r", 4);
-
-                        focus.append("text")
-                             .attr("y", -10);
-
-                        let vG = svg.append("g")
-                                    .classed("voron", true);
-
-                        voron.selectAll("path")
-                             .data(voronoi.polygons(d3.merge(vals)))
-                             .enter.append("path")
-                             .attr("d", function(d) {
-                                return d ? "M" + d.join("L") + "Z" : null;
-                             })
-                             .on("mouseover", function(d) {
-                                d3.select(d).classed("city_hover", true);
-                                d3.select(".ImpactTrace")
-                             })
-                             .on("mouseout", function(d) {
-
-                             });
-
-                        // Pathing
-                        svg.select(".ImpactTrace")
-                           .selectAll("path")
-                           .remove();
-
-                        d3.selectAll(".ImpactTrace > path")
-                           .data(vals)
-                           .enter()
-                           .append(path)
-                           .attr("d", d => {
-                               return d
-                           })
-                           .style("stroke", function(d) {
-                                if (name[lines.indexOf(d)] === "Nature") {
-                                    return "#E38533";
-                                } else {
-                                    return "#004445";
-                                }
-                           })
-                           .style("opacity", d => {
-                                if (name[lines.indexOf(d)] === "Nature") {
-                                    return 1;
-                                } else {
-                                    return 0.15;
-                                }
-                           })
-
+                    // Map Data points and create path strings
+                    let lines =  name.map((e1,i) => {
+                        // Filter Data Based On Journal
+                        let vals = Grid.filter((e2,i) => {
+                            if (e2["Journal"] === e1){
+                                return e2;
+                            }
                         });
+
+                        // Compute the line
+                        vals = vals.map((e2,i) => {
+                            let sGnames = Object.keys(e2);
+                            let sGpos = [];
+                            sGnames.forEach((e3,i1) => {
+                                if (e3 === d) {
+                                    sGpos = i1;
+                                }
+                            });
+                            let y1 = parseInt(e2["Year"]);
+                            let v1 = parseFloat(e2[sGnames[sGpos]]);
+                            if (isNaN(v1)) {
+                                v1 = 0;
+                            };
+                            return [y1, v1]
+                        });
+                        return line(vals)
+                    });
+
+                    let lined = d3.select(".ImpactTrace")
+                                  .selectAll("path")
+                                  .remove();
+                    d3.select(".ImpactTrace")
+                      .selectAll("path")
+                      .data(lines)
+                      .enter()
+                      .append("path")
+                      .attr("d", e1 => {return e1})
+                      .style("stroke", function(e1) {
+                        if (name[lines.indexOf(e1)] === currJournal) {
+                            return "#E38533";
+                        } else {
+                            return "#004445";
+                        }
+                        })
+                      .style("opacity", e1 => {
+                        if (name[lines.indexOf(e1)] === currJournal) {
+                            return 1;
+                        } else {
+                            return 0.15;
+                        }
+                      })
+                      .style("stroke-width", d => {
+                        if (name[lines.indexOf(d)] === currJournal) {
+                            return 5;
+                        } else {
+                            return 2;
+                        }
+                      })
+                      .on("mouseover", (d) => {
+                            let pos = lines.map((e1,i) => {
+                            if (d === e1) {
+                                return [i];
+                            } else {
+                                return NaN;
+                            }
+                            });
+                            // Remove NaNs from pos
+                            pos = pos.filter((e1) => {if (!isNaN(e1)) {return e1}});
+
+                            d3.select(".ImpactTrace")
+                            .selectAll("path")
+                            .style("opacity", 0.05);
+
+                            d3.select(".ImpactTrace")
+                                .selectAll("path")
+                                .forEach(e4 => {
+                                    console.log(e4);
+                                })
+
+                            d3.select(this)
+                                .append("title")
+                                .text("Journal: " + sortGrid[pos[0]]["Journal"])
+                                .classed("barsTitle", true)
+                                .transition()
+                                .duration(100)
+                                .style("opacity", 0.9);
+
+                            // highlight related nodes in FDN
+                            d3.select('.nodes').selectAll('circle')
+                            .attr('id', e1 => {
+                                if (sortGrid[pos[0]]["Journal"].toUpperCase() === e1.id.toUpperCase()) {
+                                    return 'hlightCited'
+                                } else {
+                                    return null
+                                }
+                            });
+
+                            // highlight cited bars
+                            d3.select('.citedBars')
+                                .selectAll("rect")
+                                .attr("id", e1 => {
+                                if (sortGrid[pos[0]]["Journal"] === e1["Journal"]) {
+                                    return 'hlightCited'
+                                } else {
+                                    return null
+                                }
+                            });
+
+                            // highlight citing bars
+                            d3.select('.citingBars')
+                                .selectAll("rect")
+                                .attr("id", e1 => {
+                                    if (sortGrid[pos[0]]["Journal"] === e1["Journal"]) {
+                                        return 'hlightCited'
+                                    } else {
+                                        return null
+                                    }
+                                });
+                    })
+                    .on("mouseout", function(d) {
+                        d3.select(".ImpactTrace")
+                            .selectAll("path")
+                            .style("opacity", 0.15);
+                    });
                 })
                 .on("mouseout", function(d,i) {
                     let that = this;
@@ -329,18 +395,18 @@ class ImpactTrace {
                 });
 
         // Create Voronoi Function
-        this.voronoi = d3.voronoi()
-                        .x(function(d) {
-                            return Xscale(d[0]) + 200
-                        })
-                        .y(function(d) {
-                            if (isNaN(d[1])) {
-                                return Yscale(0);
-                            } else {
-                                return Yscale(d[1])
-                            }
-                        })
-                        .extent([[-50, -20], [539.5 + 25, 400 + 25]]);
+//        this.voronoi = d3.voronoi()
+//                        .x(function(d) {
+//                            return Xscale(d[0]) + 200
+//                        })
+//                        .y(function(d) {
+//                            if (isNaN(d[1])) {
+//                                return Yscale(0);
+//                            } else {
+//                                return Yscale(d[1])
+//                            }
+//                        })
+//                        .extent([[-50, -20], [539.5 + 25, 400 + 25]]);
 
         // Create Line Function
         this.line = d3.line()
@@ -356,7 +422,7 @@ class ImpactTrace {
                         });
 
         // Filter Data
-        var lines =  name.map((e1,i) => {
+        let lines =  name.map((e1,i) => {
             let vals = Grid.filter((e2,i) => {
                 if (e2["Journal"] === e1){
                     return e2;
@@ -365,21 +431,22 @@ class ImpactTrace {
             vals = vals.map((e2,i) => {
                 return [parseInt(e2["Year"]), parseFloat(e2["Journal Impact Factor"])]
             });
-            return this.line(vals)
-        });
+            let lineData = {paths:this.line(vals), name:e1}
 
-        let voronois =  name.map((e1,i) => {
-            let vals = Grid.filter((e2,i) => {
-                if (e2["Journal"] === e1){
-                    return e2;
-                }
-            });
-            vals = vals.map((e2,i) => {
-                return [parseInt(e2["Year"]), parseFloat(e2["Journal Impact Factor"])]
-            });
-            return this.voronoi(vals).polygons()
+            return lineData;
         });
-
+//        let voronois =  name.map((e1,i) => {
+//            let vals = Grid.filter((e2,i) => {
+//                if (e2["Journal"] === e1){
+//                    return e2;
+//                }
+//            });
+//            vals = vals.map((e2,i) => {
+//                return [parseInt(e2["Year"]), parseFloat(e2["Journal Impact Factor"])]
+//            });
+//            return this.voronoi(vals).polygons()
+//        });
+//
         let lined = this.svg.append("g")
                             .classed("ImpactTrace", true)
                             .selectAll("path")
@@ -388,135 +455,158 @@ class ImpactTrace {
         lined.exit().remove();
 
         lined.enter().append("path")
-                     .attr("d", d => {return d})
+                     .attr("d", d => {return d.paths})
                      .style("stroke", function(d) {
-                        if (name[lines.indexOf(d)] === "Nature") {
+                        if (name[lines.indexOf(d)] === currJournal) {
                             return "#E38533";
                         } else {
                             return "#004445";
                         }
                      })
                      .style("opacity", d => {
-                        if (name[lines.indexOf(d)] === "Nature") {
+                        if (name[lines.indexOf(d)] === currJournal) {
                             return 1;
                         } else {
                             return 0.15;
                         }
+                     })
+                     .style("stroke-width", d => {
+                        if (name[lines.indexOf(d)] === currJournal) {
+                            return 5;
+                        } else {
+                            return 2;
+                        }
                      });
 
-        let voron = this.svg.append("g")
-                            .attr("class", "voronoi");
-
-        voron.selectAll("path")
-             .data(voronois)
-             .enter().append("path")
-             .attr("d", d => {
-                let str = d ? "M" + d.join("L") : null;
-                let nstr = str.replace(/L+/g,"L");
-                while (nstr[nstr.length-1] === "L") {
-                    nstr = nstr.slice(0,-1);
-                };
-                nstr = nstr + "Z";
-                return nstr;
-             })
-             .style("opacity", 0)
-             .on("mouseover", mouseover)
-             .on("mouseout", mouseout);
+//        let voron = this.svg.append("g")
+//                            .attr("class", "voronoi");
+//
+//        voron.selectAll("path")
+//             .data(voronois)
+//             .enter().append("path")
+//             .attr("d", d => {
+//                let str = d ? "M" + d.join("L") : null;
+//                let nstr = str.replace(/L+/g,"L");
+//                while (nstr[nstr.length-1] === "L") {
+//                    nstr = nstr.slice(0,-1);
+//                };
+//                nstr = nstr + "Z";
+//                return nstr;
+//             })
+//             .datum(function(d) {
+//                console.log(d.point);
+//                return d.point;
+//             })
+//             .style("opacity", 0)
+//             .on("mouseover", mouseover)
+//             .on("mouseout", mouseout);
 //                let l2 = d3.select(".ImpactTrace").selectAll("path")._groups[0][i];
 //                l2.style.opacity = 1;
 
         function mouseover(d) {
-            let l0 = lines[i];
-                let l1 = d3.select(".ImpactTrace").selectAll("path")._groups[0];
-                let des_l1 = [];
-                l1.forEach((e2,i) => {
-                    if (e2.__data__ === l0) {
-                        des_l1.push(i)
-                    };
-                });
-                console.log(des_l1);
-                des_l1.forEach(d => {
-                    d3.select(".ImpactTrace")
-                      .select("path:nth-child("+ des_l1[0] +")")
-                      .style("opacity",1)
-                      .style("stroke", "black")
-                      .style("stroke-width", 10);
-                });
+            d3.select("."+d.type).classed("city_hover", true);
+
+//            let l0 = lines[i];
+//                let l1 = d3.select(".ImpactTrace").selectAll("path")._groups[0];
+//                let des_l1 = [];
+//                l1.forEach((e2,i) => {
+//                    if (e2.__data__ === l0) {
+//                        des_l1.push(i)
+//                    };
+//                });
+//                console.log(des_l1);
+//                des_l1.forEach(d => {
+//                    d3.select(".ImpactTrace")
+//                      .select("path:nth-child("+ des_l1[0] +")")
+//                      .style("opacity",1)
+//                      .style("stroke", "black")
+//                      .style("stroke-width", 10);
+//                });
         };
 
         function mouseout(d) {
-            d3.select(this)
-              .style("opacity", 0.1)
-              .style("stroke-width", 1)
-              .style("stroke", "#6FB98F")
+            d3.select("."+d.type).classed("city_hover", false);
+//            d3.select(this)
+//              .style("opacity", 0.1)
+//              .style("stroke-width", 1)
+//              .style("stroke", "#6FB98F")
         };
 
         // Give the lines interactivity properties
-//        d3.select(".ImpactTrace")
-//                .selectAll("path")
-//                .on("mouseover", function(d) {
-//                    // Find Journal Name Through Mapping
-//                    let pos = lines.map((e1,i) => {
-//                        if (d === e1) {
-//                            return [i];
-//                        } else {
-//                            return NaN;
-//                        }
-//
-//                    });
-//                    // Remove NaNs from pos
-//                    pos = pos.filter((e1) => {if (!isNaN(e1)) {return e1}});
-//                    d3.select(this)
-//                        .append("title")
-//                        .text("Journal: " + sortGrid[pos[0]]["Journal"])
-//                        .classed("barsTitle", true)
-//                        .transition()
-//                        .duration(100)
-//                        .style("opacity", 0.9);
-//
-//                    // highlight related nodes in FDN
-//                        d3.select('.nodes').selectAll('circle')
-//                          .attr('id', e1 => {
-//                                if (sortGrid[pos[0]]["Journal"].toUpperCase() === e1.id.toUpperCase()) {
-//                                    return 'hlightCited'
-//                                } else {
-//                                return null
-//                                }
-//                          });
-//
-//                        // highlight cited bars
-//                        d3.select('.citedBars')
-//                          .selectAll("rect")
-//                          .attr("id", e1 => {
-//                            if (sortGrid[pos[0]]["Journal"] === e1["Journal"]) {
-//                                return 'hlightCited'
-//                            } else {
-//                                return null
-//                            }
-//                          });
-//
-//                        // highlight citing bars
-//                        d3.select('.citingBars')
-//                          .selectAll("rect")
-//                          .attr("id", e1 => {
-//                            if (sortGrid[pos[0]]["Journal"] === e1["Journal"]) {
-//                                return 'hlightCited'
-//                            } else {
-//                                return null
-//                            }
-//                          });
-//
-////                        d3.select(this)
-////                          .style("stroke-width", 3 + "px")
-////                          .style("opacity", 1)
-////                          .style("stroke", "#6FB98F");
-//                })
-//                .on("mouseout", function(d) {
-////                    d3.select(this)
-////                      .transition()
-////                      .duration(100)
-////                      .style("opacity", 0)
-////                      .remove();
-//                });
+        d3.select(".ImpactTrace")
+                .selectAll("path")
+                .on("mouseover", function(d) {
+                    // Find Journal Name Through Mapping
+                    let pos = lines.map((e1,i) => {
+                        if (d === e1) {
+                            return [i];
+                        } else {
+                            return NaN;
+                        }
+
+                    });
+                    // Remove NaNs from pos
+                    pos = pos.filter((e1) => {if (!isNaN(e1)) {return e1}});
+
+                    d3.select(this)
+                      .style("stroke-width", 10)
+                      .style("opacity", 1)
+                      .style("stroke", "black");
+
+                    d3.select(".impactTrace")
+                        .append("g")
+                        .attr("class", "circles")
+                        .append("circle")
+                        .attr("r", 5)
+                        .style("fill", "red")
+                        .attr("cx", d3.mouse(this)[0])
+                        .attr("cy", d3.mouse(this)[1]);
+
+                    d3.select(this)
+                        .append("title")
+                        .text("Journal: " + sortGrid[pos[0]]["Journal"])
+                        .classed("barsTitle", true)
+                        .transition()
+                        .duration(100)
+                        .style("opacity", 0.9);
+
+                    // highlight related nodes in FDN
+                    d3.select('.nodes').selectAll('circle')
+                      .attr('id', e1 => {
+                      if (sortGrid[pos[0]]["Journal"].toUpperCase() === e1.id.toUpperCase()) {
+                            return 'hlightCited'
+                      } else {
+                            return null
+                      }
+                    });
+
+                    // highlight cited bars
+                    d3.select('.citedBars')
+                      .selectAll("rect")
+                      .attr("id", e1 => {
+                        if (sortGrid[pos[0]]["Journal"] === e1["Journal"]) {
+                            return 'hlightCited'
+                        } else {
+                            return null
+                        }
+                      });
+
+                    // highlight citing bars
+                    d3.select('.citingBars')
+                      .selectAll("rect")
+                      .attr("id", e1 => {
+                        if (sortGrid[pos[0]]["Journal"] === e1["Journal"]) {
+                            return 'hlightCited'
+                        } else {
+                            return null
+                        }
+                      });
+                })
+                .on("mouseout", function(d) {
+                    d3.select(this)
+                        .style("opacity", 0.15)
+                        .style("stroke-width", 2)
+                        .style("stroke", "#004445");
+                });
     }
 };

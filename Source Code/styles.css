@@ -147,7 +147,7 @@
 
 #horizontalBars {
     position: relative;
-    top: 125px;
+    top: 15px;
     right: 150px;
 }
 
@@ -212,6 +212,12 @@ path {
     border-radius: 50%;
     background: #4CAF50;
     cursor: pointer;
+}
+
+.selectedLines {
+    stroke-width: 5
+    stroke: #4CAF50
+    opacity: 1
 }
 
 .slider::-moz-range-thumb {
