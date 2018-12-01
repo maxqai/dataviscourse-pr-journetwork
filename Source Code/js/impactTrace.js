@@ -177,18 +177,8 @@ class ImpactTrace {
                       .style("opacity", 1);
                 })
                 .on("click", d => {
-                    // Create a Line Function
-                    let line = d3.line()
-                                 .x(e2 => {
-                                    return Xscale(e2[0]);
-                                 })
-                                 .y(e2 => {
-                                    if (isNaN(e2[1])) {
-                                        return Yscale(0);
-                                    } else {
-                                        return Yscale(e2[1]);
-                                    }
-                                 });
+//                this.svg.selectAll("g").remove(); // Makes sure changes to selected groups works
+
                     // Find Min and Max Data Points
                     let ext = d3.extent(Grid.map((e1,i) => {
                         let idx = parseFloat(Grid[i][d]);
@@ -202,13 +192,32 @@ class ImpactTrace {
                     if (ext[1] === 0) {
                         ext[1] = 5;
                     }
-                    Yscale = d3.scaleLinear().domain([ext[0], ext[1]])
-                                             .range([[this.svgHeight - 2 * this.margin.bottom, 3 * this.margin.top]]);
+                    let Taylorscale = d3.scaleLinear().domain([ext[0], ext[1]]).range([360, 60]);
+
+                    let steps = [0,0,0,0,0,0,0,0,0,0];
+                    let idx1 = (ext[1] - ext[0])/10;
+                    for (i = 0; i < 10; i++) {
+                       steps[i] = ext[0] + i*idx1;
+                    };
+
+                    // Create a Line Function
+                    let line = d3.line()
+                                 .x(e2 => {
+                                    return Xscale(e2[0]);
+                                 })
+                                 .y(e2 => {
+                                    if (isNaN(e2[1])) {
+                                        return Taylorscale(0);
+                                    } else {
+                                        return Taylorscale(e2[1]);
+                                    }
+                                 });
+
                     // Redefine the Y axis;
-                    this.Yaxis = d3.axisLeft();
-                    this.Yaxis
-                    .scale(Yscale)
-                    .tickValues([0, 5, 10, 15, 20, 25, 30, 35, 40, 45]);
+                    let Yaxis = d3.axisLeft();
+                    Yaxis
+                        .scale(Yscale)
+                        .tickValues(steps);
 
 
                     // Map Data points and create path strings
@@ -259,10 +268,7 @@ class ImpactTrace {
                       .data(lines)
                       .enter()
                       .append("path")
-                      .attr("d", e1 => {
-                            console.log(e1);
-                            return e1
-                      })
+                      .attr("d", e1 => {return e1})
                       .style("stroke", function(e1) {
                         if (name[lines.indexOf(e1)] === currJournal) {
                             return "#E38533";
