@@ -17,6 +17,8 @@ class ImpactTrace {
         this.svg = divImpactTrace.append("svg")
             .attr("width", this.svgWidth)
             .attr("height", this.svgHeight);
+
+        this.forceDirectedNetwork = forceDirectedNetwork;
    };
 	update (journalCSVs, currJournal){
         this.svg.selectAll("g").remove(); // Makes sure changes to selected groups works
@@ -608,7 +610,7 @@ class ImpactTrace {
                         .style("stroke", "#004445");
                 })
                 .on("click", (d) => {
-                    forceDirectedNetwork.update(journalCSVs,d.year,d.name,"Cited")
+                    this.forceDirectedNetwork.update(journalCSVs,d.year,d.name,"Cited")
                 });
     }
 };
