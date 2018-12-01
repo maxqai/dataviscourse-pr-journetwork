@@ -18,7 +18,7 @@ class YearSlider {
         //add the svg to the div
         this.svg = divYearSlider.append("svg")
             .attr("width", this.svgWidth)
-            .attr("height", 30); //TODO: fix this to not be hardcoded
+            .attr("height", 30);
 
         // The following has been adapted from the HW 4 solution provided to us via Slack
 

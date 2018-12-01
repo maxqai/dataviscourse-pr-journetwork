@@ -137,12 +137,11 @@ class ForceDirectedNetwork {
         let rangeMin = 3;
         let impactFactorScale = d3.scaleSqrt()
             .domain([domainMin,domainMax])
-            .range([rangeMin,rangeMax]); //TODO: correction for area
+            .range([rangeMin,rangeMax]);
 
         let forceData = {
             nodes: journalsNodeInfo.map((d,i) => {
                 if(d.journal === journal) {
-                    // console.log('selJOurnal', d.journal);
                     return {
                         fx: this.svgWidth/2, // initially fix selected journal in center
                         fy: this.svgHeight/2,
@@ -178,10 +177,8 @@ class ForceDirectedNetwork {
         let forceSimulation = d3.forceSimulation()
             .force("link", d3.forceLink()
                 .id(function(d) {
-                    // console.log('d forceLink', d);
                     return d.id;})
                 .distance(function(d) {
-                    // console.log('d citedCount', d.citedCount, 'citationScale', citationScale(d.citedCount));
                     return citationScale(d.citedCount);
                 }))
             .force('charge', d3.forceManyBody().strength(-60))
@@ -217,9 +214,7 @@ class ForceDirectedNetwork {
                 return impactFactorScale(d.impactFactor);
             })
             .attr('fill', d => {
-                // console.log('d', d.id);
                 if(d.id === journal){
-                    // console.log('in')
                     return '#ec7f3e' // *** <-- If this gets updated in the future, please update in yearSlider, as well!
                 } else {
                     return '#004647'
@@ -268,7 +263,7 @@ class ForceDirectedNetwork {
               d.fy = null;
         }
 
-        this.impactTrace.update(journalCSVs[0],journal);
+        this.impactTrace.update(journalCSVs,journal);
         // Update horizontalBars graph with above values
         this.horizontalBars.update(this.citedTab, this.citingTab, this.year, journal, journalCSVs[3]);
         this.journalInfoBox.update(journal, journalCSVs[3]);
@@ -276,7 +271,6 @@ class ForceDirectedNetwork {
         //update journalInfoBox on click
         nodes
             .on('click', function() {
-                // console.log('hello', d3.select(this)._groups[0][0].__data__.id);
                 d3.select('#network > svg').selectAll('circle').classed('selectedNode', false);
                 d3.select(this).classed('selectedNode', true);
                 let journalName = d3.select(this)._groups[0][0].__data__.id;
@@ -340,7 +334,16 @@ class ForceDirectedNetwork {
                 }
             });
 
-        // Todo: On links hover, change color so that you can see where it goes to
+        // On links hover, change color so that you can see where it goes to
+        links
+            .on('mouseover', function(d) {
+                d3.select(this)
+                    .attr('id', 'hlightLink');
+            })
+            .on('mouseout', function(d) {
+                d3.select(this)
+                    .attr('id', null)
+            });
 
         // Add zoom feature to FDN
         let zoom = d3.zoom()
