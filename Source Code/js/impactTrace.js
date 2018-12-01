@@ -248,23 +248,11 @@ class ImpactTrace {
                         return line(vals)
                     });
 
-//                    // Get X scale
-//                    let Xscaled = d3.scaleLinear()
-//                                    .domain([1997, 2017])
-//                                    .range([20, 380]).nice();
-//
-//                    // create Yscale based on JIF values
-//                    let Yscaled = d3.scaleLinear()
-//                        .domain([ext[0], ext[1]])
-//                        .range([360, 60]).nice();
-//
-//                    let values2 = line(values);
-
-                    let lined = this.svg.append("g")
-                            .classed("ImpactTrace", true)
-                            .selectAll("path")
-                            .remove();
+                    let lined = d3.select(".ImpactTrace")
+                                  .selectAll("path")
+                                  .remove();
                     d3.select(".ImpactTrace")
+                      .selectAll("path")
                       .data(lines)
                       .enter()
                       .append("path")
@@ -280,7 +268,7 @@ class ImpactTrace {
                         if (name[lines.indexOf(e1)] === currJournal) {
                             return 1;
                         } else {
-                            return 0.05;
+                            return 0.15;
                         }
                       })
                       .style("stroke-width", d => {
