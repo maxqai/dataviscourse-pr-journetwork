@@ -118,8 +118,9 @@ class ImpactTrace {
                 .append("text")
                 .attr("transform", "rotate(-90)")
                 .text("Journal Impact Factor")
-                .attr("x", -this.svgHeight/2*1.25)
-                .attr("y", this.margin.left/5*2);
+                .attr("x", -this.svgHeight/2)
+                .attr("y", this.margin.left/5*2)
+                .attr("text-anchor", "middle");
 
         d3.select(".itTitle").remove();
 
