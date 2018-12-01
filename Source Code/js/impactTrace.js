@@ -274,7 +274,8 @@ class ImpactTrace {
                             };
                             return [y1, v1]
                         });
-                        return line(vals)
+                        let newLine = {paths:line(vals), name:e1};
+                        return newLine
                     });
 
                     let lined = d3.select(".ImpactTrace")
@@ -285,7 +286,7 @@ class ImpactTrace {
                       .data(lines)
                       .enter()
                       .append("path")
-                      .attr("d", e1 => {return e1})
+                      .attr("d", e1 => {return e1.paths})
                       .style("stroke", function(e1) {
                         if (name[lines.indexOf(e1)] === currJournal) {
                             return "#E38533";
@@ -322,11 +323,11 @@ class ImpactTrace {
                             .selectAll("path")
                             .style("opacity", 0.05);
 
-                            d3.select(".ImpactTrace")
-                                .selectAll("path")
-                                .forEach(e4 => {
-                                    console.log(e4);
-                                })
+//                            d3.select(".ImpactTrace")
+//                                .selectAll("path")
+//                                .forEach(e4 => {
+//                                    console.log(e4);
+//                                })
 
                             d3.select(this)
                                 .append("title")
