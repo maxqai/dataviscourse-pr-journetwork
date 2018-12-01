@@ -607,9 +607,6 @@ class ImpactTrace {
                         .style("opacity", 0.15)
                         .style("stroke-width", 2)
                         .style("stroke", "#004445");
-                })
-                .on("click", (d) => {
-
                 });
     }
 };
