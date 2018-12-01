@@ -26,16 +26,16 @@ class ImpactTrace {
         Grid = Grid.sort(function (e1, e2) {
             return d3.ascending(e1.Year, e2.Year)
         });
-        let sortGrid = Grid;
+        let sortGrid = Grid; // Gives ascending year values
 
         // Separate Years
-        this.Years = Grid.map(d => {
+        let Years = Grid.map(d => {
             return parseInt(d["Year"])
         });
 
         // Find Min and Max Years
-        let startYear = d3.min(this.Years)
-        let endYear = d3.max(this.Years)
+        let startYear = d3.min(Years)
+        let endYear = d3.max(Years)
 
         // Find Columns worth filtering
         let JofInterest = ["5-Year Impact Factor", "% Articles in Citable Items", "Article Influence Score", "Citable Items", "Cited Half-Life", "Citing Half-LIfe", "Eigenfactor Score", "Immediacy Index", "Impact Factor without Journal Self Cites", "Journal Impact Factor", "Normalized Eigenfactor", "Total Cites", "avgJIFPercentile"];
@@ -180,7 +180,7 @@ class ImpactTrace {
                 .on("click", d => {
 //                this.svg.selectAll("g").remove(); // Makes sure changes to selected groups works
                     d3.select(".Filt_Data_Text").remove();
-                    d3.select(".impactTraces")
+                    d3.select(".impactTrace")
                       .select("svg")
                       .append("g")
                       .classed("Filt_Data_Text", true)
@@ -217,14 +217,14 @@ class ImpactTrace {
 
                     let Yaxis = d3.axisLeft().scale(Taylorscale).tickValues(steps);
 
-                    d3.select("#impactTrace")
+                    d3.select(".impactTrace")
                       .select("svg")
                       .append("g")
                       .attr("transform","translate(" + 50 + "," + -1 + ")")
                       .attr("id", "ylineAxis")
                       .call(Yaxis);
 
-                    d3.select("#impactTrace")
+                    d3.select(".impactTrace")
                       .select("svg")
                       .append("g")
                       .attr("id", "ylabel")
@@ -321,10 +321,11 @@ class ImpactTrace {
                             .selectAll("path")
                             .style("opacity", 0.05);
 
-                            d3.select(this)
-                                .style("stroke-width", 5)
-                                .style("stroke", "black")
-                                .style("opacity", 1);
+                            d3.select(".ImpactTrace")
+                                .selectAll("path")
+                                .forEach(e4 => {
+                                    console.log(e4);
+                                })
 
                             d3.select(this)
                                 .append("title")
@@ -367,9 +368,9 @@ class ImpactTrace {
                                 });
                     })
                     .on("mouseout", function(d) {
-                        d3.select(".ImpactTraces")
+                        d3.select(".ImpactTrace")
                             .selectAll("path")
-                            .style("opacity", 1);
+                            .style("opacity", 0.15);
                     });
                 })
                 .on("mouseout", function(d,i) {
@@ -429,7 +430,9 @@ class ImpactTrace {
             vals = vals.map((e2,i) => {
                 return [parseInt(e2["Year"]), parseFloat(e2["Journal Impact Factor"])]
             });
-            return this.line(vals)
+            let lineData = {paths:this.line(vals), name:e1}
+
+            return lineData;
         });
 //        let voronois =  name.map((e1,i) => {
 //            let vals = Grid.filter((e2,i) => {
@@ -451,7 +454,7 @@ class ImpactTrace {
         lined.exit().remove();
 
         lined.enter().append("path")
-                     .attr("d", d => {return d})
+                     .attr("d", d => {return d.paths})
                      .style("stroke", function(d) {
                         if (name[lines.indexOf(d)] === currJournal) {
                             return "#E38533";
@@ -549,7 +552,14 @@ class ImpactTrace {
                       .style("opacity", 1)
                       .style("stroke", "black");
 
-
+                    d3.select(".impactTrace")
+                        .append("g")
+                        .attr("class", "circles")
+                        .append("circle")
+                        .attr("r", 5)
+                        .style("fill", "red")
+                        .attr("cx", d3.mouse(this)[0])
+                        .attr("cy", d3.mouse(this)[1]);
 
                     d3.select(this)
                         .append("title")
