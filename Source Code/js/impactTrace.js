@@ -16,26 +16,28 @@ class ImpactTrace {
         //add the svg to the div
         this.svg = divImpactTrace.append("svg")
             .attr("width", this.svgWidth)
-            .attr("height", this.svgHeight);//TODO: fix this to not be hardcoded
+            .attr("height", this.svgHeight);
+
    };
-	update (Grid, currJournal){
+	update (journalCSVs, currJournal){
         this.svg.selectAll("g").remove(); // Makes sure changes to selected groups works
 
         // Things that need to get done: Formatting of Graph - adding X and Y Labels, Changing Year so it Looks Good, appending circle to show which line was highlighted
         // First Sort the Data
+        let Grid = journalCSVs[0];
         Grid = Grid.sort(function (e1, e2) {
             return d3.ascending(e1.Year, e2.Year)
         });
-        let sortGrid = Grid;
+        let sortGrid = Grid; // Gives ascending year values
 
         // Separate Years
-        this.Years = Grid.map(d => {
+        let Years = Grid.map(d => {
             return parseInt(d["Year"])
         });
 
         // Find Min and Max Years
-        let startYear = d3.min(this.Years)
-        let endYear = d3.max(this.Years)
+        let startYear = d3.min(Years)
+        let endYear = d3.max(Years)
 
         // Find Columns worth filtering
         let JofInterest = ["5-Year Impact Factor", "% Articles in Citable Items", "Article Influence Score", "Citable Items", "Cited Half-Life", "Citing Half-LIfe", "Eigenfactor Score", "Immediacy Index", "Impact Factor without Journal Self Cites", "Journal Impact Factor", "Normalized Eigenfactor", "Total Cites", "avgJIFPercentile"];
@@ -59,11 +61,11 @@ class ImpactTrace {
         });
 
         // Filter JIF values
-        this.JIF = Grid.map(d => {
+        let JIF = Grid.map(d => {
             return parseInt(d["Journal Impact Factor"])
         })
 
-        let endJIF = d3.max(this.JIF);
+        let endJIF = d3.max(JIF);
 
         // create Xscale based on year values
         let Xscale = d3.scaleLinear()
@@ -122,7 +124,7 @@ class ImpactTrace {
                 .attr("y", this.margin.left/5*2)
                 .attr("text-anchor", "middle");
 
-        d3.select(".itTitle").remove();
+//        d3.select(".itTitle").remove();
 
         let rectScale = d3.scaleLinear()
                           .domain([0, JofInterest.length])
@@ -143,6 +145,8 @@ class ImpactTrace {
                 .attr("x", this.margin.left)
                 .attr("y", this.margin.top*2.5)
 
+        let buff = 30;
+
         this.svg.select("g > FilterData").exit().remove();
         this.svg.append("g")
                 .classed("FD_Group", true)
@@ -159,13 +163,13 @@ class ImpactTrace {
                 .attr("height", this.margin.top/2)
                 .style("fill", "#43a2ca")
                 .on("mouseover", function(d,i) {
-                    let x = d3.select(this)
+                    d3.select(this)
                               .attr("x", d => {
                                 return rectScale(i) - 5;
                               })
-                              .attr("y", 30)
-                              .attr("width", 30)
-                              .attr("height", 30)
+                              .attr("y", buff)
+                              .attr("width", buff)
+                              .attr("height", buff)
                               .style("fill", "#6FB98F");
 
                     d3.select(".FD_Group")
@@ -174,22 +178,21 @@ class ImpactTrace {
                       .attr("class", "tooltip")
                       .style("opacity", 0)
                       .transition()
-                      .duration(200)
+                      .duration(100)
                       .style("opacity", 1);
                 })
                 .on("click", d => {
-//                this.svg.selectAll("g").remove(); // Makes sure changes to selected groups works
+                     // Makes sure changes to selected groups works
                     d3.select(".Filt_Data_Text").remove();
-                    d3.select(".impactTraces")
+                    d3.select(".impactTrace")
                       .select("svg")
-                      .append("g")
+                      .append("text")
                       .classed("Filt_Data_Text", true)
                       .text("Current Filter: " + d)
                       .attr("x", 50)
                       .attr("y", 20)
                       .classed("instruct", true)
                       .attr("font-size", 20 + "px");
-
 
                     // Find Min and Max Data Points
                     let ext = d3.extent(Grid.map((e1,i) => {
@@ -217,14 +220,14 @@ class ImpactTrace {
 
                     let Yaxis = d3.axisLeft().scale(Taylorscale).tickValues(steps);
 
-                    d3.select("#impactTrace")
+                    d3.select(".impactTrace")
                       .select("svg")
                       .append("g")
                       .attr("transform","translate(" + 50 + "," + -1 + ")")
                       .attr("id", "ylineAxis")
                       .call(Yaxis);
 
-                    d3.select("#impactTrace")
+                    d3.select(".impactTrace")
                       .select("svg")
                       .append("g")
                       .attr("id", "ylabel")
@@ -273,7 +276,8 @@ class ImpactTrace {
                             };
                             return [y1, v1]
                         });
-                        return line(vals)
+                        let newLine = {paths:line(vals), name:e1};
+                        return newLine
                     });
 
                     let lined = d3.select(".ImpactTrace")
@@ -284,7 +288,7 @@ class ImpactTrace {
                       .data(lines)
                       .enter()
                       .append("path")
-                      .attr("d", e1 => {return e1})
+                      .attr("d", e1 => {return e1.paths})
                       .style("stroke", function(e1) {
                         if (name[lines.indexOf(e1)] === currJournal) {
                             return "#E38533";
@@ -320,11 +324,6 @@ class ImpactTrace {
                             d3.select(".ImpactTrace")
                             .selectAll("path")
                             .style("opacity", 0.05);
-
-                            d3.select(this)
-                                .style("stroke-width", 5)
-                                .style("stroke", "black")
-                                .style("opacity", 1);
 
                             d3.select(this)
                                 .append("title")
@@ -367,9 +366,9 @@ class ImpactTrace {
                                 });
                     })
                     .on("mouseout", function(d) {
-                        d3.select(".ImpactTraces")
+                        d3.select(".ImpactTrace")
                             .selectAll("path")
-                            .style("opacity", 1);
+                            .style("opacity", 0.15);
                     });
                 })
                 .on("mouseout", function(d,i) {
@@ -429,7 +428,12 @@ class ImpactTrace {
             vals = vals.map((e2,i) => {
                 return [parseInt(e2["Year"]), parseFloat(e2["Journal Impact Factor"])]
             });
-            return this.line(vals)
+            let y1 = vals.map((e2) => {
+                return [parseInt(e2["Year"])];
+            })
+
+            let lineData = {paths:this.line(vals), name:e1, year:y1}
+            return lineData;
         });
 //        let voronois =  name.map((e1,i) => {
 //            let vals = Grid.filter((e2,i) => {
@@ -451,7 +455,7 @@ class ImpactTrace {
         lined.exit().remove();
 
         lined.enter().append("path")
-                     .attr("d", d => {return d})
+                     .attr("d", d => {return d.paths})
                      .style("stroke", function(d) {
                         if (name[lines.indexOf(d)] === currJournal) {
                             return "#E38533";
@@ -549,7 +553,14 @@ class ImpactTrace {
                       .style("opacity", 1)
                       .style("stroke", "black");
 
-
+                    d3.select(".impactTrace")
+                        .append("g")
+                        .attr("class", "circles")
+                        .append("circle")
+                        .attr("r", 5)
+                        .style("fill", "red")
+                        .attr("cx", d3.mouse(this)[0])
+                        .attr("cy", d3.mouse(this)[1]);
 
                     d3.select(this)
                         .append("title")
@@ -596,6 +607,9 @@ class ImpactTrace {
                         .style("opacity", 0.15)
                         .style("stroke-width", 2)
                         .style("stroke", "#004445");
+                })
+                .on("click", (d) => {
+
                 });
     }
 };
