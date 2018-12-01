@@ -18,11 +18,12 @@ class ImpactTrace {
             .attr("width", this.svgWidth)
             .attr("height", this.svgHeight);//TODO: fix this to not be hardcoded
    };
-	update (Grid, currJournal){
+	update (journalCSVs, currJournal){
         this.svg.selectAll("g").remove(); // Makes sure changes to selected groups works
 
         // Things that need to get done: Formatting of Graph - adding X and Y Labels, Changing Year so it Looks Good, appending circle to show which line was highlighted
         // First Sort the Data
+        let Grid = journalCSVs[0];
         Grid = Grid.sort(function (e1, e2) {
             return d3.ascending(e1.Year, e2.Year)
         });
@@ -323,12 +324,6 @@ class ImpactTrace {
                             .selectAll("path")
                             .style("opacity", 0.05);
 
-//                            d3.select(".ImpactTrace")
-//                                .selectAll("path")
-//                                .forEach(e4 => {
-//                                    console.log(e4);
-//                                })
-
                             d3.select(this)
                                 .append("title")
                                 .text("Journal: " + sortGrid[pos[0]]["Journal"])
@@ -432,8 +427,11 @@ class ImpactTrace {
             vals = vals.map((e2,i) => {
                 return [parseInt(e2["Year"]), parseFloat(e2["Journal Impact Factor"])]
             });
-            let lineData = {paths:this.line(vals), name:e1}
-
+            let y1 = vals.map((e2) => {
+                return [parseInt(e2["Year"])];
+            })
+            console,log(vals);
+            let lineData = {paths:this.line(vals), name:e1, year:y1}
             return lineData;
         });
 //        let voronois =  name.map((e1,i) => {
@@ -608,6 +606,9 @@ class ImpactTrace {
                         .style("opacity", 0.15)
                         .style("stroke-width", 2)
                         .style("stroke", "#004445");
+                })
+                .on("click", (d) => {
+                    forceDirectedNetwork.update(journalCSVs,d.year,d.name,"Cited")
                 });
     }
 };
