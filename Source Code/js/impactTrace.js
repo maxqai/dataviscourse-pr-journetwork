@@ -305,7 +305,72 @@ class ImpactTrace {
                         } else {
                             return 2;
                         }
-                      });
+                      })
+                      .on("mouseover", (d) => {
+                            let pos = lines.map((e1,i) => {
+                            if (d === e1) {
+                                return [i];
+                            } else {
+                                return NaN;
+                            }
+                            });
+                            // Remove NaNs from pos
+                            pos = pos.filter((e1) => {if (!isNaN(e1)) {return e1}});
+
+                            d3.select(".ImpactTrace")
+                            .selectAll("path")
+                            .style("opacity", 0.05);
+
+                            d3.select(this)
+                                .style("stroke-width", 5)
+                                .style("stroke", "black")
+                                .style("opacity", 1);
+
+                            d3.select(this)
+                                .append("title")
+                                .text("Journal: " + sortGrid[pos[0]]["Journal"])
+                                .classed("barsTitle", true)
+                                .transition()
+                                .duration(100)
+                                .style("opacity", 0.9);
+
+                            // highlight related nodes in FDN
+                            d3.select('.nodes').selectAll('circle')
+                            .attr('id', e1 => {
+                                if (sortGrid[pos[0]]["Journal"].toUpperCase() === e1.id.toUpperCase()) {
+                                    return 'hlightCited'
+                                } else {
+                                    return null
+                                }
+                            });
+
+                            // highlight cited bars
+                            d3.select('.citedBars')
+                                .selectAll("rect")
+                                .attr("id", e1 => {
+                                if (sortGrid[pos[0]]["Journal"] === e1["Journal"]) {
+                                    return 'hlightCited'
+                                } else {
+                                    return null
+                                }
+                            });
+
+                            // highlight citing bars
+                            d3.select('.citingBars')
+                                .selectAll("rect")
+                                .attr("id", e1 => {
+                                    if (sortGrid[pos[0]]["Journal"] === e1["Journal"]) {
+                                        return 'hlightCited'
+                                    } else {
+                                        return null
+                                    }
+                                });
+                    })
+                    .on("mouseout", function(d) {
+                        d3.select(".ImpactTraces")
+                            .selectAll("path")
+                            .style("opacity", 1);
+                    });
                 })
                 .on("mouseout", function(d,i) {
                     let that = this;
@@ -328,18 +393,18 @@ class ImpactTrace {
                 });
 
         // Create Voronoi Function
-        this.voronoi = d3.voronoi()
-                        .x(function(d) {
-                            return Xscale(d[0]) + 200
-                        })
-                        .y(function(d) {
-                            if (isNaN(d[1])) {
-                                return Yscale(0);
-                            } else {
-                                return Yscale(d[1])
-                            }
-                        })
-                        .extent([[-50, -20], [539.5 + 25, 400 + 25]]);
+//        this.voronoi = d3.voronoi()
+//                        .x(function(d) {
+//                            return Xscale(d[0]) + 200
+//                        })
+//                        .y(function(d) {
+//                            if (isNaN(d[1])) {
+//                                return Yscale(0);
+//                            } else {
+//                                return Yscale(d[1])
+//                            }
+//                        })
+//                        .extent([[-50, -20], [539.5 + 25, 400 + 25]]);
 
         // Create Line Function
         this.line = d3.line()
@@ -479,15 +544,11 @@ class ImpactTrace {
                     // Remove NaNs from pos
                     pos = pos.filter((e1) => {if (!isNaN(e1)) {return e1}});
 
-                    d3.select(".ImpactTrace")
-                      .selectAll("path")
-                      .style("opacity", 0.05);
-
                     d3.select(this)
-                      .classed("selectedLines", true)
-                      .style("stroke-width", 5)
-                      .style("stroke", "black")
-                      .style("opacity", 1);
+                      .style("stroke-width", 10)
+                      .style("opacity", 1)
+                      .style("stroke", "black");
+
 
 
                     d3.select(this)
@@ -531,8 +592,10 @@ class ImpactTrace {
                       });
                 })
                 .on("mouseout", function(d) {
-                    d3.select(".ImpactTraces")
-                      .classed("selectedLines", false);
+                    d3.select(this)
+                        .style("opacity", 0.15)
+                        .style("stroke-width", 2)
+                        .style("stroke", "#004445");
                 });
     }
 };
