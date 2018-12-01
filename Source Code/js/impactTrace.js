@@ -16,16 +16,13 @@ class ImpactTrace {
         //add the svg to the div
         this.svg = divImpactTrace.append("svg")
             .attr("width", this.svgWidth)
-            .attr("height", this.svgHeight);
-
-        this.forceDirectedNetwork = forceDirectedNetwork;
+            .attr("height", this.svgHeight);//TODO: fix this to not be hardcoded
    };
-	update (journalCSVs, currJournal){
+	update (Grid, currJournal){
         this.svg.selectAll("g").remove(); // Makes sure changes to selected groups works
 
         // Things that need to get done: Formatting of Graph - adding X and Y Labels, Changing Year so it Looks Good, appending circle to show which line was highlighted
         // First Sort the Data
-        let Grid = journalCSVs[0];
         Grid = Grid.sort(function (e1, e2) {
             return d3.ascending(e1.Year, e2.Year)
         });
@@ -277,8 +274,7 @@ class ImpactTrace {
                             };
                             return [y1, v1]
                         });
-                        let newLine = {paths:line(vals), name:e1};
-                        return newLine
+                        return line(vals)
                     });
 
                     let lined = d3.select(".ImpactTrace")
@@ -289,7 +285,7 @@ class ImpactTrace {
                       .data(lines)
                       .enter()
                       .append("path")
-                      .attr("d", e1 => {return e1.paths})
+                      .attr("d", e1 => {return e1})
                       .style("stroke", function(e1) {
                         if (name[lines.indexOf(e1)] === currJournal) {
                             return "#E38533";
@@ -325,6 +321,12 @@ class ImpactTrace {
                             d3.select(".ImpactTrace")
                             .selectAll("path")
                             .style("opacity", 0.05);
+
+                            d3.select(".ImpactTrace")
+                                .selectAll("path")
+                                .forEach(e4 => {
+                                    console.log(e4);
+                                })
 
                             d3.select(this)
                                 .append("title")
@@ -429,11 +431,8 @@ class ImpactTrace {
             vals = vals.map((e2,i) => {
                 return [parseInt(e2["Year"]), parseFloat(e2["Journal Impact Factor"])]
             });
-            let y1 = vals.map((e2) => {
-                return [parseInt(e2["Year"])];
-            })
+            let lineData = {paths:this.line(vals), name:e1}
 
-            let lineData = {paths:this.line(vals), name:e1, year:y1}
             return lineData;
         });
 //        let voronois =  name.map((e1,i) => {
@@ -608,9 +607,6 @@ class ImpactTrace {
                         .style("opacity", 0.15)
                         .style("stroke-width", 2)
                         .style("stroke", "#004445");
-                })
-                .on("click", (d) => {
-                    this.forceDirectedNetwork.update(journalCSVs,d.year,d.name,"Cited")
                 });
     }
 };
