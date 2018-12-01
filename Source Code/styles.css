@@ -208,6 +208,12 @@ path {
     cursor: pointer;
 }
 
+.selectedLines {
+    stroke-width: 5
+    stroke: #4CAF50
+    opacity: 1
+}
+
 .slider::-moz-range-thumb {
     width: 25px;
     height: 25px;

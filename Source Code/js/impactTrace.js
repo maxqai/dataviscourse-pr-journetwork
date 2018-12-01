@@ -301,9 +301,9 @@ class ImpactTrace {
                       })
                       .style("stroke-width", d => {
                         if (name[lines.indexOf(d)] === currJournal) {
-                            return 4;
+                            return 5;
                         } else {
-                            return 1;
+                            return 2;
                         }
                       });
                 })
@@ -403,9 +403,9 @@ class ImpactTrace {
                      })
                      .style("stroke-width", d => {
                         if (name[lines.indexOf(d)] === currJournal) {
-                            return 3;
+                            return 5;
                         } else {
-                            return 1;
+                            return 2;
                         }
                      });
 
@@ -478,6 +478,18 @@ class ImpactTrace {
                     });
                     // Remove NaNs from pos
                     pos = pos.filter((e1) => {if (!isNaN(e1)) {return e1}});
+
+                    d3.select(".ImpactTrace")
+                      .selectAll("path")
+                      .style("opacity", 0.05);
+
+                    d3.select(this)
+                      .classed("selectedLines", true)
+                      .style("stroke-width", 5)
+                      .style("stroke", "black")
+                      .style("opacity", 1);
+
+
                     d3.select(this)
                         .append("title")
                         .text("Journal: " + sortGrid[pos[0]]["Journal"])
@@ -519,11 +531,8 @@ class ImpactTrace {
                       });
                 })
                 .on("mouseout", function(d) {
-//                    d3.select(this)
-//                      .transition()
-//                      .duration(100)
-//                      .style("opacity", 0)
-//                      .remove();
+                    d3.select(".ImpactTraces")
+                      .classed("selectedLines", false);
                 });
     }
 };
