@@ -59,11 +59,11 @@ class ImpactTrace {
         });
 
         // Filter JIF values
-        let JIF = Grid.map(d => {
+        this.JIF = Grid.map(d => {
             return parseInt(d["Journal Impact Factor"])
         })
 
-        let endJIF = d3.max(JIF);
+        let endJIF = d3.max(this.JIF);
 
         // create Xscale based on year values
         let Xscale = d3.scaleLinear()
@@ -122,7 +122,7 @@ class ImpactTrace {
                 .attr("y", this.margin.left/5*2)
                 .attr("text-anchor", "middle");
 
-//        d3.select(".itTitle").remove();
+        d3.select(".itTitle").remove();
 
         let rectScale = d3.scaleLinear()
                           .domain([0, JofInterest.length])
@@ -143,8 +143,6 @@ class ImpactTrace {
                 .attr("x", this.margin.left)
                 .attr("y", this.margin.top*2.5)
 
-        let buff = 30;
-
         this.svg.select("g > FilterData").exit().remove();
         this.svg.append("g")
                 .classed("FD_Group", true)
@@ -161,13 +159,13 @@ class ImpactTrace {
                 .attr("height", this.margin.top/2)
                 .style("fill", "#43a2ca")
                 .on("mouseover", function(d,i) {
-                    d3.select(this)
+                    let x = d3.select(this)
                               .attr("x", d => {
                                 return rectScale(i) - 5;
                               })
-                              .attr("y", buff)
-                              .attr("width", buff)
-                              .attr("height", buff)
+                              .attr("y", 30)
+                              .attr("width", 30)
+                              .attr("height", 30)
                               .style("fill", "#6FB98F");
 
                     d3.select(".FD_Group")
@@ -176,21 +174,22 @@ class ImpactTrace {
                       .attr("class", "tooltip")
                       .style("opacity", 0)
                       .transition()
-                      .duration(100)
+                      .duration(200)
                       .style("opacity", 1);
                 })
                 .on("click", d => {
-                     // Makes sure changes to selected groups works
+//                this.svg.selectAll("g").remove(); // Makes sure changes to selected groups works
                     d3.select(".Filt_Data_Text").remove();
                     d3.select(".impactTrace")
                       .select("svg")
-                      .append("text")
+                      .append("g")
                       .classed("Filt_Data_Text", true)
                       .text("Current Filter: " + d)
                       .attr("x", 50)
                       .attr("y", 20)
                       .classed("instruct", true)
                       .attr("font-size", 20 + "px");
+
 
                     // Find Min and Max Data Points
                     let ext = d3.extent(Grid.map((e1,i) => {
