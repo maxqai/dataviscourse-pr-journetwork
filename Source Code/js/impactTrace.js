@@ -310,7 +310,7 @@ class ImpactTrace {
                             return 2;
                         }
                       })
-                      .on("mouseover", (d) => {
+                      .on("mouseover", (d, i1, p) => {
                             let pos = lines.map((e1,i) => {
                             if (d === e1) {
                                 return [i];
@@ -321,17 +321,18 @@ class ImpactTrace {
                             // Remove NaNs from pos
                             pos = pos.filter((e1) => {if (!isNaN(e1)) {return e1}});
 
-                            d3.select(".ImpactTrace")
-                            .selectAll("path")
-                            .style("opacity", 0.05);
-
-                            d3.select(this)
+                            d3.select(p[i1])
                                 .append("title")
                                 .text("Journal: " + sortGrid[pos[0]]["Journal"])
                                 .classed("barsTitle", true)
                                 .transition()
                                 .duration(100)
                                 .style("opacity", 0.9);
+
+                            d3.select(p[i1])
+                                .style("stroke-width", 10)
+                                .style("opacity", 1)
+                                .style("stroke", "black");
 
                             // highlight related nodes in FDN
                             d3.select('.nodes').selectAll('circle')
@@ -536,6 +537,7 @@ class ImpactTrace {
         d3.select(".ImpactTrace")
                 .selectAll("path")
                 .on("mouseover", function(d) {
+                    console.log(d);
                     // Find Journal Name Through Mapping
                     let pos = lines.map((e1,i) => {
                         if (d === e1) {
