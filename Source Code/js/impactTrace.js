@@ -430,7 +430,7 @@ class ImpactTrace {
             let y1 = vals.map((e2) => {
                 return [parseInt(e2["Year"])];
             })
-            console,log(vals);
+
             let lineData = {paths:this.line(vals), name:e1, year:y1}
             return lineData;
         });
