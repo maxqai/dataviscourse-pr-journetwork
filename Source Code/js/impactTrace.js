@@ -183,7 +183,7 @@ class ImpactTrace {
                 })
                 .on("click", d => {
                      // Makes sure changes to selected groups works
-                    d3.select(".Filt_Data_Text").remove();
+                    d3.selectAll(".Filt_Data_Text").remove();
                     d3.select(".impactTrace")
                       .select("svg")
                       .append("text")
