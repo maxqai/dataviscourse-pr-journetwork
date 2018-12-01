@@ -19,8 +19,9 @@ class ImpactTrace {
             .attr("height", this.svgHeight);//TODO: fix this to not be hardcoded
    };
 	update (Grid, currJournal){
-        // Things that need to get done: Formatting of Graph - adding X and Y Labels, Changing Year so it Looks Good, appending circle to show which line was highlighted
+        this.svg.selectAll("g").remove(); // Makes sure changes to selected groups works
 
+        // Things that need to get done: Formatting of Graph - adding X and Y Labels, Changing Year so it Looks Good, appending circle to show which line was highlighted
         // First Sort the Data
         Grid = Grid.sort(function (e1, e2) {
             return d3.ascending(e1.Year, e2.Year)
@@ -203,6 +204,12 @@ class ImpactTrace {
                     }
                     Yscale = d3.scaleLinear().domain([ext[0], ext[1]])
                                              .range([[this.svgHeight - 2 * this.margin.bottom, 3 * this.margin.top]]);
+                    // Redefine the Y axis;
+                    this.Yaxis = d3.axisLeft();
+                    this.Yaxis
+                    .scale(Yscale)
+                    .tickValues([0, 5, 10, 15, 20, 25, 30, 35, 40, 45]);
+
 
                     // Map Data points and create path strings
                     let lines =  name.map((e1,i) => {
@@ -212,9 +219,7 @@ class ImpactTrace {
                                 return e2;
                             }
                         });
-                        // Find the Column of Interest
-//                        let year = parseInt(e1["Year"]);
-//                        let val =   parseFloat(e1[sGnames[sGpos]]);
+
                         // Compute the line
                         vals = vals.map((e2,i) => {
                             let sGnames = Object.keys(e2);
@@ -249,27 +254,36 @@ class ImpactTrace {
                     let lined = this.svg.append("g")
                             .classed("ImpactTrace", true)
                             .selectAll("path")
-                            .data(lines);
-                    lined.exit().remove();
-                    lined.enter().append("path")
-                         .attr("d", e1 => {
+                            .remove();
+                    d3.select(".ImpactTrace")
+                      .data(lines)
+                      .enter()
+                      .append("path")
+                      .attr("d", e1 => {
                             console.log(e1);
                             return e1
-                         })
-                         .style("stroke", function(e1) {
-                            if (name[lines.indexOf(e1)] === "Nature") {
-                                return "#E38533";
-                            } else {
-                                return "#004445";
-                            }
-                            })
-                        .style("opacity", e1 => {
-                            if (name[lines.indexOf(e1)] === "Nature") {
-                                return 1;
-                            } else {
-                                return 0.15;
-                            }
-                        });
+                      })
+                      .style("stroke", function(e1) {
+                        if (name[lines.indexOf(e1)] === currJournal) {
+                            return "#E38533";
+                        } else {
+                            return "#004445";
+                        }
+                        })
+                      .style("opacity", e1 => {
+                        if (name[lines.indexOf(e1)] === currJournal) {
+                            return 1;
+                        } else {
+                            return 0.05;
+                        }
+                      })
+                      .style("stroke-width", d => {
+                        if (name[lines.indexOf(d)] === currJournal) {
+                            return 4;
+                        } else {
+                            return 1;
+                        }
+                      });
                 })
                 .on("mouseout", function(d,i) {
                     let that = this;
@@ -352,22 +366,22 @@ class ImpactTrace {
         lined.enter().append("path")
                      .attr("d", d => {return d})
                      .style("stroke", function(d) {
-                        if (name[lines.indexOf(d)] === "Nature") {
+                        if (name[lines.indexOf(d)] === currJournal) {
                             return "#E38533";
                         } else {
                             return "#004445";
                         }
                      })
                      .style("opacity", d => {
-                        if (name[lines.indexOf(d)] === "Nature") {
+                        if (name[lines.indexOf(d)] === currJournal) {
                             return 1;
                         } else {
                             return 0.15;
                         }
                      })
                      .style("stroke-width", d => {
-                        if (name[lines.indexOf(d)] === "Nature") {
-                            return 10;
+                        if (name[lines.indexOf(d)] === currJournal) {
+                            return 3;
                         } else {
                             return 1;
                         }
