@@ -93,7 +93,7 @@ class ImpactTrace {
                 .attr("transform","translate(" + 0 + "," + Yscale(0) + ")")
                 .call(this.Xaxis)
                 .selectAll(".ticks")
-                .attr("id", "lineAxis");
+                .attr("id", "xlineAxis");
 
         // Append X Label
         this.svg.append("g")
@@ -102,24 +102,24 @@ class ImpactTrace {
                 .text("YEAR")
                 .attr("x", this.svgWidth/2)
                 .attr("y", this.svgHeight)
-                .attr("id", "lineAxis");
+                .attr("id", "xlineAxis");
 
         // Append Y Axis
         this.svg.append("g")
+                .attr("id", "ylineAxis")
                 .attr("transform","translate(" + this.margin.left + "," + 0 + ")")
                 .call(this.Yaxis)
-                .selectAll(".ticks")
-                .attr("id", "lineAxis");
+                .selectAll(".ticks");
 
         // Append Y Label
         this.svg.append("g")
                 .classed("label", true)
+                .attr("id", "ylabel")
                 .append("text")
                 .attr("transform", "rotate(-90)")
                 .text("Journal Impact Factor")
                 .attr("x", -this.svgHeight/2*1.25)
-                .attr("y", this.margin.left/5*2)
-                .attr("id", "lineAxis");
+                .attr("y", this.margin.left/5*2);
 
         d3.select(".itTitle").remove();
 
@@ -178,6 +178,17 @@ class ImpactTrace {
                 })
                 .on("click", d => {
 //                this.svg.selectAll("g").remove(); // Makes sure changes to selected groups works
+                    d3.select(".Filt_Data_Text").remove();
+                    d3.select(".impactTraces")
+                      .select("svg")
+                      .append("g")
+                      .classed("Filt_Data_Text", true)
+                      .text("Current Filter: " + d)
+                      .attr("x", 50)
+                      .attr("y", 20)
+                      .classed("instruct", true)
+                      .attr("font-size", 20 + "px");
+
 
                     // Find Min and Max Data Points
                     let ext = d3.extent(Grid.map((e1,i) => {
@@ -200,6 +211,29 @@ class ImpactTrace {
                        steps[i] = ext[0] + i*idx1;
                     };
 
+                    d3.select("#ylineAxis").remove();
+                    d3.select("#ylabel").remove();
+
+                    let Yaxis = d3.axisLeft().scale(Taylorscale).tickValues(steps);
+
+                    d3.select("#impactTrace")
+                      .select("svg")
+                      .append("g")
+                      .attr("transform","translate(" + 50 + "," + -1 + ")")
+                      .attr("id", "ylineAxis")
+                      .call(Yaxis);
+
+                    d3.select("#impactTrace")
+                      .select("svg")
+                      .append("g")
+                      .attr("id", "ylabel")
+                      .append("text")
+                      .attr("transform", "rotate(-90)")
+                      .text(d)
+                      .attr("x", -200)
+                      .attr("y", 20)
+                      .attr("text-anchor", "middle");
+
                     // Create a Line Function
                     let line = d3.line()
                                  .x(e2 => {
@@ -212,13 +246,6 @@ class ImpactTrace {
                                         return Taylorscale(e2[1]);
                                     }
                                  });
-
-                    // Redefine the Y axis;
-                    let Yaxis = d3.axisLeft();
-                    Yaxis
-                        .scale(Yscale)
-                        .tickValues(steps);
-
 
                     // Map Data points and create path strings
                     let lines =  name.map((e1,i) => {
